@@ -15,11 +15,14 @@ export default {
         code: ['monospace'],
       },
       colors: {
-        'soft-lavender': 'hsl(var(--soft-lavender))',
-        'pastel-purple': 'hsl(var(--pastel-purple))',
-        'sky-blue': 'hsl(var(--sky-blue))',
-        'soft-magenta': 'hsl(var(--soft-magenta))',
-        'soft-shadow': 'hsl(var(--soft-shadow))',
+        // User's specified colors
+        'soft-lavender': 'hsl(var(--soft-lavender))', // #A29BFF
+        'pastel-purple': 'hsl(var(--pastel-purple))', // #9B7BFF
+        'sky-blue': 'hsl(var(--sky-blue))',       // #8AC6FF
+        'soft-magenta': 'hsl(var(--soft-magenta))',  // #FF9CEC
+        'soft-shadow': 'hsl(var(--soft-shadow))',   // #DDE1F0
+
+        // ShadCN theme colors mapped to user's palette
         background: 'hsl(var(--background))',
         foreground: 'hsl(var(--foreground))',
         card: {
@@ -59,16 +62,6 @@ export default {
           '3': 'hsl(var(--chart-3))',
           '4': 'hsl(var(--chart-4))',
           '5': 'hsl(var(--chart-5))',
-        },
-        sidebar: {
-          DEFAULT: 'hsl(var(--sidebar-background))',
-          foreground: 'hsl(var(--sidebar-foreground))',
-          primary: 'hsl(var(--sidebar-primary))',
-          'primary-foreground': 'hsl(var(--sidebar-primary-foreground))',
-          accent: 'hsl(var(--sidebar-accent))',
-          'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
-          border: 'hsl(var(--sidebar-border))',
-          ring: 'hsl(var(--sidebar-ring))',
         },
       },
       borderRadius: {
