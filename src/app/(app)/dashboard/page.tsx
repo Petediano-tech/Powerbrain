@@ -14,6 +14,7 @@ import { useUser, useDoc, useMemoFirebase } from "@/firebase";
 import { useEffect, useState } from "react";
 import { doc, getFirestore, collection, query, orderBy, limit } from "firebase/firestore";
 import { useCollection } from "@/firebase/firestore/use-collection";
+import { DashboardNotes } from "@/components/dashboard-notes";
 
 const motivationalQuotes = [
   "The future belongs to those who believe in the beauty of their dreams. - Eleanor Roosevelt",
@@ -106,19 +107,22 @@ export default function DashboardPage() {
       </div>
 
       <div className="grid gap-4 md:grid-cols-5">
-        <Card className="md:col-span-3">
-          <CardHeader>
-            <CardTitle>Your Study Score</CardTitle>
-            <CardDescription>Based on your recent activity and quiz scores. Keep it up!</CardDescription>
-          </CardHeader>
-          <CardContent className="flex flex-col gap-3">
-            <div className="flex items-center gap-4">
-              <span className="text-4xl font-bold text-primary">{studyScore.toFixed(0)}%</span>
-              <Progress value={studyScore} className="h-3 w-full" />
-            </div>
-            <p className="text-xs text-muted-foreground">Your average score across all quizzes.</p>
-          </CardContent>
-        </Card>
+        <div className="md:col-span-3 flex flex-col gap-4">
+            <Card>
+                <CardHeader>
+                    <CardTitle>Your Study Score</CardTitle>
+                    <CardDescription>Based on your recent activity and quiz scores. Keep it up!</CardDescription>
+                </CardHeader>
+                <CardContent className="flex flex-col gap-3">
+                    <div className="flex items-center gap-4">
+                    <span className="text-4xl font-bold text-primary">{studyScore.toFixed(0)}%</span>
+                    <Progress value={studyScore} className="h-3 w-full" />
+                    </div>
+                    <p className="text-xs text-muted-foreground">Your average score across all quizzes.</p>
+                </CardContent>
+            </Card>
+            <DashboardNotes />
+        </div>
          <div className="grid md:col-span-2 gap-4">
             <Card>
               <CardHeader>
