@@ -38,15 +38,21 @@ export default function ProfilePage() {
   const userAvatarUrl = useMemo(() => {
     if (user?.photoURL) return user.photoURL;
     if (user?.uid) {
-        // Simple hash function to pick a consistent avatar
         const hash = user.uid.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
         const avatarIndex = hash % PlaceHolderImages.length;
         return PlaceHolderImages[avatarIndex]?.imageUrl;
     }
-    return PlaceHolderImages[0]?.imageUrl; // default
+    return PlaceHolderImages[0]?.imageUrl;
   }, [user]);
 
-  const displayName = user?.displayName || "User";
+  const displayName = useMemo(() => {
+    if (user?.displayName) return user.displayName;
+    if (studentData) {
+      return `${studentData.firstName} ${studentData.lastName}`.trim();
+    }
+    return "Learner";
+  }, [user, studentData]);
+
   const profileData = studentData || {
     gradeLevel: 'Form 1',
     studyStreaks: 0,

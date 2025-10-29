@@ -1,7 +1,6 @@
 'use client';
 import { useUser } from '@/firebase';
 import LoginPage from './login/page';
-import AppRootPage from './(app)/page';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 
@@ -29,7 +28,6 @@ export default function Home() {
   }
 
   if (user) {
-    // This will be briefly rendered before the redirect, can also be a loading spinner
     return (
        <div className="flex h-screen w-screen items-center justify-center">
         <div className="h-16 w-16 animate-spin rounded-full border-4 border-solid border-primary border-t-transparent"></div>

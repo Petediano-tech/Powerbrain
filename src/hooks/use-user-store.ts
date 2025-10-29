@@ -10,5 +10,3 @@ export const useUserStore = create<UserStore>((set) => ({
   profileId: null,
   setProfileId: (id) => set({ profileId: id }),
 }));
-
-    
