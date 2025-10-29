@@ -1,7 +1,7 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { BookMarked, ChevronLeft, Lock, FileText, Download } from "lucide-react";
+import { BookMarked, ChevronLeft, Lock, FileText, BookOpen } from "lucide-react";
 import Link from "next/link";
 import { capitalize } from "@/lib/utils";
 import { Progress } from "@/components/ui/progress";
@@ -96,9 +96,9 @@ export default function SubjectChaptersPage({ params }: { params: { subjectName:
                         </CardHeader>
                         <CardFooter>
                              <Button className="w-full" asChild>
-                                <Link href={note.pdfUrl} target="_blank" rel="noopener noreferrer">
-                                    <Download className="mr-2 h-4 w-4" />
-                                    Download PDF
+                                <Link href={`/notes/view?pdf=${encodeURIComponent(note.pdfUrl)}&subject=${params.subjectName}`}>
+                                    <BookOpen className="mr-2 h-4 w-4" />
+                                    Read Note
                                 </Link>
                             </Button>
                         </CardFooter>

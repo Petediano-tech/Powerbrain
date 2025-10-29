@@ -4,7 +4,7 @@ export type Note = {
   title: string;
   subject: string;
   author: string;
-  pdfUrl: string; // Changed from content to pdfUrl
+  pdfUrl: string; 
   createdAt: string;
 };
 
