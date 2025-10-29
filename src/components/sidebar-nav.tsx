@@ -11,7 +11,6 @@ import {
   School,
   User,
   Settings,
-  Trophy,
   Layers,
 } from 'lucide-react';
 import {
@@ -27,7 +26,6 @@ const navItems = [
   { href: '/quizzes', label: 'Quizzes', icon: PencilRuler },
   { href: '/tutor', label: 'Brainy', icon: Bot },
   { href: '/flashcards', label: 'Flashcards', icon: Layers },
-  { href: '/leaderboard', label: 'Leaderboard', icon: Trophy },
   { href: '/teacher', label: "Teacher's Corner", icon: School },
 ];
 

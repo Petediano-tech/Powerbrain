@@ -113,36 +113,6 @@
         "lastName",
         "gradeLevel"
       ]
-    },
-    "LeaderboardEntry": {
-      "$schema": "http://json-schema.org/draft-07/schema#",
-      "title": "LeaderboardEntry",
-      "type": "object",
-      "description": "Represents a user's public entry on the leaderboard.",
-      "properties": {
-        "id": {
-          "type": "string",
-          "description": "Unique identifier for the leaderboard entry (matches user ID)."
-        },
-        "name": {
-          "type": "string",
-          "description": "Full name of the user."
-        },
-        "averageScore": {
-          "type": "number",
-          "description": "The user's average score across all quizzes."
-        },
-        "profilePicture": {
-          "type": "string",
-          "description": "URL to the user's profile picture, if available.",
-          "format": "uri"
-        }
-      },
-      "required": [
-        "id",
-        "name",
-        "averageScore"
-      ]
     }
   },
   "auth": {
@@ -163,12 +133,6 @@
         "$ref": "#/entities/UserProfile"
       },
       "description": "Stores user profile details. Uses document id for security (profileId field from UserAccount). Includes user's personal information like first name, last name, date of birth, profile picture, grade level, and school ID."
-    },
-    "leaderboard/{userId}": {
-      "schema": {
-        "$ref": "#/entities/LeaderboardEntry"
-      },
-      "description": "Publicly readable collection for leaderboard data. Write access is restricted to the owner of the user ID."
     }
   }
 }
