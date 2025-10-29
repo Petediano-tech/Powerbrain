@@ -1,3 +1,4 @@
+
 {
   "entities": {
     "UserAccount": {
@@ -151,56 +152,23 @@
     ]
   },
   "firestore": {
-    "structure": [
-      {
-        "path": "/userAccounts/{userId}",
-        "definition": {
-          "entityName": "UserAccount",
-          "schema": {
-            "$ref": "#/backend/entities/UserAccount"
-          },
-          "description": "Stores user account information. Uses path-based ownership for security. Includes standard user profile information such as email, username, registration date and last login.",
-          "params": [
-            {
-              "name": "userId",
-              "description": "The unique identifier for the user account."
-            }
-          ]
-        }
+    "userAccounts/{userId}": {
+      "schema": {
+        "$ref": "#/entities/UserAccount"
       },
-      {
-        "path": "/userProfiles/{profileId}",
-        "definition": {
-          "entityName": "UserProfile",
-          "schema": {
-            "$ref": "#/backend/entities/UserProfile"
-          },
-          "description": "Stores user profile details. Uses document id for security (profileId field from UserAccount). Includes user's personal information like first name, last name, date of birth, profile picture, grade level, and school ID.",
-          "params": [
-            {
-              "name": "profileId",
-              "description": "The unique identifier for the user profile."
-            }
-          ]
-        }
+      "description": "Stores user account information. Uses path-based ownership for security. Includes standard user profile information such as email, username, registration date and last login."
+    },
+    "userProfiles/{profileId}": {
+      "schema": {
+        "$ref": "#/entities/UserProfile"
       },
-      {
-        "path": "/leaderboard/{userId}",
-        "definition": {
-          "entityName": "LeaderboardEntry",
-          "schema": {
-            "$ref": "#/backend/entities/LeaderboardEntry"
-          },
-          "description": "Stores public, denormalized data for the leaderboard. This collection is publicly readable for the leaderboard feature but write access is restricted.",
-          "params": [
-            {
-              "name": "userId",
-              "description": "The user's ID, matching the document ID."
-            }
-          ]
-        }
-      }
-    ],
-    "reasoning": "The Firestore structure is designed to support user authentication, profile management, and role-based access control, focusing on authorization independence. The structure leverages path-based ownership for user accounts and profiles to simplify security rules. The design avoids the use of `get()` calls in security rules by denormalizing necessary authorization information, ensuring atomic operations and easier debugging. Specifically, UserProfile data is kept separate from UserAccount data, but can be joined via the profileId. \n\nA public 'leaderboard' collection is added to securely expose leaderboard data without granting read access to all user profiles, which would be a security risk. This collection is populated with denormalized data upon user creation and updates.\n\nQAPs are supported by segregating user data based on ownership, enabling secure `list` operations within a user's own data. Since the app is focused on user data, a membership model isn't included as the core feature revolves around a `User owns Data` relationship."
+      "description": "Stores user profile details. Uses document id for security (profileId field from UserAccount). Includes user's personal information like first name, last name, date of birth, profile picture, grade level, and school ID."
+    },
+    "leaderboard/{userId}": {
+      "schema": {
+        "$ref": "#/entities/LeaderboardEntry"
+      },
+      "description": "Stores public, denormalized data for the leaderboard. This collection is publicly readable for the leaderboard feature but write access is restricted."
+    }
   }
 }
