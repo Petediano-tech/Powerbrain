@@ -12,7 +12,6 @@ import {
   User,
   Settings,
   Trophy,
-  File,
 } from 'lucide-react';
 import {
   SidebarMenu,
@@ -20,7 +19,6 @@ import {
   SidebarMenuButton,
   useSidebar,
 } from '@/components/ui/sidebar';
-import { capitalize } from '@/lib/utils';
 
 const navItems = [
   { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
@@ -29,7 +27,6 @@ const navItems = [
   { href: '/tutor', label: 'Brainy', icon: Bot },
   { href: '/notes', label: 'Notes', icon: FileText },
   { href: '/leaderboard', label: 'Leaderboard', icon: Trophy },
-  { href: '/pdf-viewer', label: 'Document Reader', icon: File },
   { href: '/teacher', label: "Teacher's Corner", icon: School },
 ];
 
