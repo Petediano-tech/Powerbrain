@@ -10,10 +10,11 @@ import { aiGradeQuizzes, AiGradeQuizzesOutput } from "@/ai/flows/ai-grade-quizze
 import { Skeleton } from "@/components/ui/skeleton";
 import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
-import { useFirestore, useUser, useFirebaseApp } from "@/firebase";
+import { useFirestore, useUser } from "@/firebase";
 import { Progress } from "@/components/ui/progress";
 import { useToast } from "@/hooks/use-toast";
 import { Label } from "@/components/ui/label";
+import { getApp } from "firebase/app";
 
 export default function TeacherPage() {
   // Grading state
@@ -32,7 +33,6 @@ export default function TeacherPage() {
 
   const { user } = useUser();
   const firestore = useFirestore();
-  const firebaseApp = useFirebaseApp();
   const { toast } = useToast();
 
   const handleGradeWithAI = async () => {
@@ -66,7 +66,6 @@ export default function TeacherPage() {
   };
 
   const handleUploadNote = async () => {
-    const storage = getStorage(firebaseApp);
     if (!noteTitle || !noteSubject || !fileToUpload || !user) {
       toast({
         variant: "destructive",
@@ -75,14 +74,9 @@ export default function TeacherPage() {
       });
       return;
     }
-    if (!storage) {
-        toast({
-            variant: "destructive",
-            title: "Storage service not ready",
-            description: "Please wait a moment and try uploading again.",
-        });
-        return;
-    }
+
+    const app = getApp();
+    const storage = getStorage(app);
     
     setIsUploading(true);
     setUploadProgress(0);
@@ -110,6 +104,9 @@ export default function TeacherPage() {
         getDownloadURL(uploadTask.snapshot.ref).then(async (downloadURL) => {
           // Save the note metadata to Firestore
           try {
+            if (!firestore) {
+                throw new Error("Firestore not initialized");
+            }
             await addDoc(collection(firestore, "notes"), {
               title: noteTitle,
               subject: noteSubject,
@@ -248,5 +245,6 @@ export default function TeacherPage() {
       </Card>
     </div>
   );
+    
 
     
