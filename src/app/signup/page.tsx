@@ -1,4 +1,3 @@
-
 'use client';
 import { Button } from '@/components/ui/button';
 import {
@@ -17,7 +16,7 @@ import { doc, setDoc, writeBatch } from 'firebase/firestore';
 import Link from 'next/link';
 import { useState } from 'react';
 import { useToast } from '@/hooks/use-toast';
-import { BrainCircuit } from 'lucide-react';
+import { Logo } from '@/components/logo';
 import { useRouter } from 'next/navigation';
 
 
@@ -106,13 +105,9 @@ export default function SignUpPage() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-background p-4">
       <Card className="w-full max-w-sm">
-        <CardHeader className="text-center">
-          <div className="mb-4 flex justify-center">
-            <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/20">
-              <BrainCircuit className="h-8 w-8 text-primary" />
-            </div>
-          </div>
-          <CardTitle className="text-2xl">Create an Account</CardTitle>
+        <CardHeader className="text-center items-center">
+            <Logo />
+          <CardTitle className="text-2xl pt-4">Create an Account</CardTitle>
           <CardDescription>
             Join the digital learning movement in Malawi.
           </CardDescription>

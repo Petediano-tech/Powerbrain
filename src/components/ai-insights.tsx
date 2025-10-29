@@ -1,4 +1,3 @@
-
 'use client';
 import { useState } from "react";
 import {
@@ -102,9 +101,9 @@ export function AIInsights() {
         ) : insights ? (
             <div className="space-y-4">
               <InsightSection icon={<Sparkles className="h-4 w-4"/>} title="Overall Performance" content={insights.overallPerformance} colorClass="text-primary"/>
-              <InsightSection icon={<Target className="h-4 w-4"/>} title="Strengths" content={insights.strengths} colorClass="text-green-400"/>
-              <InsightSection icon={<ShieldAlert className="h-4 w-4"/>} title="Weaknesses" content={insights.weaknesses} colorClass="text-yellow-400"/>
-              <InsightSection icon={<Lightbulb className="h-4 w-4"/>} title="Recommendations" content={insights.recommendations} colorClass="text-sky-blue"/>
+              <InsightSection icon={<Target className="h-4 w-4"/>} title="Strengths" content={insights.strengths} colorClass="text-green-500"/>
+              <InsightSection icon={<ShieldAlert className="h-4 w-4"/>} title="Weaknesses" content={insights.weaknesses} colorClass="text-yellow-500"/>
+              <InsightSection icon={<Lightbulb className="h-4 w-4"/>} title="Recommendations" content={insights.recommendations} colorClass="text-sky-500"/>
             </div>
         ) : (
           <div className="text-center text-muted-foreground py-8 flex flex-col items-center justify-center h-full">
@@ -114,7 +113,7 @@ export function AIInsights() {
         )}
       </CardContent>
       <CardFooter>
-        <Button onClick={handleGetInsights} disabled={isLoading || !userProfile} className="w-full bg-sky-blue hover:bg-sky-blue/90 text-background">
+        <Button onClick={handleGetInsights} disabled={isLoading || !userProfile} className="w-full bg-[hsl(var(--sky-blue))] hover:bg-[hsl(var(--sky-blue))]/90 text-white">
           {isLoading ? "Generating..." : "Generate My Insights"}
         </Button>
       </CardFooter>

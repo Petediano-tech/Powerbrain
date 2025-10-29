@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { BookCopy, FileText, PencilRuler, School, MoveRight, Layers } from "lucide-react";
+import { BookCopy, FileText, PencilRuler, School, MoveRight, Layers, Bot } from "lucide-react";
 import Link from 'next/link';
 import { useUser, useDoc, useMemoFirebase } from "@/firebase";
 import { useEffect, useState } from "react";
@@ -33,10 +33,10 @@ const didYouKnowFacts = [
 ];
 
 const quickAccess = [
-    { name: 'Start Learning', href: '/subjects', icon: BookCopy },
-    { name: 'Take a Quiz', href: '/quizzes', icon: PencilRuler },
-    { name: 'Flashcards', href: '/flashcards', icon: Layers },
-    { name: "Teacher's Corner", href: '/teacher', icon: School }
+    { name: 'Start Learning', description: 'Browse subjects and chapters.', href: '/subjects', icon: BookCopy },
+    { name: 'Take a Quiz', description: 'Test your knowledge.', href: '/quizzes', icon: PencilRuler },
+    { name: 'Practice Flashcards', description: 'Memorize key concepts.', href: '/flashcards', icon: Layers },
+    { name: 'Talk to Brainy', description: 'Your AI-powered tutor.', href: '/tutor', icon: Bot }
 ];
 
 export default function DashboardPage() {
@@ -88,30 +88,32 @@ export default function DashboardPage() {
         </p>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        {quickAccess.map((item) => (
-          <Card key={item.name} className="hover:border-primary transition-colors shadow-sm hover:shadow-primary/20">
-            <Link href={item.href} className="block h-full">
-              <CardContent className="p-4 flex items-center justify-between">
-                <div className="flex flex-col gap-1">
-                  <div className={`flex items-center justify-center rounded-lg p-2 w-fit bg-primary/10 text-primary`}>
-                    <item.icon className="h-5 w-5" />
-                  </div>
-                  <p className="text-sm font-semibold">{item.name}</p>
-                </div>
-                <MoveRight className="h-5 w-5 text-muted-foreground" />
-              </CardContent>
-            </Link>
-          </Card>
-        ))}
-      </div>
-
-      <div className="grid gap-4 md:grid-cols-5">
-        <div className="md:col-span-3 flex flex-col gap-4">
-            <Card>
+      <div className="grid gap-6 lg:grid-cols-3">
+        <div className="lg:col-span-2 space-y-6">
+          <div className="grid gap-4 md:grid-cols-2">
+            {quickAccess.map((item) => (
+              <Card key={item.name} className="hover:border-primary transition-colors shadow-sm hover:shadow-primary/20">
+                <Link href={item.href} className="block h-full">
+                  <CardHeader>
+                      <div className={`flex items-center justify-center rounded-lg p-2 w-fit bg-primary/10 text-primary`}>
+                        <item.icon className="h-5 w-5" />
+                      </div>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="font-semibold">{item.name}</p>
+                    <p className="text-sm text-muted-foreground">{item.description}</p>
+                  </CardContent>
+                </Link>
+              </Card>
+            ))}
+          </div>
+          <DashboardNotes />
+        </div>
+        <div className="lg:col-span-1 space-y-6">
+           <Card>
                 <CardHeader>
                     <CardTitle>Your Study Score</CardTitle>
-                    <CardDescription>Based on your recent activity and quiz scores. Keep it up!</CardDescription>
+                    <CardDescription>Based on your recent quiz scores.</CardDescription>
                 </CardHeader>
                 <CardContent className="flex flex-col gap-3">
                     <div className="flex items-center gap-4">
@@ -121,9 +123,6 @@ export default function DashboardPage() {
                     <p className="text-xs text-muted-foreground">Your average score across all quizzes.</p>
                 </CardContent>
             </Card>
-            <DashboardNotes />
-        </div>
-         <div className="grid md:col-span-2 gap-4">
             <Card>
               <CardHeader>
                 <CardTitle>Quote of the Day</CardTitle>
@@ -142,10 +141,22 @@ export default function DashboardPage() {
                 <p className="text-sm text-muted-foreground">{fact}</p>
               </CardContent>
             </Card>
-         </div>
+            <Card>
+              <CardHeader>
+                <CardTitle>Teacher's Corner</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <Button className="w-full" asChild variant={'secondary'}>
+                    <Link href={'/teacher'}>
+                        <School className="mr-2"/>
+                        Go to Teacher Area
+                    </Link>
+                </Button>
+              </CardContent>
+            </Card>
+        </div>
       </div>
-
-      <Card>
+       <Card>
         <CardHeader>
           <CardTitle>Recent Quizzes</CardTitle>
           <CardDescription>Review your latest quiz attempts.</CardDescription>
@@ -176,6 +187,7 @@ export default function DashboardPage() {
           )}
         </CardContent>
       </Card>
+
     </div>
   );
 }

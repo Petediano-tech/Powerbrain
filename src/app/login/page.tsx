@@ -20,7 +20,7 @@ import {
 import Link from 'next/link';
 import { useState } from 'react';
 import { useToast } from '@/hooks/use-toast';
-import { BrainCircuit } from 'lucide-react';
+import { Logo } from '@/components/logo';
 import { useRouter } from 'next/navigation';
 
 export default function LoginPage() {
@@ -86,13 +86,9 @@ export default function LoginPage() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-background p-4">
       <Card className="w-full max-w-sm">
-        <CardHeader className="text-center">
-          <div className="mb-4 flex justify-center">
-            <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/20">
-              <BrainCircuit className="h-8 w-8 text-primary" />
-            </div>
-          </div>
-          <CardTitle className="text-2xl">Welcome Back!</CardTitle>
+        <CardHeader className="text-center items-center">
+          <Logo />
+          <CardTitle className="text-2xl pt-4">Welcome Back!</CardTitle>
           <CardDescription>
             Sign in to continue your learning journey.
           </CardDescription>
