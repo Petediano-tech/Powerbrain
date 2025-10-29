@@ -10,6 +10,7 @@ import { CheckCircle, XCircle, ChevronLeft, Award } from "lucide-react";
 import Link from "next/link";
 import { capitalize } from "@/lib/utils";
 import Confetti from 'react-confetti';
+import { cn } from "@/lib/utils";
 
 type Question = {
   question: string;
@@ -148,8 +149,8 @@ export default function QuizPage({ params }: { params: { quizId: string } }) {
         {scorePercentage === 100 && <Confetti recycle={false} numberOfPieces={200} />}
         <Card className="max-w-2xl mx-auto">
           <CardHeader className="text-center items-center">
-            <div className="p-3 bg-accent/20 rounded-full mb-2">
-                <Award className="h-10 w-10 text-accent"/>
+            <div className="p-3 bg-muted rounded-full mb-2">
+                <Award className="h-10 w-10 text-primary"/>
             </div>
             <CardTitle className="text-3xl">Quiz Complete!</CardTitle>
             <CardDescription>You finished the {title} quiz.</CardDescription>
@@ -166,12 +167,12 @@ export default function QuizPage({ params }: { params: { quizId: string } }) {
               {questions.map((q, index) => (
                   <div key={index} className="p-4 rounded-lg border bg-muted/50">
                       <p className="font-semibold">{q.question}</p>
-                      <p className={`flex items-center gap-2 text-sm mt-2 ${selectedAnswers[index] === q.answer ? 'text-green-500' : 'text-red-500'}`}>
+                      <p className={cn("flex items-center gap-2 text-sm mt-2", selectedAnswers[index] === q.answer ? 'text-foreground' : 'text-destructive')}>
                           {selectedAnswers[index] === q.answer ? <CheckCircle size={16} /> : <XCircle size={16} />}
                           Your answer: {selectedAnswers[index] || "Not answered"}
                       </p>
                       {selectedAnswers[index] !== q.answer && (
-                          <p className="text-sm text-green-600 mt-1">Correct answer: {q.answer}</p>
+                          <p className="text-sm text-foreground mt-1">Correct answer: {q.answer}</p>
                       )}
                        <p className="text-xs text-muted-foreground mt-2 pt-2 border-t">{q.explanation}</p>
                   </div>
@@ -210,11 +211,11 @@ export default function QuizPage({ params }: { params: { quizId: string } }) {
         >
           {currentQuestion.options.map((option) => {
             const isSelected = selectedAnswer === option;
-            let variant = "default";
+            let labelClass = "";
             if(isChecking && isSelected) {
-                variant = isCorrect ? "correct" : "incorrect";
+                labelClass = isCorrect ? 'border-foreground' : 'border-destructive';
             } else if (isChecking && currentQuestion.answer === option) {
-                variant = "correct";
+                labelClass = "border-foreground";
             }
 
             return (
@@ -222,20 +223,18 @@ export default function QuizPage({ params }: { params: { quizId: string } }) {
                 <RadioGroupItem value={option} id={option} className="sr-only" />
                 <Label 
                   htmlFor={option} 
-                  className={`flex items-center space-x-3 border rounded-md p-3 transition-all cursor-pointer
-                    ${isChecking ? '' : 'hover:border-primary hover:bg-primary/5'}
+                  className={cn(`flex items-center space-x-3 border rounded-md p-3 transition-all cursor-pointer
+                    hover:border-primary
                     ${isSelected ? 'border-primary' : ''}
-                    ${variant === "correct" ? 'bg-green-500/10 border-green-500' : ''}
-                    ${variant === "incorrect" ? 'bg-red-500/10 border-red-500' : ''}
-                  `}
+                  `, labelClass)}
                 >
                   <div className="h-4 w-4 rounded-full border border-primary flex items-center justify-center">
                     {isSelected && <div className="h-2.5 w-2.5 rounded-full bg-primary" />}
                   </div>
                   <span className="flex-1">{option}</span>
-                  {isChecking && isSelected && isCorrect && <CheckCircle className="text-green-500" />}
-                  {isChecking && isSelected && !isCorrect && <XCircle className="text-red-500" />}
-                  {isChecking && !isSelected && currentQuestion.answer === option && <CheckCircle className="text-green-500" />}
+                  {isChecking && isCorrect && isSelected && <CheckCircle className="text-foreground" />}
+                  {isChecking && !isCorrect && isSelected && <XCircle className="text-destructive" />}
+                  {isChecking && currentQuestion.answer === option && !isSelected && <CheckCircle className="text-foreground" />}
                 </Label>
               </div>
             )}
@@ -243,7 +242,7 @@ export default function QuizPage({ params }: { params: { quizId: string } }) {
         </RadioGroup>
         
         {isChecking && (
-            <div className={`p-4 rounded-md text-sm ${isCorrect ? 'bg-green-500/10 text-green-700' : 'bg-red-500/10 text-red-700'}`}>
+            <div className={cn('p-4 rounded-md text-sm', isCorrect ? 'bg-muted' : 'bg-destructive/10 text-destructive-foreground')}>
                 <h4 className="font-bold mb-1">{isCorrect ? "Correct!" : "Not quite..."}</h4>
                 <p>{currentQuestion.explanation}</p>
             </div>
@@ -252,7 +251,7 @@ export default function QuizPage({ params }: { params: { quizId: string } }) {
       </CardContent>
       <CardFooter>
         {isChecking ? (
-            <Button onClick={handleNext} className="w-full bg-sky-blue hover:bg-sky-blue/90 text-background">
+            <Button onClick={handleNext} className="w-full">
                 {currentQuestionIndex < questions.length - 1 ? "Next Question" : "Finish Quiz"}
             </Button>
         ) : (

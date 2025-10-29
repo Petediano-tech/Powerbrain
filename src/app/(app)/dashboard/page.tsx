@@ -23,10 +23,10 @@ const motivationalQuotes = [
 ];
 
 const quickAccess = [
-    { name: 'Start Learning', href: '/subjects', icon: BookCopy, color: 'bg-primary/10 text-primary' },
-    { name: 'Take a Quiz', href: '/quizzes', icon: PencilRuler, color: 'bg-sky-blue/10 text-sky-blue' },
-    { name: 'View Notes', href: '/notes', icon: FileText, color: 'bg-accent/10 text-accent' },
-    { name: "Teacher's Corner", href: '/teacher', icon: School, color: 'bg-pink-500/10 text-pink-500' }
+    { name: 'Start Learning', href: '/subjects', icon: BookCopy },
+    { name: 'Take a Quiz', href: '/quizzes', icon: PencilRuler },
+    { name: 'View Notes', href: '/notes', icon: FileText },
+    { name: "Teacher's Corner", href: '/teacher', icon: School }
 ];
 
 export default function DashboardPage() {
@@ -69,7 +69,7 @@ export default function DashboardPage() {
             <Link href={item.href} className="block h-full">
               <CardContent className="p-4 flex items-center justify-between">
                 <div className="flex flex-col gap-1">
-                  <div className={`flex items-center justify-center rounded-lg p-2 w-fit ${item.color}`}>
+                  <div className={`flex items-center justify-center rounded-lg p-2 w-fit bg-primary/10 text-primary`}>
                     <item.icon className="h-5 w-5" />
                   </div>
                   <p className="text-sm font-semibold">{item.name}</p>
@@ -95,12 +95,12 @@ export default function DashboardPage() {
             <p className="text-xs text-muted-foreground">Your average score across all quizzes.</p>
           </CardContent>
         </Card>
-        <Card className="md:col-span-2 bg-gradient-to-tr from-card to-accent/10">
+        <Card className="md:col-span-2">
           <CardHeader>
             <CardTitle>Quote of the Day</CardTitle>
           </CardHeader>
           <CardContent>
-            <blockquote className="border-l-4 border-accent pl-4 italic text-foreground/90">
+            <blockquote className="border-l-4 border-primary pl-4 italic">
               {quote}
             </blockquote>
           </CardContent>
@@ -132,7 +132,7 @@ export default function DashboardPage() {
                 <p className="text-sm text-muted-foreground">Completed 2 days ago</p>
               </div>
               <div className="flex items-center gap-4">
-                <span className="font-semibold text-lg text-sky-blue">92%</span>
+                <span className="font-semibold text-lg text-primary">92%</span>
                  <Button variant="outline" size="sm" asChild>
                   <Link href="/quizzes/tenses-and-grammar">Review</Link>
                 </Button>

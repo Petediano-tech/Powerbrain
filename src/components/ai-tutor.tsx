@@ -138,7 +138,7 @@ export function AITutor() {
                         className={cn(
                             'max-w-2xl rounded-xl px-4 py-3 text-sm shadow-sm',
                             message.role === 'user'
-                            ? 'bg-sky-blue text-background'
+                            ? 'bg-primary text-primary-foreground'
                             : 'bg-muted'
                         )}
                         >
@@ -183,7 +183,7 @@ export function AITutor() {
                     rows={1}
                     className="pr-12 min-h-[48px] resize-none"
                 />
-                <Button type="submit" size="icon" disabled={isLoading || !input.trim()} className="absolute right-2.5 top-1/2 -translate-y-1/2 bg-sky-blue hover:bg-sky-blue/90 text-background flex-shrink-0">
+                <Button type="submit" size="icon" disabled={isLoading || !input.trim()} className="absolute right-2.5 top-1/2 -translate-y-1/2 flex-shrink-0">
                     <CornerDownLeft className="h-4 w-4" />
                     <span className="sr-only">Send Message</span>
                 </Button>

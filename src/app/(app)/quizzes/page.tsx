@@ -19,7 +19,7 @@ const quizzes = [
     id: "cellular-biology",
     title: "Cellular Biology",
     subject: "Biology",
-    icon: <Dna className="h-6 w-6 text-green-400" />,
+    icon: <Dna className="h-6 w-6 text-primary" />,
     difficulty: "Moderate",
     questions: 1,
     timeLimit: 5,
@@ -28,7 +28,7 @@ const quizzes = [
     id: "tenses-and-grammar",
     title: "Tenses and Grammar",
     subject: "English",
-    icon: <Languages className="h-6 w-6 text-sky-blue" />,
+    icon: <Languages className="h-6 w-6 text-primary" />,
     difficulty: "Easy",
     questions: 1,
     timeLimit: 5,
@@ -45,21 +45,6 @@ const quizzes = [
 ];
 
 export default function QuizzesPage() {
-  const getBadgeVariant = (difficulty: string) => {
-    switch (difficulty) {
-        case "Easy": return "secondary";
-        case "Moderate": return "outline";
-        case "Advanced": return "default";
-        default: return "secondary";
-    }
-  }
-
-  const getBadgeClass = (difficulty: string) => {
-     if (difficulty === 'Advanced') return 'bg-accent text-accent-foreground';
-     if (difficulty === 'Moderate') return 'border-yellow-500 text-yellow-500';
-     return '';
-  }
-
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       {quizzes.map((quiz) => (
@@ -86,12 +71,11 @@ export default function QuizzesPage() {
           </CardContent>
           <CardFooter className="flex justify-between items-center">
             <Badge 
-              variant={getBadgeVariant(quiz.difficulty)}
-              className={getBadgeClass(quiz.difficulty)}
+              variant="outline"
             >
                 {quiz.difficulty}
             </Badge>
-            <Button asChild className="bg-sky-blue hover:bg-sky-blue/90 text-background">
+            <Button asChild>
               <Link href={`/quizzes/${quiz.id}`}>Start Quiz</Link>
             </Button>
           </CardFooter>

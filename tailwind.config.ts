@@ -48,12 +48,6 @@ export default {
           DEFAULT: 'hsl(var(--card))',
           foreground: 'hsl(var(--card-foreground))',
         },
-        // Custom colors from user's palette
-        'soft-lavender': 'hsl(var(--soft-lavender))',
-        'pastel-purple': 'hsl(var(--pastel-purple))',
-        'light-blue': 'hsl(var(--light-blue))',
-        'pink-magenta': 'hsl(var(--pink-magenta))',
-        'soft-shadow': 'hsl(var(--soft-shadow))',
         chart: {
           '1': 'hsl(var(--chart-1))',
           '2': 'hsl(var(--chart-2))',
