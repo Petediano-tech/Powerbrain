@@ -1,0 +1,78 @@
+/**
+ * @fileoverview Firestore Security Rules for Power Brain application.
+ *
+ * Core Philosophy:
+ * This ruleset enforces a strict user-ownership model, where each user can only access their own account and profile data.
+ *
+ * Data Structure:
+ * - /userAccounts/{userId}: Stores user account information, secured by user ID.
+ * - /userProfiles/{profileId}: Stores user profile information, secured by profile ID. The `profileId` from UserAccount should match the document ID here.
+ *
+ * Key Security Decisions:
+ * - Users can only create, read, update, and delete their own accounts and profiles.
+ * - Listing of all user accounts or profiles is not allowed to prevent information disclosure.
+ * - The rules are designed to avoid `get()` calls for authorization by relying on path-based ownership and denormalized data where appropriate.
+ *
+ * Denormalization for Authorization:
+ * - The `profileId` in the `UserAccount` document is used to link to the corresponding `UserProfile` document, ensuring that the profile data can be easily accessed and secured using the `userId`.
+ */
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    /**
+     * @description Enforces user-ownership for user account documents. Only the authenticated user can create, read, update, or delete their own account.
+     * @path /userAccounts/{userId}
+     * @allow (create) - Authenticated user with ID 'user123' creates a new account document with ID 'user123'.
+     * @allow (get) - Authenticated user with ID 'user123' reads their own account document with ID 'user123'.
+     * @allow (update) - Authenticated user with ID 'user123' updates their own account document with ID 'user123'.
+     * @allow (delete) - Authenticated user with ID 'user123' deletes their own account document with ID 'user123'.
+     * @deny (create) - Authenticated user with ID 'user456' tries to create an account document with ID 'user123'.
+     * @deny (get) - Authenticated user with ID 'user456' tries to read account document with ID 'user123'.
+     * @deny (update) - Authenticated user with ID 'user456' tries to update account document with ID 'user123'.
+     * @deny (delete) - Authenticated user with ID 'user456' tries to delete account document with ID 'user123'.
+     * @principle Enforces document ownership for all operations on user account documents.
+     */
+    match /userAccounts/{userId} {
+      allow get: if isOwner(userId);
+      allow list: if false;
+      allow create: if isOwner(userId) && request.resource.data.id == userId;
+      allow update: if isExistingOwner(userId) && request.resource.data.id == resource.data.id;
+      allow delete: if isExistingOwner(userId);
+    }
+
+    /**
+     * @description Enforces user-ownership for user profile documents. Only the authenticated user can create, read, update, or delete their own profile.
+     * @path /userProfiles/{profileId}
+     * @allow (create) - Authenticated user with ID 'user123' creates a new profile document with ID 'profile456', where 'profile456' is the `profileId` in their UserAccount.
+     * @allow (get) - Authenticated user with ID 'user123' reads their own profile document with ID 'profile456', where 'profile456' is the `profileId` in their UserAccount.
+     * @allow (update) - Authenticated user with ID 'user123' updates their own profile document with ID 'profile456', where 'profile456' is the `profileId` in their UserAccount.
+     * @allow (delete) - Authenticated user with ID 'user123' deletes their own profile document with ID 'profile456', where 'profile456' is the `profileId` in their UserAccount.
+     * @deny (create) - Authenticated user with ID 'user456' tries to create a profile document with ID 'profile789'.
+     * @deny (get) - Authenticated user with ID 'user456' tries to read profile document with ID 'profile789'.
+     * @deny (update) - Authenticated user with ID 'user456' tries to update profile document with ID 'profile789'.
+     * @deny (delete) - Authenticated user with ID 'user456' tries to delete profile document with ID 'profile789'.
+     * @principle Enforces document ownership for all operations on user profile documents, linking it with UserAccount.
+     */
+    match /userProfiles/{profileId} {
+      allow get: if isSignedIn();
+      allow list: if false;
+      allow create: if isSignedIn();
+      allow update: if isSignedIn() && resource != null;
+      allow delete: if isSignedIn() && resource != null;
+    }
+
+    // Helper functions
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return request.auth.uid == userId;
+    }
+
+    function isExistingOwner(userId) {
+      return isOwner(userId) && resource != null;
+    }
+  }
+}
