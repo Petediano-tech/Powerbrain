@@ -9,16 +9,22 @@ import { Separator } from "@/components/ui/separator";
 
 export const chaptersData: { [key: string]: { id: string; title: string; description: string; isLocked?: boolean; progress?: number; }[] } = {
   mathematics: [
-    { id: "algebra-basics", title: "Chapter 1: Algebra Basics", description: "Introduction to variables, equations, and expressions.", progress: 100 },
-    { id: "geometry-intro", title: "Chapter 2: Introduction to Geometry", description: "Learn about shapes, lines, and angles.", progress: 45 },
-    { id: "fractions-and-decimals", title: "Chapter 3: Fractions and Decimals", description: "Master the art of working with parts of whole numbers.", progress: 0 },
-    { id: "statistics-basics", title: "Chapter 4: Basic Statistics", description: "Understand data with mean, median, and mode.", isLocked: true },
+    { id: "algebra-basics", title: "Algebra Basics", description: "Introduction to variables, equations, and expressions.", progress: 100 },
+    { id: "geometry-intro", title: "Introduction to Geometry", description: "Learn about shapes, lines, and angles.", progress: 45 },
+    { id: "fractions-and-decimals", title: "Fractions and Decimals", description: "Master the art of working with parts of whole numbers.", progress: 0 },
+    { id: "statistics-basics", title: "Basic Statistics", description: "Understand data with mean, median, and mode.", isLocked: true },
   ],
   english: [
-    { id: "grammar-tenses", title: "Chapter 1: Tenses and Grammar", description: "Master past, present, and future tenses.", progress: 80 },
-    { id: "comprehension-skills", title: "Chapter 2: Comprehension Skills", description: "Improve your reading and understanding.", progress: 20 },
-    { id: "essay-writing", title: "Chapter 3: Essay Writing", description: "Learn to write compelling essays.", isLocked: true },
+    { id: "grammar-tenses", title: "Tenses and Grammar", description: "Master past, present, and future tenses.", progress: 80 },
+    { id: "comprehension-skills", title: "Comprehension Skills", description: "Improve your reading and understanding.", progress: 20 },
+    { id: "essay-writing", title: "Creative Writing", description: "Learn to write compelling essays and stories.", isLocked: true },
+    { id: "literature-analysis", title: "Literature Analysis", description: "Learn to analyze and interpret literature.", isLocked: true }
   ],
+  biology: [
+      { id: "cell-biology", title: "Cell Biology", description: "Explore the basic building blocks of life.", progress: 50 },
+      { id: "genetics-101", title: "Genetics 101", description: "An introduction to heredity and DNA.", progress: 10 },
+      { id: "human-anatomy", title: "Human Anatomy", description: "Discover the structure of the human body.", isLocked: true },
+  ]
 };
 
 
@@ -36,13 +42,13 @@ export default function SubjectChaptersPage({ params }: { params: { subjectName:
                 Back to Subjects
             </Link>
         </Button>
-        <h1 className="text-3xl font-bold hidden md:block">Chapters in {capitalize(params.subjectName)}</h1>
+        <h1 className="text-3xl font-bold hidden md:block">{capitalize(params.subjectName)}</h1>
       </div>
 
       {chapters.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {chapters.map((chapter) => (
-            <Card key={chapter.id} className={`flex flex-col transition-colors ${chapter.isLocked ? 'bg-muted/50' : 'hover:border-sky-blue'}`}>
+            <Card key={chapter.id} className={`flex flex-col transition-colors ${chapter.isLocked ? 'bg-muted/50' : 'hover:border-primary'}`}>
                <CardHeader>
                 <CardTitle className="flex items-center justify-between">
                   {chapter.title}
@@ -58,14 +64,14 @@ export default function SubjectChaptersPage({ params }: { params: { subjectName:
                   </div>
                 )}
               </CardContent>
-              <CardContent>
-                <Button className="w-full bg-sky-blue hover:bg-sky-blue/90 text-background" asChild disabled={chapter.isLocked}>
+              <CardFooter>
+                <Button className="w-full" asChild disabled={chapter.isLocked}>
                   <Link href={`/subjects/${params.subjectName}/${chaptersData[subjectName] ? chapter.id : ''}`}>
                     <BookMarked className="mr-2 h-4 w-4" />
-                    {chapter.progress && chapter.progress > 0 ? 'Continue' : 'Start Reading'}
+                    {chapter.progress && chapter.progress > 0 ? 'Continue Lesson' : 'Start Lesson'}
                   </Link>
                 </Button>
-              </CardContent>
+              </CardFooter>
             </Card>
           ))}
         </div>

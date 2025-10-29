@@ -17,20 +17,4 @@ export const notesData: Note[] = [
     pdfUrl: "https://github.com/Petediano-tech/PowerBrainNotes-/raw/refs/heads/main/__English_prepositions_(1)_(1).pdf",
     createdAt: new Date().toISOString(),
   },
-  {
-    id: "introduction-to-algebra",
-    title: "Introduction to Algebra",
-    subject: "Mathematics",
-    author: "Your Teacher",
-    pdfUrl: "#", // Placeholder, user can replace
-    createdAt: new Date().toISOString(),
-  },
-  {
-    id: "the-cell",
-    title: "The Cell: Basic Unit of Life",
-    subject: "Biology",
-    author: "Your Teacher",
-    pdfUrl: "#", // Placeholder, user can replace
-    createdAt: new Date().toISOString(),
-  },
 ];

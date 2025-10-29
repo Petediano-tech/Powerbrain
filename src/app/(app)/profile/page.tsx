@@ -15,6 +15,8 @@ import { ProgressChart } from "@/components/progress-chart";
 import { useUser, useDoc, useMemoFirebase } from "@/firebase";
 import { doc, getFirestore } from "firebase/firestore";
 import { useUserStore } from "@/hooks/use-user-store";
+import { useMemo } from "react";
+import { PlaceHolderImages } from "@/lib/placeholder-images";
 
 export default function ProfilePage() {
   const { user } = useUser();
@@ -29,11 +31,22 @@ export default function ProfilePage() {
   const { data: studentData } = useDoc(userProfileRef);
   
   const getInitials = (name: string) => {
+    if (!name) return 'U';
     return name.split(' ').map(n => n[0]).join('').toUpperCase();
   };
+  
+  const userAvatarUrl = useMemo(() => {
+    if (user?.photoURL) return user.photoURL;
+    if (user?.uid) {
+        // Simple hash function to pick a consistent avatar
+        const hash = user.uid.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+        const avatarIndex = hash % PlaceHolderImages.length;
+        return PlaceHolderImages[avatarIndex]?.imageUrl;
+    }
+    return PlaceHolderImages[0]?.imageUrl; // default
+  }, [user]);
 
   const displayName = user?.displayName || "User";
-  const userAvatarUrl = user?.photoURL;
   const profileData = studentData || {
     gradeLevel: 'Form 1',
     studyStreaks: 0,
