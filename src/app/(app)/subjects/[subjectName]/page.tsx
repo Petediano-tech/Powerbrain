@@ -1,4 +1,3 @@
-
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { BookMarked, ChevronLeft, Lock, FileText, BookOpen } from "lucide-react";
@@ -61,7 +60,7 @@ export default function SubjectChaptersPage({ params }: { params: { subjectName:
               </CardContent>
               <CardContent>
                 <Button className="w-full bg-sky-blue hover:bg-sky-blue/90 text-background" asChild disabled={chapter.isLocked}>
-                  <Link href={`/subjects/${params.subjectName}/${chapter.id}`}>
+                  <Link href={`/subjects/${params.subjectName}/${chaptersData[subjectName] ? chapter.id : ''}`}>
                     <BookMarked className="mr-2 h-4 w-4" />
                     {chapter.progress && chapter.progress > 0 ? 'Continue' : 'Start Reading'}
                   </Link>

@@ -31,12 +31,15 @@ function PDFViewer() {
   }
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-screen">
       <div className="flex items-center justify-between p-4 border-b bg-background sticky top-0 z-10">
         <Button variant="outline" onClick={() => router.back()}>
             <ChevronLeft className="mr-2 h-4 w-4" />
             Back
         </Button>
+        <div className="text-center">
+            {subject && <h1 className="text-lg font-semibold">{capitalize(subject)} Note</h1>}
+        </div>
         <Button asChild>
           <a href={pdfUrl} download target="_blank" rel="noopener noreferrer">
             <Download className="mr-2 h-4 w-4" />
@@ -57,11 +60,8 @@ function PDFViewer() {
 
 export default function NoteViewPage() {
   return (
-    // The h-full class with a fixed layout in the parent will make it take up available space
-    <div className="h-full -m-4 md:-m-6 lg:-m-8">
-        <Suspense fallback={<div>Loading PDF...</div>}>
-            <PDFViewer />
-        </Suspense>
-    </div>
+    <Suspense fallback={<div className="flex h-screen w-screen items-center justify-center">Loading PDF...</div>}>
+        <PDFViewer />
+    </Suspense>
   );
 }

@@ -27,7 +27,7 @@ export function DashboardNotes() {
                         <p className="text-sm text-muted-foreground">{note.subject} • By {note.author}</p>
                     </div>
                     <Button variant="secondary" size="sm" asChild>
-                      <Link href={`/notes/view?pdf=${encodeURIComponent(note.pdfUrl)}`}>
+                      <Link href={`/notes/view?pdf=${encodeURIComponent(note.pdfUrl)}&subject=${note.subject.toLowerCase()}`}>
                         <BookOpen className="mr-2 h-4 w-4" />
                         Read Note
                       </Link>
