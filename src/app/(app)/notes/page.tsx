@@ -7,7 +7,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ReactElement } from "react";
-import { notesData } from "@/lib/notes-data";
+import { useCollection, useFirestore, useMemoFirebase } from "@/firebase";
+import { collection, orderBy, query } from "firebase/firestore";
 
 const subjectIcons: { [key: string]: ReactElement } = {
   English: <Languages />,
@@ -30,8 +31,11 @@ const getSubjectIcon = (subject: string) => {
 
 
 export default function NotesPage() {
-  const notes = notesData;
-  const isLoading = false; // Data is now local
+  const firestore = useFirestore();
+  const notesQuery = useMemoFirebase(() => {
+    return query(collection(firestore, 'notes'), orderBy('createdAt', 'desc'));
+  }, [firestore]);
+  const { data: notes, isLoading } = useCollection(notesQuery);
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
