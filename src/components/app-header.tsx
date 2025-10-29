@@ -3,6 +3,7 @@ import {
   Sidebar,
   SidebarContent,
   SidebarHeader,
+  SidebarTrigger,
 } from '@/components/ui/sidebar';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
@@ -43,7 +44,7 @@ export function AppHeader() {
   
   return (
     <>
-      {/* Desktop Sidebar */}
+      {/* Sidebar for both mobile and desktop */}
       <Sidebar side="left" variant="sidebar" collapsible="icon">
         <SidebarHeader>
           <Logo />
@@ -55,6 +56,7 @@ export function AppHeader() {
 
       {/* Header */}
       <header className="sticky top-0 z-10 flex h-16 shrink-0 items-center gap-4 border-b bg-background/80 px-4 backdrop-blur-sm md:pl-[var(--sidebar-width-icon)]">
+         <SidebarTrigger className="md:hidden" />
         <h1 className="text-lg font-semibold md:text-xl">
           {capitalize(pageTitle.replace('-', ' '))}
         </h1>

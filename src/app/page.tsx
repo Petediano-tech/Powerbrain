@@ -1,7 +1,7 @@
 'use client';
 import { useUser } from '@/firebase';
 import LoginPage from './login/page';
-import DashboardPage from './(app)/dashboard/page';
+import AppRootPage from './(app)/page';
 import { useEffect, useState } from 'react';
 
 export default function Home() {
@@ -21,7 +21,7 @@ export default function Home() {
   }
 
   if (user) {
-    return <DashboardPage />;
+    return <AppRootPage />;
   }
 
   return <LoginPage />;

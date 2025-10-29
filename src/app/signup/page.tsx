@@ -51,7 +51,7 @@ export default function SignUpPage() {
         description: "Welcome to Power Brain.",
       });
 
-      router.push('/');
+      router.push('/dashboard');
 
     } catch (error) {
        console.error(error);

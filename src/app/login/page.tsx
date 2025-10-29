@@ -43,7 +43,7 @@ export default function LoginPage() {
         title: 'Logged in successfully!',
         description: "Welcome back to Power Brain.",
       });
-      router.push('/');
+      router.push('/dashboard');
     } catch (error) {
       console.error(error);
       const authError = error as AuthError;
@@ -68,7 +68,7 @@ export default function LoginPage() {
         title: 'Logged in successfully!',
         description: "Welcome back to Power Brain.",
       });
-      router.push('/');
+      router.push('/dashboard');
     } catch (error) {
        console.error(error);
       const authError = error as AuthError;
