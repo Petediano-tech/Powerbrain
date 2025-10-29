@@ -54,7 +54,7 @@ export default function DashboardPage() {
       return query(collection(firestore, 'userProfiles', user.uid, 'quizAttempts'), orderBy('completedAt', 'desc'), limit(2));
   }, [firestore, user]);
 
-  const { data: userProfile } = useDoc(userProfile);
+  const { data: userProfile } = useDoc(userProfileRef);
   const { data: recentQuizzes } = useCollection(recentQuizzesQuery);
 
   useEffect(() => {
