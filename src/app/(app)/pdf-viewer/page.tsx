@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -7,22 +7,34 @@ import { UploadCloud, FileText } from 'lucide-react';
 
 export default function PdfViewerPage() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [fileName, setFileName] = useState('');
+  const [fileUrl, setFileUrl] = useState<string | null>(null);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files[0]) {
       const file = event.target.files[0];
       if (file.type === 'application/pdf') {
         setSelectedFile(file);
-        setFileName(file.name);
+        const url = URL.createObjectURL(file);
+        setFileUrl(url);
       } else {
         alert('Please select a PDF file.');
+        setSelectedFile(null);
+        setFileUrl(null);
       }
     }
   };
 
+  // Clean up the object URL when the component unmounts or the file changes
+  useEffect(() => {
+    return () => {
+      if (fileUrl) {
+        URL.revokeObjectURL(fileUrl);
+      }
+    };
+  }, [fileUrl]);
+
   return (
-    <div className="container mx-auto p-4 space-y-6">
+    <div className="container mx-auto p-4 space-y-6 flex flex-col h-full">
       <div>
         <h2 className="text-2xl font-bold">PDF Viewer</h2>
         <p className="text-muted-foreground">Upload and view your PDF documents directly in the app.</p>
@@ -43,21 +55,19 @@ export default function PdfViewerPage() {
             </Button>
             <Input id="pdf-upload" type="file" accept="application/pdf" className="sr-only" onChange={handleFileChange} />
           </label>
-          {fileName && <p className="text-sm text-muted-foreground">Selected: {fileName}</p>}
+          {selectedFile && <p className="text-sm text-muted-foreground">Selected: {selectedFile.name}</p>}
         </CardContent>
       </Card>
 
-      <Card className="flex-grow">
+      <Card className="flex-grow flex flex-col">
         <CardHeader>
-          <CardTitle>Document</CardTitle>
+          <CardTitle>Document Viewer</CardTitle>
         </CardHeader>
-        <CardContent className="h-[60vh] flex items-center justify-center bg-muted/50 rounded-b-lg">
-          {selectedFile ? (
-            <div className="text-center text-muted-foreground">
-              <p>PDF rendering area. Logic to display "{fileName}" would go here.</p>
-            </div>
+        <CardContent className="flex-grow flex items-center justify-center bg-muted/50 rounded-b-lg p-0">
+          {fileUrl ? (
+            <iframe src={fileUrl} className="w-full h-full border-0" title={selectedFile?.name || 'PDF Viewer'} />
           ) : (
-            <div className="text-center text-muted-foreground">
+            <div className="text-center text-muted-foreground p-6">
               <FileText className="mx-auto h-12 w-12 text-muted-foreground/50 mb-4" />
               <p>Your PDF will be displayed here once uploaded.</p>
             </div>
