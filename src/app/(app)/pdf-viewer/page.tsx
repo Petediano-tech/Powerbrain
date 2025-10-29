@@ -23,18 +23,22 @@ export default function DocumentReaderPage() {
   };
 
   useEffect(() => {
+    let objectUrl: string | null = null;
     if (selectedFile) {
-      const objectUrl = URL.createObjectURL(selectedFile);
+      objectUrl = URL.createObjectURL(selectedFile);
       setFileUrl(objectUrl);
+    }
 
-      // Cleanup function: This is called when the component unmounts
-      // or when the `selectedFile` dependency changes.
-      return () => {
+    // This is the cleanup function.
+    // It runs when the component unmounts, OR before the effect runs again.
+    return () => {
+      // We only revoke the URL if it was created in the previous render.
+      if (objectUrl) {
         URL.revokeObjectURL(objectUrl);
         setFileUrl(null);
-      };
-    }
-  }, [selectedFile]);
+      }
+    };
+  }, [selectedFile]); // This effect depends only on the selected file.
 
   return (
     <div className="flex flex-col h-full bg-muted/30 rounded-lg border">
