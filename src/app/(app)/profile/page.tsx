@@ -1,3 +1,4 @@
+'use client';
 import {
   Card,
   CardContent,
@@ -10,10 +11,9 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { BookOpenCheck, PencilRuler, CalendarDays, Clock } from "lucide-react";
 import { AIInsights } from "@/components/ai-insights";
 import { ProgressChart } from "@/components/progress-chart";
-import { PlaceHolderImages } from "@/lib/placeholder-images";
+import { useUser } from "@/firebase";
 
 const studentData = {
-  name: "Peter Phiri",
   class: "Form 3",
   studyStreaks: 5,
   totalTimeStudied: 1240, // in minutes
@@ -23,21 +23,24 @@ const studentData = {
 };
 
 export default function ProfilePage() {
+  const { user } = useUser();
+  
   const getInitials = (name: string) => {
     return name.split(' ').map(n => n[0]).join('').toUpperCase();
   };
 
-  const userAvatar = PlaceHolderImages.find(p => p.id === 'user-avatar');
+  const displayName = user?.displayName || "User";
+  const userAvatarUrl = user?.photoURL;
 
   return (
     <div className="space-y-6">
       <Card>
         <CardHeader className="flex flex-col items-center text-center">
           <Avatar className="h-24 w-24 mb-4 border-4 border-primary">
-            <AvatarImage src={userAvatar?.imageUrl} alt={studentData.name} data-ai-hint={userAvatar?.imageHint} />
-            <AvatarFallback className="text-3xl">{getInitials(studentData.name)}</AvatarFallback>
+            {userAvatarUrl && <AvatarImage src={userAvatarUrl} alt={displayName} />}
+            <AvatarFallback className="text-3xl">{getInitials(displayName)}</AvatarFallback>
           </Avatar>
-          <CardTitle className="text-3xl">{studentData.name}</CardTitle>
+          <CardTitle className="text-3xl">{displayName}</CardTitle>
           <CardDescription>{studentData.class}</CardDescription>
         </CardHeader>
         <CardContent className="flex flex-wrap justify-center gap-2">

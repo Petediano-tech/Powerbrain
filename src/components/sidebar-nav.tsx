@@ -20,7 +20,7 @@ import {
 } from '@/components/ui/sidebar';
 
 const navItems = [
-  { href: '/', label: 'Dashboard', icon: LayoutDashboard },
+  { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { href: '/subjects', label: 'Subjects', icon: BookCopy },
   { href: '/quizzes', label: 'Quizzes', icon: PencilRuler },
   { href: '/tutor', label: 'AI Tutor', icon: Bot },
@@ -38,7 +38,7 @@ export function SidebarNav() {
   const pathname = usePathname();
 
   const isActive = (href: string) => {
-    if (href === '/') return pathname === '/';
+    if (href === '/dashboard') return pathname === '/' || pathname === '/dashboard';
     return pathname.startsWith(href);
   };
 

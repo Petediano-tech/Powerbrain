@@ -9,6 +9,7 @@ import { aiSmartTutor } from '@/ai/flows/ai-smart-tutor';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { ScrollArea } from './ui/scroll-area';
 import { cn } from '@/lib/utils';
+import { useUser } from '@/firebase';
 
 interface Message {
   role: 'user' | 'assistant';
@@ -20,6 +21,15 @@ export function AITutor() {
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
+  const { user } = useUser();
+
+  const getInitials = (name: string) => {
+    return name
+      .split(' ')
+      .map((n) => n[0])
+      .join('')
+      .toUpperCase();
+  };
 
   useEffect(() => {
     if (scrollAreaRef.current) {
@@ -89,7 +99,7 @@ export function AITutor() {
                 </div>
                 {message.role === 'user' && (
                   <Avatar className="h-8 w-8">
-                     <AvatarFallback>P</AvatarFallback>
+                     <AvatarFallback>{getInitials(user?.displayName || "U")}</AvatarFallback>
                   </Avatar>
                 )}
               </div>
