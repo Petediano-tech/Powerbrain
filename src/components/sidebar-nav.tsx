@@ -12,6 +12,7 @@ import {
   User,
   Settings,
   Trophy,
+  Layers,
 } from 'lucide-react';
 import {
   SidebarMenu,
@@ -25,7 +26,7 @@ const navItems = [
   { href: '/subjects', label: 'Subjects', icon: BookCopy },
   { href: '/quizzes', label: 'Quizzes', icon: PencilRuler },
   { href: '/tutor', label: 'Brainy', icon: Bot },
-  { href: '/notes', label: 'Notes', icon: FileText },
+  { href: '/flashcards', label: 'Flashcards', icon: Layers },
   { href: '/leaderboard', label: 'Leaderboard', icon: Trophy },
   { href: '/teacher', label: "Teacher's Corner", icon: School },
 ];

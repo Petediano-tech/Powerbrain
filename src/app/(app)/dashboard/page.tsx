@@ -8,11 +8,12 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { BookCopy, FileText, PencilRuler, School, MoveRight } from "lucide-react";
+import { BookCopy, FileText, PencilRuler, School, MoveRight, Layers } from "lucide-react";
 import Link from 'next/link';
 import { useUser, useDoc, useMemoFirebase } from "@/firebase";
 import { useEffect, useState } from "react";
-import { doc, getFirestore } from "firebase/firestore";
+import { doc, getFirestore, collection, query, orderBy, limit } from "firebase/firestore";
+import { useCollection } from "@/firebase/firestore/use-collection";
 
 const motivationalQuotes = [
   "The future belongs to those who believe in the beauty of their dreams. - Eleanor Roosevelt",
@@ -22,27 +23,43 @@ const motivationalQuotes = [
   "Your time is limited, so don't waste it living someone else's life. - Steve Jobs"
 ];
 
+const didYouKnowFacts = [
+    "The shortest war in history was between Britain and Zanzibar on August 27, 1896. Zanzibar surrendered after 38 minutes.",
+    "A single cloud can weigh more than 1 million pounds.",
+    "The human brain takes in 11 million bits of information every second but is aware of only 40.",
+    "A day on Venus is longer than a year on Venus. It takes Venus 243 Earth days to rotate once, but only 225 Earth days to orbit the sun.",
+    "There are more trees on Earth than stars in the Milky Way galaxy."
+];
+
 const quickAccess = [
     { name: 'Start Learning', href: '/subjects', icon: BookCopy },
     { name: 'Take a Quiz', href: '/quizzes', icon: PencilRuler },
-    { name: 'View Notes', href: '/notes', icon: FileText },
+    { name: 'Flashcards', href: '/flashcards', icon: Layers },
     { name: "Teacher's Corner", href: '/teacher', icon: School }
 ];
 
 export default function DashboardPage() {
   const { user } = useUser();
   const [quote, setQuote] = useState('');
+  const [fact, setFact] = useState('');
   const firestore = getFirestore();
 
   const userProfileRef = useMemoFirebase(() => {
     if (!user) return null;
     return doc(firestore, 'userProfiles', user.uid);
   }, [firestore, user]);
+  
+  const recentQuizzesQuery = useMemoFirebase(() => {
+      if (!user) return null;
+      return query(collection(firestore, 'userProfiles', user.uid, 'quizAttempts'), orderBy('completedAt', 'desc'), limit(2));
+  }, [firestore, user]);
 
-  const { data: userProfile } = useDoc(userProfileRef);
+  const { data: userProfile } = useDoc(userProfile);
+  const { data: recentQuizzes } = useCollection(recentQuizzesQuery);
 
   useEffect(() => {
     setQuote(motivationalQuotes[Math.floor(Math.random() * motivationalQuotes.length)]);
+    setFact(didYouKnowFacts[Math.floor(Math.random() * didYouKnowFacts.length)]);
   }, []);
 
   const userDetails = {
@@ -89,22 +106,32 @@ export default function DashboardPage() {
           </CardHeader>
           <CardContent className="flex flex-col gap-3">
             <div className="flex items-center gap-4">
-              <span className="text-4xl font-bold text-primary">{studyScore}%</span>
+              <span className="text-4xl font-bold text-primary">{studyScore.toFixed(0)}%</span>
               <Progress value={studyScore} className="h-3 w-full" />
             </div>
             <p className="text-xs text-muted-foreground">Your average score across all quizzes.</p>
           </CardContent>
         </Card>
-        <Card className="md:col-span-2">
-          <CardHeader>
-            <CardTitle>Quote of the Day</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <blockquote className="border-l-4 border-primary pl-4 italic">
-              {quote}
-            </blockquote>
-          </CardContent>
-        </Card>
+         <div className="grid md:col-span-2 gap-4">
+            <Card>
+              <CardHeader>
+                <CardTitle>Quote of the Day</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <blockquote className="border-l-4 border-primary pl-4 italic text-sm">
+                  {quote}
+                </blockquote>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardHeader>
+                <CardTitle>Did You Know?</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-muted-foreground">{fact}</p>
+              </CardContent>
+            </Card>
+         </div>
       </div>
 
       <Card>
@@ -113,32 +140,29 @@ export default function DashboardPage() {
           <CardDescription>Review your latest quiz attempts.</CardDescription>
         </CardHeader>
         <CardContent>
-          <ul className="space-y-4">
-            <li className="flex items-center justify-between hover:bg-muted/50 p-3 rounded-lg -m-3">
-              <div>
-                <p className="font-medium">Mathematics - Algebra Basics</p>
-                <p className="text-sm text-muted-foreground">Completed yesterday</p>
-              </div>
-              <div className="flex items-center gap-4">
-                <span className="font-semibold text-lg text-primary">85%</span>
-                <Button variant="outline" size="sm" asChild>
-                  <Link href="/quizzes/algebra-basics">Review</Link>
-                </Button>
-              </div>
-            </li>
-            <li className="flex items-center justify-between hover:bg-muted/50 p-3 rounded-lg -m-3">
-              <div>
-                <p className="font-medium">English - Tenses and Grammar</p>
-                <p className="text-sm text-muted-foreground">Completed 2 days ago</p>
-              </div>
-              <div className="flex items-center gap-4">
-                <span className="font-semibold text-lg text-primary">92%</span>
-                 <Button variant="outline" size="sm" asChild>
-                  <Link href="/quizzes/tenses-and-grammar">Review</Link>
-                </Button>
-              </div>
-            </li>
-          </ul>
+          {recentQuizzes && recentQuizzes.length > 0 ? (
+            <ul className="space-y-4">
+              {recentQuizzes.map((quizAttempt) => (
+                <li key={quizAttempt.id} className="flex items-center justify-between hover:bg-muted/50 p-3 rounded-lg -m-3">
+                  <div>
+                    <p className="font-medium">{quizAttempt.quizTitle}</p>
+                    <p className="text-sm text-muted-foreground">Completed {new Date(quizAttempt.completedAt).toLocaleDateString()}</p>
+                  </div>
+                  <div className="flex items-center gap-4">
+                    <span className="font-semibold text-lg text-primary">{quizAttempt.score}%</span>
+                    <Button variant="outline" size="sm" asChild>
+                      <Link href={`/quizzes/${quizAttempt.quizId}`}>Review</Link>
+                    </Button>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <div className="text-center text-muted-foreground p-8">
+              <p>You haven't completed any quizzes yet.</p>
+              <Button variant="link" asChild><Link href="/quizzes">Take a quiz now!</Link></Button>
+            </div>
+          )}
         </CardContent>
       </Card>
     </div>

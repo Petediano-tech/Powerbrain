@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
@@ -8,9 +8,11 @@ import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
 import { CheckCircle, XCircle, ChevronLeft, Award } from "lucide-react";
 import Link from "next/link";
-import { capitalize } from "@/lib/utils";
 import Confetti from 'react-confetti';
 import { cn } from "@/lib/utils";
+import { useUser, useFirestore, useDoc, useMemoFirebase } from "@/firebase";
+import { doc, runTransaction, serverTimestamp, increment } from "firebase/firestore";
+import { useToast } from "@/hooks/use-toast";
 
 type Question = {
   question: string;
@@ -101,6 +103,61 @@ export default function QuizPage({ params }: { params: { quizId: string } }) {
   const [selectedAnswers, setSelectedAnswers] = useState<{[key: number]: string}>({});
   const [showResults, setShowResults] = useState(false);
   const [isChecking, setIsChecking] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+
+  const { user } = useUser();
+  const firestore = useFirestore();
+  const { toast } = useToast();
+
+  const handleFinishQuiz = async (calculatedScore: number) => {
+    if (!user || isSaving) return;
+    setIsSaving(true);
+    
+    const userProfileRef = doc(firestore, 'userProfiles', user.uid);
+    const quizAttemptRef = doc(firestore, `userProfiles/${user.uid}/quizAttempts`, `${params.quizId}_${Date.now()}`);
+
+    try {
+      await runTransaction(firestore, async (transaction) => {
+        const userProfileDoc = await transaction.get(userProfileRef);
+        if (!userProfileDoc.exists()) {
+          throw new Error("User profile not found!");
+        }
+
+        const oldQuizzesCompleted = userProfileDoc.data().quizzesCompleted || 0;
+        const oldAverageScore = userProfileDoc.data().averageScore || 0;
+        const totalTimeStudied = userProfileDoc.data().totalTimeStudied || 0;
+
+        const newQuizzesCompleted = oldQuizzesCompleted + 1;
+        const newAverageScore = ((oldAverageScore * oldQuizzesCompleted) + calculatedScore) / newQuizzesCompleted;
+        const newTotalTimeStudied = totalTimeStudied + (quiz.questions.length * 0.5); // Add 30s per question
+
+        transaction.update(userProfileRef, {
+          quizzesCompleted: newQuizzesCompleted,
+          averageScore: newAverageScore,
+          totalTimeStudied: increment(30 * quiz.questions.length),
+        });
+
+        transaction.set(quizAttemptRef, {
+          quizId: params.quizId,
+          quizTitle: quiz.title,
+          score: calculatedScore,
+          completedAt: new Date().toISOString(),
+        });
+      });
+
+      setShowResults(true);
+
+    } catch (e) {
+      console.error("Quiz save transaction failed: ", e);
+      toast({
+        variant: "destructive",
+        title: "Oh no!",
+        description: "There was an error saving your quiz results. Please try again.",
+      });
+    } finally {
+      setIsSaving(false);
+    }
+  };
   
   if (!quiz) {
     return (
@@ -127,7 +184,8 @@ export default function QuizPage({ params }: { params: { quizId: string } }) {
     if (currentQuestionIndex < questions.length - 1) {
       setCurrentQuestionIndex(currentQuestionIndex + 1);
     } else {
-      setShowResults(true);
+      const finalScore = (score / questions.length) * 100;
+      handleFinishQuiz(finalScore);
     }
   };
 
@@ -251,8 +309,13 @@ export default function QuizPage({ params }: { params: { quizId: string } }) {
       </CardContent>
       <CardFooter>
         {isChecking ? (
-            <Button onClick={handleNext} className="w-full">
-                {currentQuestionIndex < questions.length - 1 ? "Next Question" : "Finish Quiz"}
+            <Button onClick={handleNext} className="w-full" disabled={isSaving}>
+                {isSaving 
+                    ? "Saving Results..." 
+                    : currentQuestionIndex < questions.length - 1 
+                        ? "Next Question" 
+                        : "Finish Quiz"
+                }
             </Button>
         ) : (
             <Button
