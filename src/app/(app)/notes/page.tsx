@@ -1,12 +1,11 @@
 'use client';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Download, BookOpen, Sigma, Dna, Languages, Leaf, Globe, Landmark, Laptop, HeartHandshake, Users, FlaskConical } from "lucide-react";
+import { BookOpen, Sigma, Dna, Languages, Leaf, Globe, Landmark, Laptop, HeartHandshake, Users, FlaskConical } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { ReactElement } from "react";
-import { useCollection, useMemoFirebase } from "@/firebase";
-import { collection, getFirestore, orderBy, query } from "firebase/firestore";
+import { notesData } from "@/lib/notes-data";
 
 const subjectIcons: { [key: string]: ReactElement } = {
   English: <Languages />,
@@ -28,35 +27,7 @@ const getSubjectIcon = (subject: string) => {
 }
 
 export default function NotesPage() {
-  const firestore = getFirestore();
-  const notesQuery = useMemoFirebase(() => {
-    return query(collection(firestore, 'notes'), orderBy('createdAt', 'desc'));
-  }, [firestore]);
-
-  const { data: notes, isLoading } = useCollection(notesQuery);
-
-  if (isLoading) {
-      return (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {[...Array(3)].map((_, i) => (
-                  <Card key={i} className="flex flex-col overflow-hidden">
-                      <div className="relative h-40 w-full bg-muted animate-pulse"></div>
-                      <CardHeader>
-                          <div className="h-6 w-3/4 bg-muted animate-pulse rounded"></div>
-                          <div className="h-4 w-1/2 bg-muted animate-pulse rounded mt-2"></div>
-                      </CardHeader>
-                      <CardContent className="flex-1">
-                          <div className="h-6 w-1/4 bg-muted animate-pulse rounded"></div>
-                      </CardContent>
-                      <CardFooter className="bg-muted/50 p-4 flex gap-2">
-                         <div className="h-10 w-full bg-muted animate-pulse rounded"></div>
-                         <div className="h-10 w-full bg-muted animate-pulse rounded"></div>
-                      </CardFooter>
-                  </Card>
-              ))}
-          </div>
-      );
-  }
+  const notes = notesData;
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -82,22 +53,16 @@ export default function NotesPage() {
           </CardContent>
           <CardFooter className="bg-muted/50 p-4 flex gap-2">
             <Button className="w-full" asChild>
-                <Link href={note.pdfUrl} target="_blank">
+                <Link href={`/notes/${note.id}`}>
                     <BookOpen className="mr-2 h-4 w-4" />
                     Read
                 </Link>
             </Button>
-            <Button variant="outline" className="w-full" asChild>
-              <a href={note.pdfUrl} download={`${note.title.replace(/\s/g, '_')}.pdf`}>
-                <Download className="mr-2 h-4 w-4" />
-                Download
-              </a>
-            </Button>
           </CardFooter>
         </Card>
       ))}
-       {notes?.length === 0 && !isLoading && (
-         <p className="text-muted-foreground col-span-full text-center">No notes are available at the moment. Teachers can upload notes in the Teacher's Corner.</p>
+       {notes?.length === 0 && (
+         <p className="text-muted-foreground col-span-full text-center">No notes are available at the moment.</p>
        )}
     </div>
   );
