@@ -4,13 +4,9 @@ import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { FileText, BookOpen } from "lucide-react";
 import { notesData } from "@/lib/notes-data";
+import Link from "next/link";
 
 export function DashboardNotes() {
-
-  const handleReadNote = (pdfUrl: string) => {
-    // This will be implemented in the next step
-    alert("This will open the PDF viewer.");
-  };
   
   return (
     <Card className="flex-1 flex flex-col">
@@ -30,9 +26,11 @@ export function DashboardNotes() {
                         <p className="font-medium">{note.title}</p>
                         <p className="text-sm text-muted-foreground">{note.subject} • By {note.author}</p>
                     </div>
-                    <Button variant="secondary" size="sm" onClick={() => handleReadNote(note.pdfUrl)}>
+                    <Button variant="secondary" size="sm" asChild>
+                      <Link href={`/notes/view?pdf=${encodeURIComponent(note.pdfUrl)}`}>
                         <BookOpen className="mr-2 h-4 w-4" />
                         Read Note
+                      </Link>
                     </Button>
                 </div>
             ))}

@@ -5,7 +5,6 @@ import { Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { ChevronLeft, Download, AlertTriangle } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { capitalize } from '@/lib/utils';
 import Link from 'next/link';
 
@@ -34,11 +33,9 @@ function PDFViewer() {
   return (
     <div className="flex flex-col h-full">
       <div className="flex items-center justify-between p-4 border-b bg-background sticky top-0 z-10">
-        <Button variant="outline" asChild>
-          <Link href={subject ? `/subjects/${subject}` : '/subjects'}>
+        <Button variant="outline" onClick={() => router.back()}>
             <ChevronLeft className="mr-2 h-4 w-4" />
-            Back to {subject ? capitalize(subject) : 'Subjects'}
-          </Link>
+            Back
         </Button>
         <Button asChild>
           <a href={pdfUrl} download target="_blank" rel="noopener noreferrer">
@@ -49,7 +46,7 @@ function PDFViewer() {
       </div>
       <div className="flex-1">
         <iframe
-          src={pdfUrl}
+          src={`https://docs.google.com/gview?url=${encodeURIComponent(pdfUrl)}&embedded=true`}
           className="w-full h-full border-0"
           title="PDF Viewer"
         />
