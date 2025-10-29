@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { UploadCloud, FileText } from 'lucide-react';
 
-export default function PdfViewerPage() {
+export default function DocumentReaderPage() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [fileUrl, setFileUrl] = useState<string | null>(null);
 
@@ -36,7 +36,7 @@ export default function PdfViewerPage() {
   return (
     <div className="container mx-auto p-4 space-y-6 flex flex-col h-full">
       <div>
-        <h2 className="text-2xl font-bold">PDF Viewer</h2>
+        <h2 className="text-2xl font-bold">Document Reader</h2>
         <p className="text-muted-foreground">Upload and view your PDF documents directly in the app.</p>
       </div>
 
@@ -61,7 +61,7 @@ export default function PdfViewerPage() {
 
       <Card className="flex-grow flex flex-col">
         <CardHeader>
-          <CardTitle>Failed to open PDF notes</CardTitle>
+          <CardTitle>{selectedFile ? selectedFile.name : "Document Viewer"}</CardTitle>
         </CardHeader>
         <CardContent className="flex-grow flex items-center justify-center bg-muted/50 rounded-b-lg p-0">
           {fileUrl ? (
