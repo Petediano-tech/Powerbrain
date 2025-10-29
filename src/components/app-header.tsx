@@ -1,5 +1,5 @@
 'use client';
-import { Sidebar, SidebarContent, SidebarHeader, SidebarMenuItem, SidebarMenu, SidebarTrigger, SidebarMenuButton } from '@/components/ui/sidebar';
+import { Sidebar, SidebarContent, SidebarHeader, SidebarMenuItem, SidebarMenu, SidebarTrigger, SidebarMenuButton, SidebarProvider } from '@/components/ui/sidebar';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
   DropdownMenu,
@@ -27,10 +27,9 @@ export function AppHeader() {
   }
 
   return (
-    <>
+    <SidebarProvider>
       {/* Desktop Sidebar */}
-      <div className="hidden md:block">
-        <Sidebar side="left" variant="sidebar" collapsible="icon">
+      <Sidebar side="left" variant="sidebar" collapsible="icon">
           <SidebarHeader>
             <Logo />
           </SidebarHeader>
@@ -38,7 +37,6 @@ export function AppHeader() {
             <SidebarNav />
           </SidebarContent>
         </Sidebar>
-      </div>
       
       {/* Header */}
       <header className="sticky top-0 z-10 flex h-16 shrink-0 items-center gap-4 border-b bg-background/80 px-4 backdrop-blur-sm md:pl-[var(--sidebar-width-icon)]">
@@ -62,6 +60,6 @@ export function AppHeader() {
           </DropdownMenu>
         </div>
       </header>
-    </>
+    </SidebarProvider>
   );
 }
