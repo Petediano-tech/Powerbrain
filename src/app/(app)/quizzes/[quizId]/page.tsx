@@ -120,6 +120,7 @@ export default function QuizPage() {
     
     const userProfileRef = doc(firestore, 'userProfiles', profileId);
     const quizAttemptRef = doc(firestore, `userProfiles/${profileId}/quizAttempts`, `${quizId}_${Date.now()}`);
+    const leaderboardRef = doc(firestore, 'leaderboard', profileId);
 
     try {
       await runTransaction(firestore, async (transaction) => {
@@ -145,6 +146,11 @@ export default function QuizPage() {
           quizTitle: quiz.title,
           score: calculatedScore,
           completedAt: new Date().toISOString(),
+        });
+
+        // Update leaderboard entry
+        transaction.update(leaderboardRef, {
+            averageScore: newAverageScore,
         });
       });
 

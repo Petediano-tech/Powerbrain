@@ -3,9 +3,6 @@
 import {
   Card,
   CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
 } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Crown, Medal, Trophy } from "lucide-react";
@@ -15,6 +12,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 
 const getInitials = (name: string) => {
+    if (!name) return 'U';
     return name.split(' ').map(n => n[0]).join('').toUpperCase();
 };
 
@@ -37,11 +35,11 @@ export default function LeaderboardPage() {
     const { user } = useUser();
     const firestore = getFirestore();
 
-    const usersQuery = useMemoFirebase(() => {
-        return query(collection(firestore, 'userProfiles'), orderBy('averageScore', 'desc'), limit(10));
+    const leaderboardQuery = useMemoFirebase(() => {
+        return query(collection(firestore, 'leaderboard'), orderBy('averageScore', 'desc'), limit(10));
     }, [firestore]);
     
-    const { data: leaderboardData, isLoading } = useCollection(usersQuery);
+    const { data: leaderboardData, isLoading } = useCollection(leaderboardQuery);
 
     const getAvatarColor = (id: string) => {
         const hash = id.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
@@ -81,13 +79,13 @@ export default function LeaderboardPage() {
                     <div className="flex items-center gap-4">
                       <div className="w-8 text-center flex justify-center">{getRankIcon(rank)}</div>
                       <Avatar className="h-10 w-10 border-2 border-muted">
-                        {userData.profilePicture && <AvatarImage src={userData.profilePicture} alt={`${userData.firstName} ${userData.lastName}`} />}
+                        {userData.profilePicture && <AvatarImage src={userData.profilePicture} alt={userData.name} />}
                         <AvatarFallback className={cn("font-bold text-white", getAvatarColor(userData.id))}>
-                          {getInitials(`${userData.firstName} ${userData.lastName}`)}
+                          {getInitials(userData.name)}
                         </AvatarFallback>
                       </Avatar>
                       <span className={cn("font-medium", isCurrentUser ? "text-primary" : "")}>
-                        {`${userData.firstName} ${userData.lastName}`}
+                        {userData.name}
                         {isCurrentUser ? ' (You)' : ''}
                       </span>
                     </div>

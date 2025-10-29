@@ -79,6 +79,15 @@ export default function SignUpPage() {
         registrationDate: new Date().toISOString(),
         profileId: profileId,
       });
+
+      // 3. Create Leaderboard entry
+      const leaderboardRef = doc(firestore, "leaderboard", user.uid);
+      batch.set(leaderboardRef, {
+          id: user.uid,
+          name: name,
+          averageScore: 0,
+          profilePicture: user.photoURL || null,
+      });
       
       await batch.commit();
       

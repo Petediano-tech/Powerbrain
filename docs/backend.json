@@ -112,6 +112,36 @@
         "lastName",
         "gradeLevel"
       ]
+    },
+    "LeaderboardEntry": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "LeaderboardEntry",
+      "type": "object",
+      "description": "Represents a user's public entry on the leaderboard.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the leaderboard entry (matches user ID)."
+        },
+        "name": {
+          "type": "string",
+          "description": "Full name of the user."
+        },
+        "averageScore": {
+          "type": "number",
+          "description": "The user's average score across all quizzes."
+        },
+        "profilePicture": {
+          "type": "string",
+          "description": "URL to the user's profile picture, if available.",
+          "format": "uri"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "averageScore"
+      ]
     }
   },
   "auth": {
@@ -153,8 +183,24 @@
             }
           ]
         }
+      },
+      {
+        "path": "/leaderboard/{userId}",
+        "definition": {
+          "entityName": "LeaderboardEntry",
+          "schema": {
+            "$ref": "#/backend/entities/LeaderboardEntry"
+          },
+          "description": "Stores public, denormalized data for the leaderboard. This collection is publicly readable for the leaderboard feature but write access is restricted.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The user's ID, matching the document ID."
+            }
+          ]
+        }
       }
     ],
-    "reasoning": "The Firestore structure is designed to support user authentication, profile management, and role-based access control, focusing on authorization independence. The structure leverages path-based ownership for user accounts and profiles to simplify security rules. The design avoids the use of `get()` calls in security rules by denormalizing necessary authorization information, ensuring atomic operations and easier debugging. Specifically, UserProfile data is kept separate from UserAccount data, but can be joined via the profileId. \n\nQAPs are supported by segregating user data based on ownership, enabling secure `list` operations within a user's own data. Since the app is focused on user data, a membership model isn't included as the core feature revolves around a `User owns Data` relationship."
+    "reasoning": "The Firestore structure is designed to support user authentication, profile management, and role-based access control, focusing on authorization independence. The structure leverages path-based ownership for user accounts and profiles to simplify security rules. The design avoids the use of `get()` calls in security rules by denormalizing necessary authorization information, ensuring atomic operations and easier debugging. Specifically, UserProfile data is kept separate from UserAccount data, but can be joined via the profileId. \n\nA public 'leaderboard' collection is added to securely expose leaderboard data without granting read access to all user profiles, which would be a security risk. This collection is populated with denormalized data upon user creation and updates.\n\nQAPs are supported by segregating user data based on ownership, enabling secure `list` operations within a user's own data. Since the app is focused on user data, a membership model isn't included as the core feature revolves around a `User owns Data` relationship."
   }
 }
