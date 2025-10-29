@@ -10,6 +10,11 @@ export default function DocumentReaderPage() {
   const [fileUrl, setFileUrl] = useState<string | null>(null);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (fileUrl) {
+      URL.revokeObjectURL(fileUrl);
+      setFileUrl(null);
+    }
+    
     if (event.target.files && event.target.files[0]) {
       const file = event.target.files[0];
       if (file.type === 'application/pdf') {
@@ -19,12 +24,13 @@ export default function DocumentReaderPage() {
       } else {
         alert('Please select a PDF file.');
         setSelectedFile(null);
-        setFileUrl(null);
       }
+    } else {
+      setSelectedFile(null);
     }
   };
 
-  // Clean up the object URL when the component unmounts or the file changes
+  // Clean up the object URL when the component unmounts
   useEffect(() => {
     return () => {
       if (fileUrl) {
