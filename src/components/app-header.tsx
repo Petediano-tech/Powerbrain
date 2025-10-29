@@ -5,7 +5,6 @@ import {
   SidebarHeader,
   SidebarTrigger,
 } from '@/components/ui/sidebar';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -25,20 +24,19 @@ import { useUser } from '@/firebase';
 import { Button } from './ui/button';
 import { Settings } from 'lucide-react';
 
+function getPageTitle(pathname: string) {
+    if (pathname === '/' || pathname === '/dashboard') return 'Dashboard';
+    if (pathname === '/tutor') return 'Brainy';
+    const pageName = pathname.split('/').pop() || 'Dashboard';
+    return capitalize(pageName.replace('-', ' '));
+}
+
 export function AppHeader() {
   const pathname = usePathname();
-  const pageTitle =
-    pathname === '/' || pathname === '/dashboard' ? 'Dashboard' : pathname.split('/').pop() || 'Dashboard';
+  const pageTitle = getPageTitle(pathname);
+
   const { user } = useUser();
   const auth = useAuth();
-
-  const getInitials = (name: string) => {
-    return name
-      .split(' ')
-      .map((n) => n[0])
-      .join('')
-      .toUpperCase();
-  };
 
   const handleLogout = () => {
     signOut(auth);
@@ -60,7 +58,7 @@ export function AppHeader() {
       <header className="sticky top-0 z-10 flex h-16 shrink-0 items-center gap-4 border-b bg-background/80 px-4 backdrop-blur-sm md:pl-[var(--sidebar-width-icon)]">
          <SidebarTrigger className="md:hidden" />
         <h1 className="text-lg font-semibold md:text-xl">
-          {capitalize(pageTitle.replace('-', ' '))}
+          {pageTitle}
         </h1>
         <div className="ml-auto flex items-center gap-4">
           <DropdownMenu>

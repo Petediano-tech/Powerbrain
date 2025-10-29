@@ -18,12 +18,13 @@ import {
   SidebarMenuItem,
   SidebarMenuButton,
 } from '@/components/ui/sidebar';
+import { capitalize } from '@/lib/utils';
 
 const navItems = [
   { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { href: '/subjects', label: 'Subjects', icon: BookCopy },
   { href: '/quizzes', label: 'Quizzes', icon: PencilRuler },
-  { href: '/tutor', label: 'AI Tutor', icon: Bot },
+  { href: '/tutor', label: 'Brainy', icon: Bot },
   { href: '/notes', label: 'Notes', icon: FileText },
   { href: '/leaderboard', label: 'Leaderboard', icon: Trophy },
   { href: '/teacher', label: "Teacher's Corner", icon: School },
