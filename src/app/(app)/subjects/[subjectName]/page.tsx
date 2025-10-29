@@ -27,12 +27,13 @@ export default function SubjectChaptersPage({ params }: { params: { subjectName:
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-4">
-        <Button variant="outline" size="icon" asChild>
+        <Button variant="outline" asChild>
             <Link href="/subjects">
-                <ChevronLeft />
+                <ChevronLeft className="mr-2" />
+                Back to Subjects
             </Link>
         </Button>
-        <h1 className="text-3xl font-bold">Chapters in {capitalize(params.subjectName)}</h1>
+        <h1 className="text-3xl font-bold hidden md:block">Chapters in {capitalize(params.subjectName)}</h1>
       </div>
 
       {chapters.length > 0 ? (

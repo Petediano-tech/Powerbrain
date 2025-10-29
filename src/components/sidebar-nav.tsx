@@ -17,6 +17,7 @@ import {
   SidebarMenu,
   SidebarMenuItem,
   SidebarMenuButton,
+  useSidebar,
 } from '@/components/ui/sidebar';
 import { capitalize } from '@/lib/utils';
 
@@ -37,6 +38,13 @@ const bottomNavItems = [
 
 export function SidebarNav() {
   const pathname = usePathname();
+  const { isMobile, setOpenMobile } = useSidebar();
+
+  const handleLinkClick = () => {
+    if (isMobile) {
+      setOpenMobile(false);
+    }
+  };
 
   const isActive = (href: string) => {
     if (href === '/dashboard') return pathname === '/' || pathname === '/dashboard';
@@ -47,7 +55,7 @@ export function SidebarNav() {
     <>
       <SidebarMenu>
         {navItems.map((item) => (
-          <SidebarMenuItem key={item.label}>
+          <SidebarMenuItem key={item.label} onClick={handleLinkClick}>
             <Link href={item.href}>
               <SidebarMenuButton
                 isActive={isActive(item.href)}
@@ -63,7 +71,7 @@ export function SidebarNav() {
       <div className="mt-auto">
         <SidebarMenu>
             {bottomNavItems.map((item) => (
-              <SidebarMenuItem key={item.label}>
+              <SidebarMenuItem key={item.label} onClick={handleLinkClick}>
                   <Link href={item.href}>
                       <SidebarMenuButton
                           isActive={isActive(item.href)}
