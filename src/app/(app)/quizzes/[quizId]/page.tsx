@@ -232,9 +232,9 @@ export default function QuizPage({ params }: { params: { quizId: string } }) {
                     {isSelected && <div className="h-2.5 w-2.5 rounded-full bg-primary" />}
                   </div>
                   <span className="flex-1">{option}</span>
-                  {isChecking && isCorrect && isSelected && <CheckCircle className="text-foreground" />}
+                  {isChecking && isCorrect && isSelected && <CheckCircle />}
                   {isChecking && !isCorrect && isSelected && <XCircle className="text-destructive" />}
-                  {isChecking && currentQuestion.answer === option && !isSelected && <CheckCircle className="text-foreground" />}
+                  {isChecking && currentQuestion.answer === option && !isSelected && <CheckCircle />}
                 </Label>
               </div>
             )}
@@ -242,7 +242,7 @@ export default function QuizPage({ params }: { params: { quizId: string } }) {
         </RadioGroup>
         
         {isChecking && (
-            <div className={cn('p-4 rounded-md text-sm', isCorrect ? 'bg-muted' : 'bg-destructive/10 text-destructive-foreground')}>
+            <div className={cn('p-4 rounded-md text-sm', isCorrect ? 'bg-muted' : 'bg-destructive/10')}>
                 <h4 className="font-bold mb-1">{isCorrect ? "Correct!" : "Not quite..."}</h4>
                 <p>{currentQuestion.explanation}</p>
             </div>
