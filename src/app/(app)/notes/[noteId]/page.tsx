@@ -1,23 +1,21 @@
-'use client';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, BookOpen } from "lucide-react";
 import Link from "next/link";
 import { notesData } from "@/lib/notes-data";
-import { notFound, useSearchParams } from "next/navigation";
+import { notFound } from "next/navigation";
 import { capitalize } from "@/lib/utils";
 
-export default function NoteDisplayPage({ params }: { params: { noteId: string } }) {
+export default function NoteDisplayPage({ params, searchParams }: { params: { noteId: string }, searchParams: { [key: string]: string | string[] | undefined } }) {
   const note = notesData.find(n => n.id === params.noteId);
-  const searchParams = useSearchParams();
-  const subject = searchParams.get('subject');
+  const subject = searchParams?.subject;
 
   if (!note) {
     notFound();
   }
 
   const backLink = subject ? `/subjects/${subject}` : '/subjects';
-  const backText = subject ? `Back to ${capitalize(subject)}` : 'Back to Subjects';
+  const backText = subject ? `Back to ${capitalize(subject as string)}` : 'Back to Subjects';
 
   return (
     <div className="space-y-6">
