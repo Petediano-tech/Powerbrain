@@ -83,6 +83,7 @@ export default function DashboardPage() {
               <span className="text-4xl font-bold text-primary">{studyScore}%</span>
               <Progress value={studyScore} className="h-3 w-full" />
             </div>
+            <p className="text-xs text-muted-foreground">Your average score across all quizzes.</p>
           </CardContent>
         </Card>
         <Card className="md:col-span-2 bg-gradient-to-tr from-card to-accent/10">
@@ -104,24 +105,28 @@ export default function DashboardPage() {
         </CardHeader>
         <CardContent>
           <ul className="space-y-4">
-            <li className="flex items-center justify-between hover:bg-muted/50 p-3 rounded-lg">
+            <li className="flex items-center justify-between hover:bg-muted/50 p-3 rounded-lg -m-3">
               <div>
                 <p className="font-medium">Mathematics - Algebra Basics</p>
                 <p className="text-sm text-muted-foreground">Completed yesterday</p>
               </div>
               <div className="flex items-center gap-4">
                 <span className="font-semibold text-lg text-primary">85%</span>
-                <Button variant="outline" size="sm">Review</Button>
+                <Button variant="outline" size="sm" asChild>
+                  <Link href="/quizzes/algebra-basics">Review</Link>
+                </Button>
               </div>
             </li>
-            <li className="flex items-center justify-between hover:bg-muted/50 p-3 rounded-lg">
+            <li className="flex items-center justify-between hover:bg-muted/50 p-3 rounded-lg -m-3">
               <div>
-                <p className="font-medium">English - Grammar</p>
+                <p className="font-medium">English - Tenses and Grammar</p>
                 <p className="text-sm text-muted-foreground">Completed 2 days ago</p>
               </div>
               <div className="flex items-center gap-4">
                 <span className="font-semibold text-lg text-sky-blue">92%</span>
-                <Button variant="outline" size="sm">Review</Button>
+                 <Button variant="outline" size="sm" asChild>
+                  <Link href="/quizzes/tenses-and-grammar">Review</Link>
+                </Button>
               </div>
             </li>
           </ul>

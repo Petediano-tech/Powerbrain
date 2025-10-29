@@ -1,3 +1,4 @@
+'use client';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -44,10 +45,25 @@ const quizzes = [
 ];
 
 export default function QuizzesPage() {
+  const getBadgeVariant = (difficulty: string) => {
+    switch (difficulty) {
+        case "Easy": return "secondary";
+        case "Moderate": return "outline";
+        case "Advanced": return "default";
+        default: return "secondary";
+    }
+  }
+
+  const getBadgeClass = (difficulty: string) => {
+     if (difficulty === 'Advanced') return 'bg-accent text-accent-foreground';
+     if (difficulty === 'Moderate') return 'border-yellow-500 text-yellow-500';
+     return '';
+  }
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       {quizzes.map((quiz) => (
-        <Card key={quiz.title} className="flex flex-col">
+        <Card key={quiz.title} className="flex flex-col hover:shadow-lg transition-shadow">
           <CardHeader>
             <div className="flex items-center gap-4">
               <div className="p-3 bg-muted rounded-lg">{quiz.icon}</div>
@@ -69,13 +85,12 @@ export default function QuizzesPage() {
             </div>
           </CardContent>
           <CardFooter className="flex justify-between items-center">
-            <Badge variant={
-                quiz.difficulty === "Easy" ? "secondary" : quiz.difficulty === "Moderate" ? "outline" : "default"
-              }
-              className={
-                quiz.difficulty === 'Advanced' ? 'bg-accent text-accent-foreground' : ''
-              }
-            >{quiz.difficulty}</Badge>
+            <Badge 
+              variant={getBadgeVariant(quiz.difficulty)}
+              className={getBadgeClass(quiz.difficulty)}
+            >
+                {quiz.difficulty}
+            </Badge>
             <Button asChild className="bg-sky-blue hover:bg-sky-blue/90 text-background">
               <Link href={`/quizzes/${quiz.id}`}>Start Quiz</Link>
             </Button>

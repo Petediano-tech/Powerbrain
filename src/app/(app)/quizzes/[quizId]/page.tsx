@@ -1,19 +1,21 @@
 'use client';
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
-import { CheckCircle, XCircle, ChevronLeft } from "lucide-react";
+import { CheckCircle, XCircle, ChevronLeft, Award } from "lucide-react";
 import Link from "next/link";
 import { capitalize } from "@/lib/utils";
+import Confetti from 'react-confetti';
 
 type Question = {
   question: string;
   options: string[];
   answer: string;
+  explanation: string;
 };
 
 const quizData: { [key: string]: { title: string; questions: Question[] } } = {
@@ -24,16 +26,19 @@ const quizData: { [key: string]: { title: string; questions: Question[] } } = {
         question: "What is the value of 'x' in the equation x + 5 = 12?",
         options: ["5", "7", "10", "12"],
         answer: "7",
+        explanation: "To find x, you subtract 5 from both sides of the equation: 12 - 5 = 7.",
       },
       {
         question: "Which of the following is a variable?",
         options: ["y", "14", "+", "="],
         answer: "y",
+        explanation: "A variable is a symbol, typically a letter, that represents an unknown value. 'y' is used here as a variable.",
       },
       {
         question: "Simplify the expression: 3a + 2a",
         options: ["5a", "6a", "3a2", "5a^2"],
         answer: "5a",
+        explanation: "Since both terms have the same variable 'a', you can add their coefficients: 3 + 2 = 5. So, 3a + 2a = 5a.",
       },
     ],
   },
@@ -44,11 +49,13 @@ const quizData: { [key: string]: { title: string; questions: Question[] } } = {
         question: "What is the value of 'x' in the equation 2x = 10?",
         options: ["2", "5", "8", "10"],
         answer: "5",
+        explanation: "To find x, you divide both sides of the equation by 2: 10 / 2 = 5.",
       },
        {
         question: "Which expression is equivalent to 4(x + 2)?",
         options: ["4x + 2", "4x + 8", "x + 8", "4x + 6"],
         answer: "4x + 8",
+        explanation: "Using the distributive property, you multiply 4 by each term inside the parentheses: 4 * x and 4 * 2, which gives 4x + 8.",
       },
     ],
   },
@@ -58,7 +65,8 @@ const quizData: { [key: string]: { title: string; questions: Question[] } } = {
           {
               question: "What is the powerhouse of the cell?",
               options: ["Nucleus", "Ribosome", "Mitochondrion", "Chloroplast"],
-              answer: "Mitochondrion"
+              answer: "Mitochondrion",
+              explanation: "Mitochondria are responsible for generating most of the cell's supply of adenosine triphosphate (ATP), used as a source of chemical energy.",
           }
       ]
   },
@@ -68,7 +76,8 @@ const quizData: { [key: string]: { title: string; questions: Question[] } } = {
           {
               question: "Which sentence is in the past tense?",
               options: ["I will go to the market.", "I am going to the market.", "I went to the market.", "I go to the market."],
-              answer: "I went to the market."
+              answer: "I went to the market.",
+              explanation: "The verb 'went' is the past tense form of 'go', indicating the action has already happened.",
           }
       ]
   },
@@ -78,7 +87,8 @@ const quizData: { [key: string]: { title: string; questions: Question[] } } = {
           {
               question: "What is the derivative of x^2?",
               options: ["2x", "x", "x^2/2", "2"],
-              answer: "2x"
+              answer: "2x",
+              explanation: "Using the power rule for differentiation, the derivative of x^n is n*x^(n-1). For x^2, this is 2*x^(2-1) = 2x.",
           }
       ]
   }
@@ -87,14 +97,15 @@ const quizData: { [key: string]: { title: string; questions: Question[] } } = {
 export default function QuizPage({ params }: { params: { quizId: string } }) {
   const quiz = quizData[params.quizId];
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const [selectedAnswers, setSelectedAnswers] = useState<string[]>([]);
+  const [selectedAnswers, setSelectedAnswers] = useState<{[key: number]: string}>({});
   const [showResults, setShowResults] = useState(false);
-
+  const [isChecking, setIsChecking] = useState(false);
+  
   if (!quiz) {
     return (
         <Card className="m-auto max-w-lg text-center p-8">
             <CardTitle>Quiz Not Found</CardTitle>
-            <CardDescription>This quiz is not available yet. Please check back later.</CardDescription>
+            <CardDescription>This quiz does not exist or is under construction.</CardDescription>
             <Button asChild className="mt-4">
                 <Link href="/quizzes"><ChevronLeft className="mr-2"/> Back to Quizzes</Link>
             </Button>
@@ -104,9 +115,14 @@ export default function QuizPage({ params }: { params: { quizId: string } }) {
 
   const { title, questions } = quiz;
   const currentQuestion = questions[currentQuestionIndex];
-  const progress = ((currentQuestionIndex + 1) / questions.length) * 100;
+  const progress = showResults ? 100 : ((currentQuestionIndex) / questions.length) * 100;
+
+  const handleAnswerSelect = (answer: string) => {
+    setSelectedAnswers(prev => ({...prev, [currentQuestionIndex]: answer}));
+  };
 
   const handleNext = () => {
+    setIsChecking(false);
     if (currentQuestionIndex < questions.length - 1) {
       setCurrentQuestionIndex(currentQuestionIndex + 1);
     } else {
@@ -114,60 +130,68 @@ export default function QuizPage({ params }: { params: { quizId: string } }) {
     }
   };
 
-  const handleAnswerSelect = (answer: string) => {
-    const newAnswers = [...selectedAnswers];
-    newAnswers[currentQuestionIndex] = answer;
-    setSelectedAnswers(newAnswers);
+  const handleCheckAnswer = () => {
+    setIsChecking(true);
   };
   
-  const calculateScore = () => {
-    return selectedAnswers.reduce((score, answer, index) => {
-      return answer === questions[index].answer ? score + 1 : score;
+  const score = useMemo(() => {
+    return questions.reduce((correctAnswers, question, index) => {
+      return selectedAnswers[index] === question.answer ? correctAnswers + 1 : correctAnswers;
     }, 0);
-  }
+  }, [questions, selectedAnswers]);
 
-  const score = calculateScore();
+  const scorePercentage = useMemo(() => (score / questions.length) * 100, [score, questions.length]);
 
   if (showResults) {
     return (
-      <Card className="max-w-2xl mx-auto">
-        <CardHeader className="text-center">
-          <CardTitle className="text-3xl">Quiz Results</CardTitle>
-          <CardDescription>You completed the {title} quiz!</CardDescription>
-        </CardHeader>
-        <CardContent className="text-center space-y-4">
-            <p className="text-5xl font-bold text-primary">{score}/{questions.length}</p>
-            <p className="text-2xl font-semibold">
-                {((score / questions.length) * 100).toFixed(0)}%
-            </p>
-            <Progress value={(score / questions.length) * 100} className="h-3" />
-        </CardContent>
-        <CardContent className="space-y-4">
-            <h3 className="font-bold text-lg">Review Your Answers:</h3>
-            {questions.map((q, index) => (
-                <div key={index} className="p-3 rounded-lg border">
-                    <p className="font-semibold">{q.question}</p>
-                    <p className={`flex items-center gap-2 text-sm ${selectedAnswers[index] === q.answer ? 'text-green-500' : 'text-red-500'}`}>
-                        {selectedAnswers[index] === q.answer ? <CheckCircle size={16} /> : <XCircle size={16} />}
-                        Your answer: {selectedAnswers[index]}
-                    </p>
-                    {selectedAnswers[index] !== q.answer && (
-                        <p className="text-sm text-green-600">Correct answer: {q.answer}</p>
-                    )}
-                </div>
-            ))}
-        </CardContent>
-        <CardFooter className="flex-col gap-2">
-          <Button onClick={() => { setShowResults(false); setCurrentQuestionIndex(0); setSelectedAnswers([]); }} className="w-full">
-            Try Again
-          </Button>
-          <Button variant="outline" asChild className="w-full">
-            <Link href="/quizzes">Choose Another Quiz</Link>
-          </Button>
-        </CardFooter>
-      </Card>
+      <>
+        {scorePercentage === 100 && <Confetti recycle={false} numberOfPieces={200} />}
+        <Card className="max-w-2xl mx-auto">
+          <CardHeader className="text-center items-center">
+            <div className="p-3 bg-accent/20 rounded-full mb-2">
+                <Award className="h-10 w-10 text-accent"/>
+            </div>
+            <CardTitle className="text-3xl">Quiz Complete!</CardTitle>
+            <CardDescription>You finished the {title} quiz.</CardDescription>
+          </CardHeader>
+          <CardContent className="text-center space-y-4">
+              <p className="text-5xl font-bold text-primary">{score}/{questions.length}</p>
+              <p className="text-2xl font-semibold">
+                  {scorePercentage.toFixed(0)}%
+              </p>
+              <Progress value={scorePercentage} className="h-3" />
+          </CardContent>
+          <CardContent className="space-y-4">
+              <h3 className="font-bold text-lg">Review Your Answers:</h3>
+              {questions.map((q, index) => (
+                  <div key={index} className="p-4 rounded-lg border bg-muted/50">
+                      <p className="font-semibold">{q.question}</p>
+                      <p className={`flex items-center gap-2 text-sm mt-2 ${selectedAnswers[index] === q.answer ? 'text-green-500' : 'text-red-500'}`}>
+                          {selectedAnswers[index] === q.answer ? <CheckCircle size={16} /> : <XCircle size={16} />}
+                          Your answer: {selectedAnswers[index] || "Not answered"}
+                      </p>
+                      {selectedAnswers[index] !== q.answer && (
+                          <p className="text-sm text-green-600 mt-1">Correct answer: {q.answer}</p>
+                      )}
+                       <p className="text-xs text-muted-foreground mt-2 pt-2 border-t">{q.explanation}</p>
+                  </div>
+              ))}
+          </CardContent>
+          <CardFooter className="flex-col gap-2 pt-4">
+            <Button onClick={() => { setShowResults(false); setCurrentQuestionIndex(0); setSelectedAnswers({}); setIsChecking(false); }} className="w-full">
+              Try Again
+            </Button>
+            <Button variant="outline" asChild className="w-full">
+              <Link href="/quizzes">Choose Another Quiz</Link>
+            </Button>
+          </CardFooter>
+        </Card>
+      </>
     );
   }
+
+  const selectedAnswer = selectedAnswers[currentQuestionIndex];
+  const isCorrect = selectedAnswer === currentQuestion.answer;
 
   return (
     <Card className="max-w-2xl mx-auto">
@@ -179,26 +203,67 @@ export default function QuizPage({ params }: { params: { quizId: string } }) {
       <CardContent className="space-y-6">
         <p className="text-lg font-semibold">{currentQuestion.question}</p>
         <RadioGroup
-          value={selectedAnswers[currentQuestionIndex]}
+          value={selectedAnswer}
           onValueChange={handleAnswerSelect}
           className="space-y-3"
+          disabled={isChecking}
         >
-          {currentQuestion.options.map((option) => (
-            <div key={option} className="flex items-center space-x-3 border rounded-md p-3 has-[:checked]:border-primary has-[:checked]:bg-primary/5">
-              <RadioGroupItem value={option} id={option} />
-              <Label htmlFor={option} className="flex-1 cursor-pointer">{option}</Label>
-            </div>
-          ))}
+          {currentQuestion.options.map((option) => {
+            const isSelected = selectedAnswer === option;
+            let variant = "default";
+            if(isChecking && isSelected) {
+                variant = isCorrect ? "correct" : "incorrect";
+            } else if (isChecking && currentQuestion.answer === option) {
+                variant = "correct";
+            }
+
+            return (
+              <div key={option}>
+                <RadioGroupItem value={option} id={option} className="sr-only" />
+                <Label 
+                  htmlFor={option} 
+                  className={`flex items-center space-x-3 border rounded-md p-3 transition-all cursor-pointer
+                    ${isChecking ? '' : 'hover:border-primary hover:bg-primary/5'}
+                    ${isSelected ? 'border-primary' : ''}
+                    ${variant === "correct" ? 'bg-green-500/10 border-green-500' : ''}
+                    ${variant === "incorrect" ? 'bg-red-500/10 border-red-500' : ''}
+                  `}
+                >
+                  <div className="h-4 w-4 rounded-full border border-primary flex items-center justify-center">
+                    {isSelected && <div className="h-2.5 w-2.5 rounded-full bg-primary" />}
+                  </div>
+                  <span className="flex-1">{option}</span>
+                  {isChecking && isSelected && isCorrect && <CheckCircle className="text-green-500" />}
+                  {isChecking && isSelected && !isCorrect && <XCircle className="text-red-500" />}
+                  {isChecking && !isSelected && currentQuestion.answer === option && <CheckCircle className="text-green-500" />}
+                </Label>
+              </div>
+            )}
+          )}
         </RadioGroup>
+        
+        {isChecking && (
+            <div className={`p-4 rounded-md text-sm ${isCorrect ? 'bg-green-500/10 text-green-700' : 'bg-red-500/10 text-red-700'}`}>
+                <h4 className="font-bold mb-1">{isCorrect ? "Correct!" : "Not quite..."}</h4>
+                <p>{currentQuestion.explanation}</p>
+            </div>
+        )}
+
       </CardContent>
       <CardFooter>
-        <Button
-          onClick={handleNext}
-          disabled={!selectedAnswers[currentQuestionIndex]}
-          className="w-full bg-sky-blue hover:bg-sky-blue/90 text-background"
-        >
-          {currentQuestionIndex < questions.length - 1 ? "Next Question" : "Finish Quiz"}
-        </Button>
+        {isChecking ? (
+            <Button onClick={handleNext} className="w-full bg-sky-blue hover:bg-sky-blue/90 text-background">
+                {currentQuestionIndex < questions.length - 1 ? "Next Question" : "Finish Quiz"}
+            </Button>
+        ) : (
+            <Button
+                onClick={handleCheckAnswer}
+                disabled={!selectedAnswer}
+                className="w-full"
+            >
+                Check Answer
+            </Button>
+        )}
       </CardFooter>
     </Card>
   );
