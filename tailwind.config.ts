@@ -15,13 +15,6 @@ export default {
         code: ['monospace'],
       },
       colors: {
-        // User's specified colors
-        'soft-lavender': 'hsl(var(--soft-lavender))', // #A29BFF
-        'pastel-purple': 'hsl(var(--pastel-purple))', // #9B7BFF
-        'sky-blue': 'hsl(var(--sky-blue))',       // #8AC6FF
-        'soft-magenta': 'hsl(var(--soft-magenta))',  // #FF9CEC
-        'soft-shadow': 'hsl(var(--soft-shadow))',   // #DDE1F0
-
         // ShadCN theme colors mapped to user's palette
         background: 'hsl(var(--background))',
         foreground: 'hsl(var(--foreground))',
