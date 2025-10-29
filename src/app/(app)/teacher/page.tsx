@@ -1,26 +1,45 @@
+
 'use client';
 import { useState } from "react";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Upload, BarChart2, Bot, Send, Sparkles, AlertTriangle } from "lucide-react";
+import { Upload, BarChart2, Bot, Send, Sparkles, AlertTriangle, FileUp, Loader2 } from "lucide-react";
 import { aiGradeQuizzes, AiGradeQuizzesOutput } from "@/ai/flows/ai-grade-quizzes";
 import { Skeleton } from "@/components/ui/skeleton";
+import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
+import { collection, addDoc, serverTimestamp } from "firebase/firestore";
+import { useFirestore, useUser } from "@/firebase";
+import { Progress } from "@/components/ui/progress";
+import { useToast } from "@/hooks/use-toast";
+import { Label } from "@/components/ui/label";
 
 export default function TeacherPage() {
+  // Grading state
   const [studentAnswer, setStudentAnswer] = useState('');
   const [gradingRubric, setGradingRubric] = useState('');
   const [isGrading, setIsGrading] = useState(false);
   const [gradingResult, setGradingResult] = useState<AiGradeQuizzesOutput | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const [gradingError, setGradingError] = useState<string | null>(null);
+
+  // Upload state
+  const [noteTitle, setNoteTitle] = useState('');
+  const [noteSubject, setNoteSubject] = useState('');
+  const [fileToUpload, setFileToUpload] = useState<File | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
+
+  const { user } = useUser();
+  const firestore = useFirestore();
+  const { toast } = useToast();
 
   const handleGradeWithAI = async () => {
     if (!studentAnswer || !gradingRubric) {
-      setError("Please provide both the student's answer and the grading rubric.");
+      setGradingError("Please provide both the student's answer and the grading rubric.");
       return;
     }
-    setError(null);
+    setGradingError(null);
     setIsGrading(true);
     setGradingResult(null);
 
@@ -33,10 +52,90 @@ export default function TeacherPage() {
       setGradingResult(result);
     } catch (e) {
       console.error(e);
-      setError("The AI assistant failed to provide a grade. Please try again.");
+      setGradingError("The AI assistant failed to provide a grade. Please try again.");
     } finally {
       setIsGrading(false);
     }
+  };
+
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setFileToUpload(e.target.files[0]);
+    }
+  };
+
+  const handleUploadNote = async () => {
+    if (!noteTitle || !noteSubject || !fileToUpload || !user) {
+      toast({
+        variant: "destructive",
+        title: "Missing Information",
+        description: "Please provide a title, subject, and select a PDF file to upload.",
+      });
+      return;
+    }
+    
+    setIsUploading(true);
+    setUploadProgress(0);
+
+    const storage = getStorage();
+    // Create a storage reference: notes/filename.pdf
+    const storageRef = ref(storage, `notes/${Date.now()}_${fileToUpload.name}`);
+    const uploadTask = uploadBytesResumable(storageRef, fileToUpload);
+
+    uploadTask.on('state_changed',
+      (snapshot) => {
+        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        setUploadProgress(progress);
+      },
+      (error) => {
+        console.error("Upload failed:", error);
+        toast({
+            variant: "destructive",
+            title: "Upload Failed",
+            description: "There was an error uploading your file. Please try again.",
+        });
+        setIsUploading(false);
+      },
+      () => {
+        // Upload completed successfully, now get the download URL
+        getDownloadURL(uploadTask.snapshot.ref).then(async (downloadURL) => {
+          // Save the note metadata to Firestore
+          try {
+            await addDoc(collection(firestore, "notes"), {
+              title: noteTitle,
+              subject: noteSubject,
+              author: user.displayName || "Anonymous Teacher",
+              pdfUrl: downloadURL,
+              createdAt: serverTimestamp(),
+              // You can extend this with more metadata
+              imageUrl: `https://picsum.photos/seed/${noteTitle.replace(/\s/g, '-')}/400/200`,
+              imageHint: "textbook cover",
+            });
+
+            toast({
+                title: "Upload Successful!",
+                description: `"${noteTitle}" has been added to the library.`,
+            });
+            // Reset form
+            setNoteTitle('');
+            setNoteSubject('');
+            setFileToUpload(null);
+            const fileInput = document.getElementById('file-upload') as HTMLInputElement;
+            if(fileInput) fileInput.value = '';
+
+          } catch (error) {
+             console.error("Error saving note to Firestore:", error);
+             toast({
+                variant: "destructive",
+                title: "Database Error",
+                description: "The file was uploaded, but we couldn't save it to the library.",
+            });
+          } finally {
+             setIsUploading(false);
+          }
+        });
+      }
+    );
   };
 
   return (
@@ -49,16 +148,34 @@ export default function TeacherPage() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <Card>
           <CardHeader>
-            <CardTitle className="flex items-center gap-2"><Upload /> Upload Lessons &amp; Quizzes</CardTitle>
-            <CardDescription>Share your materials with your students.</CardDescription>
+            <CardTitle className="flex items-center gap-2"><Upload /> Upload Notes</CardTitle>
+            <CardDescription>Share PDF notes and textbooks with your students.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <Input type="text" placeholder="Lesson or Quiz Title" />
-            <Textarea placeholder="Description..." />
-            <Input type="file" />
+             <div className="space-y-2">
+                <Label htmlFor="note-title">Title</Label>
+                <Input id="note-title" type="text" placeholder="e.g., Algebra Form 3 Textbook" value={noteTitle} onChange={e => setNoteTitle(e.target.value)} disabled={isUploading}/>
+             </div>
+             <div className="space-y-2">
+                <Label htmlFor="note-subject">Subject</Label>
+                <Input id="note-subject" type="text" placeholder="e.g., Mathematics" value={noteSubject} onChange={e => setNoteSubject(e.target.value)} disabled={isUploading}/>
+             </div>
+            <div className="space-y-2">
+                <Label htmlFor="file-upload">PDF File</Label>
+                <Input id="file-upload" type="file" accept=".pdf" onChange={handleFileSelect} disabled={isUploading}/>
+            </div>
+            {isUploading && (
+                <div className="space-y-2">
+                    <Progress value={uploadProgress} className="h-2" />
+                    <p className="text-sm text-muted-foreground text-center">Uploading... {uploadProgress.toFixed(0)}%</p>
+                </div>
+            )}
           </CardContent>
           <CardFooter>
-            <Button>Upload Resource</Button>
+            <Button onClick={handleUploadNote} disabled={isUploading}>
+                {isUploading ? <Loader2 className="mr-2 h-4 w-4 animate-spin"/> : <FileUp className="mr-2 h-4 w-4" />}
+                {isUploading ? 'Uploading...' : 'Upload Note'}
+            </Button>
           </CardFooter>
         </Card>
 
@@ -85,10 +202,10 @@ export default function TeacherPage() {
         <CardContent className="space-y-4">
           <Textarea placeholder="Paste student's short-answer response here..." rows={5} value={studentAnswer} onChange={e => setStudentAnswer(e.target.value)} />
           <Textarea placeholder="Provide the correct answer or grading rubric..." rows={3} value={gradingRubric} onChange={e => setGradingRubric(e.target.value)}/>
-           {error && (
+           {gradingError && (
             <div className="flex items-center gap-2 text-sm text-destructive">
               <AlertTriangle className="h-4 w-4" />
-              <p>{error}</p>
+              <p>{gradingError}</p>
             </div>
            )}
         </CardContent>
