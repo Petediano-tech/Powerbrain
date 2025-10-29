@@ -1,10 +1,12 @@
 'use client';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { BookMarked, ChevronLeft, Lock } from "lucide-react";
+import { BookMarked, ChevronLeft, Lock, FileText } from "lucide-react";
 import Link from "next/link";
 import { capitalize } from "@/lib/utils";
 import { Progress } from "@/components/ui/progress";
+import { notesData } from "@/lib/notes-data";
+import { Separator } from "@/components/ui/separator";
 
 export const chaptersData: { [key: string]: { id: string; title: string; description: string; isLocked?: boolean; progress?: number; }[] } = {
   mathematics: [
@@ -22,7 +24,9 @@ export const chaptersData: { [key: string]: { id: string; title: string; descrip
 
 
 export default function SubjectChaptersPage({ params }: { params: { subjectName: string } }) {
-  const chapters = chaptersData[params.subjectName.toLowerCase()] || [];
+  const subjectName = params.subjectName.toLowerCase();
+  const chapters = chaptersData[subjectName] || [];
+  const subjectNotes = notesData.filter(note => note.subject.toLowerCase() === subjectName.replace('-', ' '));
 
   return (
     <div className="space-y-6">
@@ -71,9 +75,40 @@ export default function SubjectChaptersPage({ params }: { params: { subjectName:
             <div className="p-4 bg-primary/10 rounded-full mb-4">
                 <BookMarked className="h-10 w-10 text-primary" />
             </div>
-          <CardTitle>Coming Soon!</CardTitle>
+          <CardTitle>Chapters Coming Soon!</CardTitle>
           <CardDescription>The chapters for {capitalize(params.subjectName)} are being prepared. Please check back later.</CardDescription>
         </Card>
+      )}
+
+      {subjectNotes.length > 0 && (
+        <div className="space-y-4 pt-4">
+            <div className="flex items-center gap-3">
+                <FileText className="text-primary" />
+                <h2 className="text-2xl font-bold">Notes for {capitalize(params.subjectName)}</h2>
+            </div>
+            <Separator />
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {subjectNotes.map((note) => (
+                    <Card key={note.id} className="flex flex-col">
+                        <CardHeader>
+                            <CardTitle>{note.title}</CardTitle>
+                            <CardDescription>By {note.author}</CardDescription>
+                        </CardHeader>
+                        <CardContent className="flex-1">
+                            <p className="text-sm text-muted-foreground line-clamp-3">{note.content}</p>
+                        </CardContent>
+                        <CardFooter>
+                             <Button className="w-full" asChild>
+                                <Link href={`/notes/${note.id}?subject=${params.subjectName}`}>
+                                    <BookMarked className="mr-2 h-4 w-4" />
+                                    Read Note
+                                </Link>
+                            </Button>
+                        </CardFooter>
+                    </Card>
+                ))}
+            </div>
+        </div>
       )}
     </div>
   );

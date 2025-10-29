@@ -4,22 +4,28 @@ import { Button } from "@/components/ui/button";
 import { ChevronLeft, BookOpen } from "lucide-react";
 import Link from "next/link";
 import { notesData } from "@/lib/notes-data";
-import { notFound } from "next/navigation";
+import { notFound, useSearchParams } from "next/navigation";
+import { capitalize } from "@/lib/utils";
 
 export default function NoteDisplayPage({ params }: { params: { noteId: string } }) {
   const note = notesData.find(n => n.id === params.noteId);
+  const searchParams = useSearchParams();
+  const subject = searchParams.get('subject');
 
   if (!note) {
     notFound();
   }
 
+  const backLink = subject ? `/subjects/${subject}` : '/subjects';
+  const backText = subject ? `Back to ${capitalize(subject)}` : 'Back to Subjects';
+
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <Button variant="outline" asChild>
-            <Link href="/notes">
+            <Link href={backLink}>
                 <ChevronLeft className="mr-2" />
-                Back to Notes
+                {backText}
             </Link>
         </Button>
       </div>
