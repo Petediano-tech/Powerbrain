@@ -61,7 +61,7 @@ export default function PdfViewerPage() {
 
       <Card className="flex-grow flex flex-col">
         <CardHeader>
-          <CardTitle>Document Viewer</CardTitle>
+          <CardTitle>Failed to open PDF notes</CardTitle>
         </CardHeader>
         <CardContent className="flex-grow flex items-center justify-center bg-muted/50 rounded-b-lg p-0">
           {fileUrl ? (
