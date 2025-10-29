@@ -113,6 +113,21 @@
         "lastName",
         "gradeLevel"
       ]
+    },
+    "Note": {
+      "title": "Note",
+      "type": "object",
+      "description": "Represents a single note or PDF document.",
+      "properties": {
+        "title": { "type": "string", "description": "Title of the note." },
+        "subject": { "type": "string", "description": "Subject category of the note." },
+        "author": { "type": "string", "description": "Author of the note." },
+        "pdfUrl": { "type": "string", "format": "uri", "description": "Direct download URL of the PDF file from Firebase Storage." },
+        "imageUrl": { "type": "string", "format": "uri", "description": "URL for the cover image of the note." },
+        "imageHint": { "type": "string", "description": "Hint for AI image generation." },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Timestamp when the note was created." }
+      },
+      "required": ["title", "subject", "pdfUrl", "author", "createdAt"]
     }
   },
   "auth": {
@@ -133,6 +148,10 @@
         "$ref": "#/entities/UserProfile"
       },
       "description": "Stores user profile details. Uses document id for security (profileId field from UserAccount). Includes user's personal information like first name, last name, date of birth, profile picture, grade level, and school ID."
+    },
+    "notes/{noteId}": {
+        "schema": { "$ref": "#/entities/Note" },
+        "description": "Stores metadata for uploaded notes and PDFs. Publicly readable so students can browse available notes, but only authenticated teachers can create new entries."
     }
   }
 }
