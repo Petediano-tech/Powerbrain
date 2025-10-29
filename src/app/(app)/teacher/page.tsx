@@ -10,7 +10,7 @@ import { aiGradeQuizzes, AiGradeQuizzesOutput } from "@/ai/flows/ai-grade-quizze
 import { Skeleton } from "@/components/ui/skeleton";
 import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
-import { useFirestore, useUser } from "@/firebase";
+import { useFirestore, useUser, useStorage } from "@/firebase";
 import { Progress } from "@/components/ui/progress";
 import { useToast } from "@/hooks/use-toast";
 import { Label } from "@/components/ui/label";
@@ -32,6 +32,7 @@ export default function TeacherPage() {
 
   const { user } = useUser();
   const firestore = useFirestore();
+  const storage = useStorage();
   const { toast } = useToast();
 
   const handleGradeWithAI = async () => {
@@ -65,7 +66,7 @@ export default function TeacherPage() {
   };
 
   const handleUploadNote = async () => {
-    if (!noteTitle || !noteSubject || !fileToUpload || !user) {
+    if (!noteTitle || !noteSubject || !fileToUpload || !user || !storage) {
       toast({
         variant: "destructive",
         title: "Missing Information",
@@ -77,7 +78,6 @@ export default function TeacherPage() {
     setIsUploading(true);
     setUploadProgress(0);
 
-    const storage = getStorage();
     // Create a storage reference: notes/filename.pdf
     const storageRef = ref(storage, `notes/${Date.now()}_${fileToUpload.name}`);
     const uploadTask = uploadBytesResumable(storageRef, fileToUpload);
@@ -239,4 +239,5 @@ export default function TeacherPage() {
       </Card>
     </div>
   );
-}
+
+    
