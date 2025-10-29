@@ -13,6 +13,7 @@ import { cn } from "@/lib/utils";
 import { useUser, useFirestore, useDoc, useMemoFirebase } from "@/firebase";
 import { doc, runTransaction, serverTimestamp, increment } from "firebase/firestore";
 import { useToast } from "@/hooks/use-toast";
+import { useParams } from "next/navigation";
 
 type Question = {
   question: string;
@@ -97,8 +98,10 @@ const quizData: { [key: string]: { title: string; questions: Question[] } } = {
   }
 };
 
-export default function QuizPage({ params }: { params: { quizId: string } }) {
-  const quiz = quizData[params.quizId];
+export default function QuizPage() {
+  const params = useParams();
+  const quizId = params.quizId as string;
+  const quiz = quizData[quizId];
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedAnswers, setSelectedAnswers] = useState<{[key: number]: string}>({});
   const [showResults, setShowResults] = useState(false);
@@ -109,12 +112,18 @@ export default function QuizPage({ params }: { params: { quizId: string } }) {
   const firestore = useFirestore();
   const { toast } = useToast();
 
+  const userAccountRef = useMemoFirebase(() => {
+    if (!user) return null;
+    return doc(firestore, 'userAccounts', user.uid);
+  }, [firestore, user]);
+  const { data: userAccount } = useDoc(userAccountRef);
+
   const handleFinishQuiz = async (calculatedScore: number) => {
-    if (!user || isSaving) return;
+    if (!user || !userAccount || isSaving) return;
     setIsSaving(true);
     
-    const userProfileRef = doc(firestore, 'userProfiles', user.uid);
-    const quizAttemptRef = doc(firestore, `userProfiles/${user.uid}/quizAttempts`, `${params.quizId}_${Date.now()}`);
+    const userProfileRef = doc(firestore, 'userProfiles', userAccount.profileId);
+    const quizAttemptRef = doc(firestore, `userProfiles/${userAccount.profileId}/quizAttempts`, `${quizId}_${Date.now()}`);
 
     try {
       await runTransaction(firestore, async (transaction) => {
@@ -125,20 +134,18 @@ export default function QuizPage({ params }: { params: { quizId: string } }) {
 
         const oldQuizzesCompleted = userProfileDoc.data().quizzesCompleted || 0;
         const oldAverageScore = userProfileDoc.data().averageScore || 0;
-        const totalTimeStudied = userProfileDoc.data().totalTimeStudied || 0;
-
+        
         const newQuizzesCompleted = oldQuizzesCompleted + 1;
         const newAverageScore = ((oldAverageScore * oldQuizzesCompleted) + calculatedScore) / newQuizzesCompleted;
-        const newTotalTimeStudied = totalTimeStudied + (quiz.questions.length * 0.5); // Add 30s per question
 
         transaction.update(userProfileRef, {
-          quizzesCompleted: newQuizzesCompleted,
+          quizzesCompleted: increment(1),
           averageScore: newAverageScore,
-          totalTimeStudied: increment(30 * quiz.questions.length),
+          totalTimeStudied: increment(quiz.questions.length * 30), // Add 30s per question
         });
 
         transaction.set(quizAttemptRef, {
-          quizId: params.quizId,
+          quizId: quizId,
           quizTitle: quiz.title,
           score: calculatedScore,
           completedAt: new Date().toISOString(),
