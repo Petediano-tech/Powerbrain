@@ -11,6 +11,7 @@ import {
   School,
   User,
   Settings,
+  Trophy,
 } from 'lucide-react';
 import {
   SidebarMenu,
@@ -24,6 +25,7 @@ const navItems = [
   { href: '/quizzes', label: 'Quizzes', icon: PencilRuler },
   { href: '/tutor', label: 'AI Tutor', icon: Bot },
   { href: '/notes', label: 'Notes', icon: FileText },
+  { href: '/leaderboard', label: 'Leaderboard', icon: Trophy },
   { href: '/teacher', label: "Teacher's Corner", icon: School },
 ];
 

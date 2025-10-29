@@ -13,6 +13,7 @@ import {
   Users
 } from "lucide-react";
 import { ReactElement } from "react";
+import Link from "next/link";
 
 const subjectIcons: { [key: string]: ReactElement } = {
   English: <Languages className="h-6 w-6" />,
@@ -30,35 +31,37 @@ const subjectIcons: { [key: string]: ReactElement } = {
 };
 
 const subjects = [
-  { name: 'English', chapters: 12 },
-  { name: 'Chichewa', chapters: 10 },
-  { name: 'Mathematics', chapters: 15 },
-  { name: 'Biology', chapters: 18 },
-  { name: 'Chemistry', chapters: 14 },
-  { name: 'Physics', chapters: 16 },
-  { name: 'Geography', chapters: 11 },
-  { name: 'Agriculture', chapters: 9 },
-  { name: 'History', chapters: 13 },
-  { name: 'Computer Studies', chapters: 8 },
-  { name: 'Life Skills', chapters: 7 },
-  { name: 'Social Studies', chapters: 10 },
+  { name: 'English', id: 'english', chapters: 2 },
+  { name: 'Chichewa', id: 'chichewa', chapters: 0 },
+  { name: 'Mathematics', id: 'mathematics', chapters: 4 },
+  { name: 'Biology', id: 'biology', chapters: 0 },
+  { name: 'Chemistry', id: 'chemistry', chapters: 0 },
+  { name: 'Physics', id: 'physics', chapters: 0 },
+  { name: 'Geography', id: 'geography', chapters: 0 },
+  { name: 'Agriculture', id: 'agriculture', chapters: 0 },
+  { name: 'History', id: 'history', chapters: 0 },
+  { name: 'Computer Studies', id: 'computer-studies', chapters: 0 },
+  { name: 'Life Skills', id: 'life-skills', chapters: 0 },
+  { name: 'Social Studies', id: 'social-studies', chapters: 0 },
 ];
 
 export default function SubjectsPage() {
   return (
     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
       {subjects.map((subject) => (
-        <Card key={subject.name} className="hover:border-primary hover:shadow-primary/20 transition-all cursor-pointer">
-          <CardHeader className="flex flex-col items-center justify-center text-center gap-4">
-            <div className="p-4 rounded-full bg-primary/10 text-primary">
-              {subjectIcons[subject.name] || <Book className="h-6 w-6" />}
-            </div>
-            <CardTitle className="text-lg">{subject.name}</CardTitle>
-          </CardHeader>
-          <CardContent className="text-center text-sm text-muted-foreground -mt-4 pb-4">
-            <p>{subject.chapters} Chapters</p>
-          </CardContent>
-        </Card>
+        <Link key={subject.name} href={`/subjects/${subject.id}`} passHref>
+          <Card className="h-full hover:border-primary hover:shadow-primary/20 transition-all cursor-pointer flex flex-col">
+            <CardHeader className="flex flex-col items-center justify-center text-center gap-4">
+              <div className="p-4 rounded-full bg-primary/10 text-primary">
+                {subjectIcons[subject.name] || <Book className="h-6 w-6" />}
+              </div>
+              <CardTitle className="text-lg">{subject.name}</CardTitle>
+            </CardHeader>
+            <CardContent className="text-center text-sm text-muted-foreground -mt-4 pb-4 flex-1">
+              <p>{subject.chapters} Chapters</p>
+            </CardContent>
+          </Card>
+        </Link>
       ))}
     </div>
   );

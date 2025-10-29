@@ -2,39 +2,44 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Sigma, Dna, Languages, Timer } from "lucide-react"
+import Link from "next/link";
 
 const quizzes = [
   {
+    id: "algebra-fundamentals",
     title: "Algebra Fundamentals",
     subject: "Mathematics",
     icon: <Sigma className="h-6 w-6 text-primary" />,
     difficulty: "Easy",
-    questions: 15,
-    timeLimit: 20,
+    questions: 2,
+    timeLimit: 5,
   },
   {
+    id: "cellular-biology",
     title: "Cellular Biology",
     subject: "Biology",
     icon: <Dna className="h-6 w-6 text-green-400" />,
     difficulty: "Moderate",
-    questions: 25,
-    timeLimit: 30,
+    questions: 1,
+    timeLimit: 5,
   },
   {
+    id: "tenses-and-grammar",
     title: "Tenses and Grammar",
     subject: "English",
     icon: <Languages className="h-6 w-6 text-sky-blue" />,
     difficulty: "Easy",
-    questions: 20,
-    timeLimit: 15,
+    questions: 1,
+    timeLimit: 5,
   },
   {
+    id: "advanced-calculus",
     title: "Advanced Calculus",
     subject: "Mathematics",
     icon: <Sigma className="h-6 w-6 text-primary" />,
     difficulty: "Advanced",
-    questions: 20,
-    timeLimit: 45,
+    questions: 1,
+    timeLimit: 10,
   },
 ];
 
@@ -71,7 +76,9 @@ export default function QuizzesPage() {
                 quiz.difficulty === 'Advanced' ? 'bg-accent text-accent-foreground' : ''
               }
             >{quiz.difficulty}</Badge>
-            <Button className="bg-sky-blue hover:bg-sky-blue/90 text-background">Start Quiz</Button>
+            <Button asChild className="bg-sky-blue hover:bg-sky-blue/90 text-background">
+              <Link href={`/quizzes/${quiz.id}`}>Start Quiz</Link>
+            </Button>
           </CardFooter>
         </Card>
       ))}
