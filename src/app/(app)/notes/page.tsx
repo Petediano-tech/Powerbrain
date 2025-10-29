@@ -5,10 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Download, BookOpen, Sigma, Dna, Languages, Leaf, Globe, Landmark, Laptop, HeartHandshake, Users, FlaskConical } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { Skeleton } from "@/components/ui/skeleton";
 import { ReactElement } from "react";
-import { useCollection, useFirestore, useMemoFirebase } from "@/firebase";
-import { collection, orderBy, query } from "firebase/firestore";
+import { notesData, Note } from '@/lib/notes-data';
 
 const subjectIcons: { [key: string]: ReactElement } = {
   English: <Languages />,
@@ -31,42 +29,20 @@ const getSubjectIcon = (subject: string) => {
 
 
 export default function NotesPage() {
-  const firestore = useFirestore();
-  const notesQuery = useMemoFirebase(() => {
-    return query(collection(firestore, 'notes'), orderBy('createdAt', 'desc'));
-  }, [firestore]);
-  const { data: notes, isLoading } = useCollection(notesQuery);
+  const notes: Note[] = notesData;
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      {isLoading && Array.from({ length: 3 }).map((_, i) => (
-        <Card key={i}>
-            <Skeleton className="h-40 w-full" />
-            <CardHeader>
-                <Skeleton className="h-6 w-3/4" />
-                <Skeleton className="h-4 w-1/2" />
-            </CardHeader>
-            <CardContent>
-                <Skeleton className="h-4 w-1/4" />
-            </CardContent>
-            <CardFooter className="p-4 flex gap-2">
-                <Skeleton className="h-10 w-full" />
-                <Skeleton className="h-10 w-full" />
-            </CardFooter>
-        </Card>
-      ))}
-      {notes?.map((note) => (
+      {notes.map((note) => (
         <Card key={note.id} className="flex flex-col overflow-hidden">
           <div className="relative h-40 w-full bg-muted">
-            {note.imageUrl && (
-              <Image 
-                src={note.imageUrl}
-                alt={note.title}
-                fill
-                style={{ objectFit: 'cover' }}
-                data-ai-hint={note.imageHint || 'textbook cover'}
-              />
-            )}
+            <Image 
+              src={note.imageUrl}
+              alt={note.title}
+              fill
+              style={{ objectFit: 'cover' }}
+              data-ai-hint={note.imageHint || 'textbook cover'}
+            />
           </div>
           <CardHeader>
             <CardTitle>{note.title}</CardTitle>
@@ -93,8 +69,8 @@ export default function NotesPage() {
           </CardFooter>
         </Card>
       ))}
-       {!isLoading && notes?.length === 0 && (
-         <p className="text-muted-foreground col-span-full text-center">No notes have been uploaded yet.</p>
+       {notes?.length === 0 && (
+         <p className="text-muted-foreground col-span-full text-center">No notes are available at the moment. Please check back later.</p>
        )}
     </div>
   );

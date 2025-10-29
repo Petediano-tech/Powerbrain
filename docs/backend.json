@@ -113,57 +113,6 @@
         "lastName",
         "gradeLevel"
       ]
-    },
-    "Note": {
-      "$schema": "http://json-schema.org/draft-07/schema#",
-      "title": "Note",
-      "type": "object",
-      "description": "Represents a note or textbook uploaded by a user.",
-      "properties": {
-        "id": {
-          "type": "string",
-          "description": "Unique identifier for the note."
-        },
-        "title": {
-          "type": "string",
-          "description": "Title of the note."
-        },
-        "subject": {
-          "type": "string",
-          "description": "Subject of the note."
-        },
-        "author": {
-          "type": "string",
-          "description": "Author of the note."
-        },
-        "pdfUrl": {
-          "type": "string",
-          "description": "URL of the PDF file in Cloud Storage.",
-          "format": "uri"
-        },
-        "imageUrl": {
-          "type": "string",
-          "description": "URL of the cover image for the note.",
-          "format": "uri"
-        },
-        "imageHint": {
-          "type": "string",
-          "description": "AI hint for the cover image."
-        },
-        "createdAt": {
-          "type": "string",
-          "description": "Date and time when the note was created.",
-          "format": "date-time"
-        }
-      },
-      "required": [
-        "id",
-        "title",
-        "subject",
-        "author",
-        "pdfUrl",
-        "createdAt"
-      ]
     }
   },
   "auth": {
@@ -184,12 +133,6 @@
         "$ref": "#/entities/UserProfile"
       },
       "description": "Stores user profile details. Uses document id for security (profileId field from UserAccount). Includes user's personal information like first name, last name, date of birth, profile picture, grade level, and school ID."
-    },
-    "notes": {
-      "schema": {
-        "$ref": "#/entities/Note"
-      },
-      "description": "Stores publicly accessible metadata for uploaded notes and textbooks. The actual PDF files are stored in Firebase Cloud Storage."
     }
   }
 }
