@@ -54,7 +54,7 @@ export default function LeaderboardPage() {
       </div>
       <Card>
         <CardContent className="p-0">
-          {isLoading ? (
+          {isLoading && !leaderboardData ? (
             <div className="p-4 space-y-2">
                 {[...Array(5)].map((_, i) => (
                     <div key={i} className="flex items-center gap-4 p-2">
