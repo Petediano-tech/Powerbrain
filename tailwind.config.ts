@@ -15,7 +15,11 @@ export default {
         code: ['monospace'],
       },
       colors: {
+        'soft-lavender': 'hsl(var(--soft-lavender))',
+        'pastel-purple': 'hsl(var(--pastel-purple))',
         'sky-blue': 'hsl(var(--sky-blue))',
+        'soft-magenta': 'hsl(var(--soft-magenta))',
+        'soft-shadow': 'hsl(var(--soft-shadow))',
         background: 'hsl(var(--background))',
         foreground: 'hsl(var(--foreground))',
         card: {

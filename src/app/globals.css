@@ -4,60 +4,91 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 279 15% 15%;
-    --card: 0 0% 100%;
-    --card-foreground: 279 15% 15%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 279 15% 15%;
-    --primary: 279 64% 40%; /* Eggplant */
-    --primary-foreground: 0 0% 98%;
-    --secondary: 279 10% 96%;
-    --secondary-foreground: 279 15% 25%;
-    --muted: 279 10% 96%;
-    --muted-foreground: 279 10% 45%;
-    --accent: 51 100% 50%; /* Gold */
-    --accent-foreground: 279 50% 10%;
+    --background: 240 100% 97%; /* Lighter version of Soft Shadow */
+    --foreground: 247 31% 32%; /* Darker color for text */
+    --card: 250 80% 98%;
+    --card-foreground: 247 31% 32%;
+    --popover: 250 80% 98%;
+    --popover-foreground: 247 31% 32%;
+    
+    --primary: 253 100% 86%; /* Pastel Purple / Violet */
+    --primary-foreground: 247 31% 25%;
+    
+    --secondary: 243 100% 93%; /* Soft Lavender */
+    --secondary-foreground: 247 31% 32%;
+    
+    --muted: 228 33% 95%; /* Soft Shadow / Light Gray */
+    --muted-foreground: 240 5% 65%;
+    
+    --accent: 316 100% 80%; /* Pink / Soft Magenta */
+    --accent-foreground: 247 31% 25%;
+    
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
-    --border: 279 10% 90%;
-    --input: 279 10% 90%;
-    --ring: 279 64% 40%;
-    --chart-1: 279 70% 50%;
-    --chart-2: 207 88% 68%; /* Sky Blue */
-    --chart-3: 51 100% 50%; /* Gold */
-    --chart-4: 173 58% 39%;
-    --chart-5: 27 87% 67%;
-    --radius: 0.8rem; /* Rounded UI */
-    --sky-blue: 207 88% 68%;
+    
+    --border: 228 33% 91%; /* Soft Shadow / Light Gray for borders */
+    --input: 228 33% 93%; /* Soft Shadow / Light Gray for inputs */
+    --ring: 211 93% 76%; /* Light Blue / Sky Blue */
+    
+    --radius: 0.8rem;
+
+    /* Custom color names from palette */
+    --soft-lavender: 243 100% 93%;
+    --pastel-purple: 253 100% 86%;
+    --sky-blue: 211 93% 76%;
+    --soft-magenta: 316 100% 80%;
+    --soft-shadow: 228 33% 95%;
+
+    /* Chart colors */
+    --chart-1: 253 100% 86%;
+    --chart-2: 211 93% 76%;
+    --chart-3: 316 100% 80%;
+    --chart-4: 243 100% 93%;
+    --chart-5: 228 33% 91%;
   }
 
   .dark {
-    --background: 279 15% 6%; /* AMOLED-friendly dark purple */
-    --foreground: 0 0% 98%;
-    --card: 279 15% 10%;
-    --card-foreground: 0 0% 98%;
-    --popover: 279 15% 6%;
-    --popover-foreground: 0 0% 98%;
-    --primary: 279 70% 70%; /* Brighter Eggplant for dark mode */
-    --primary-foreground: 279 10% 5%;
-    --secondary: 279 15% 15%;
-    --secondary-foreground: 0 0% 98%;
-    --muted: 279 15% 15%;
-    --muted-foreground: 0 0% 63.9%;
-    --accent: 51 95% 55%; /* Gold */
-    --accent-foreground: 279 50% 10%;
+    --background: 246 24% 12%; /* Dark background */
+    --foreground: 243 100% 93%; /* Soft Lavender for text */
+    
+    --card: 247 31% 18%;
+    --card-foreground: 243 100% 93%;
+    
+    --popover: 246 24% 12%;
+    --popover-foreground: 243 100% 93%;
+    
+    --primary: 253 100% 86%; /* Pastel Purple / Violet */
+    --primary-foreground: 247 31% 25%;
+    
+    --secondary: 247 31% 22%;
+    --secondary-foreground: 243 100% 93%;
+    
+    --muted: 247 31% 22%;
+    --muted-foreground: 240 5% 65%;
+    
+    --accent: 316 100% 80%; /* Pink / Soft Magenta */
+    --accent-foreground: 247 31% 25%;
+    
     --destructive: 0 62.8% 50.6%;
     --destructive-foreground: 0 0% 98%;
-    --border: 279 15% 15%;
-    --input: 279 15% 15%;
-    --ring: 51 95% 55%; /* Gold for focus rings */
-    --chart-1: 279 70% 70%;
-    --chart-2: 207 88% 68%; /* Sky Blue */
-    --chart-3: 51 95% 55%; /* Gold */
-    --chart-4: 173 58% 45%;
-    --chart-5: 27 87% 70%;
-    --sky-blue: 207 88% 68%;
+    
+    --border: 247 31% 25%;
+    --input: 247 31% 25%;
+    --ring: 211 93% 76%; /* Light Blue / Sky Blue */
+    
+    /* Custom color names from palette */
+    --soft-lavender: 243 100% 93%;
+    --pastel-purple: 253 100% 86%;
+    --sky-blue: 211 93% 76%;
+    --soft-magenta: 316 100% 80%;
+    --soft-shadow: 228 33% 95%;
+
+    /* Chart colors */
+    --chart-1: 253 100% 86%;
+    --chart-2: 211 93% 76%;
+    --chart-3: 316 100% 80%;
+    --chart-4: 243 100% 93%;
+    --chart-5: 228 33% 91%;
   }
 }
 
@@ -67,5 +98,10 @@
   }
   body {
     @apply bg-background text-foreground;
+    background-image: linear-gradient(to right, hsl(var(--secondary)), hsl(var(--sky-blue) / 0.5));
+  }
+
+  .dark body {
+    background-image: linear-gradient(to right, #1a1826, #121f2e);
   }
 }
