@@ -2,14 +2,12 @@
 'use client';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Download, BookOpen, Sigma, Dna, Languages, Leaf, Globe, Landmark, Laptop, HeartHandshake, Users, FlaskConical } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { useCollection, useMemoFirebase } from "@/firebase";
-import { collection, getFirestore, orderBy, query } from "firebase/firestore";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ReactElement } from "react";
+import { notesData } from "@/lib/notes-data";
 
 const subjectIcons: { [key: string]: ReactElement } = {
   English: <Languages />,
@@ -32,12 +30,8 @@ const getSubjectIcon = (subject: string) => {
 
 
 export default function NotesPage() {
-  const firestore = getFirestore();
-  const notesQuery = useMemoFirebase(() => {
-    return query(collection(firestore, 'notes'), orderBy('createdAt', 'desc'));
-  }, [firestore]);
-
-  const { data: notes, isLoading } = useCollection(notesQuery);
+  const notes = notesData;
+  const isLoading = false; // Data is now local
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
