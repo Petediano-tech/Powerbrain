@@ -22,6 +22,8 @@ import { SidebarNav } from './sidebar-nav';
 import { useAuth } from '@/firebase';
 import { signOut } from 'firebase/auth';
 import { useUser } from '@/firebase';
+import { Button } from './ui/button';
+import { Settings } from 'lucide-react';
 
 export function AppHeader() {
   const pathname = usePathname();
@@ -63,13 +65,16 @@ export function AppHeader() {
         <div className="ml-auto flex items-center gap-4">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Avatar className="h-9 w-9 cursor-pointer border-2 border-transparent hover:border-primary transition-colors">
-                {user?.photoURL ? <AvatarImage src={user.photoURL} alt={user.displayName || 'User'} /> : null}
-                <AvatarFallback>{getInitials(user?.displayName || 'User')}</AvatarFallback>
-              </Avatar>
+                <Button variant="ghost" size="icon">
+                  <Settings className="h-5 w-5" />
+                  <span className="sr-only">Open user menu</span>
+                </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-56">
-              <DropdownMenuLabel>My Account</DropdownMenuLabel>
+               <DropdownMenuLabel>
+                <p>My Account</p>
+                {user?.email && <p className="text-xs text-muted-foreground font-normal">{user.email}</p>}
+              </DropdownMenuLabel>
               <DropdownMenuSeparator />
               <Link href="/profile" passHref>
                 <DropdownMenuItem>Profile</DropdownMenuItem>
