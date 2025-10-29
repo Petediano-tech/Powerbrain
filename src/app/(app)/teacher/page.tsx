@@ -10,7 +10,7 @@ import { aiGradeQuizzes, AiGradeQuizzesOutput } from "@/ai/flows/ai-grade-quizze
 import { Skeleton } from "@/components/ui/skeleton";
 import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
-import { useFirestore, useUser, useStorage } from "@/firebase";
+import { useFirestore, useUser, useFirebaseApp } from "@/firebase";
 import { Progress } from "@/components/ui/progress";
 import { useToast } from "@/hooks/use-toast";
 import { Label } from "@/components/ui/label";
@@ -32,7 +32,7 @@ export default function TeacherPage() {
 
   const { user } = useUser();
   const firestore = useFirestore();
-  const storage = useStorage();
+  const firebaseApp = useFirebaseApp();
   const { toast } = useToast();
 
   const handleGradeWithAI = async () => {
@@ -66,13 +66,22 @@ export default function TeacherPage() {
   };
 
   const handleUploadNote = async () => {
-    if (!noteTitle || !noteSubject || !fileToUpload || !user || !storage) {
+    const storage = getStorage(firebaseApp);
+    if (!noteTitle || !noteSubject || !fileToUpload || !user) {
       toast({
         variant: "destructive",
         title: "Missing Information",
         description: "Please provide a title, subject, and select a PDF file to upload.",
       });
       return;
+    }
+    if (!storage) {
+        toast({
+            variant: "destructive",
+            title: "Storage service not ready",
+            description: "Please wait a moment and try uploading again.",
+        });
+        return;
     }
     
     setIsUploading(true);
