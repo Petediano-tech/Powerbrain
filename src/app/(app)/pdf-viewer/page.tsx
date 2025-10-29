@@ -10,17 +10,10 @@ export default function DocumentReaderPage() {
   const [fileUrl, setFileUrl] = useState<string | null>(null);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (fileUrl) {
-      URL.revokeObjectURL(fileUrl);
-      setFileUrl(null);
-    }
-    
     if (event.target.files && event.target.files[0]) {
       const file = event.target.files[0];
       if (file.type === 'application/pdf') {
         setSelectedFile(file);
-        const url = URL.createObjectURL(file);
-        setFileUrl(url);
       } else {
         alert('Please select a PDF file.');
         setSelectedFile(null);
@@ -30,14 +23,21 @@ export default function DocumentReaderPage() {
     }
   };
 
-  // Clean up the object URL when the component unmounts
+  // Create or revoke the object URL whenever the selected file changes.
   useEffect(() => {
-    return () => {
-      if (fileUrl) {
-        URL.revokeObjectURL(fileUrl);
-      }
-    };
-  }, [fileUrl]);
+    if (selectedFile) {
+      const url = URL.createObjectURL(selectedFile);
+      setFileUrl(url);
+
+      // This is the cleanup function that will be called when the component unmounts
+      // or when the `selectedFile` dependency changes.
+      return () => {
+        URL.revokeObjectURL(url);
+        setFileUrl(null);
+      };
+    }
+    // If there's no selected file, do nothing. The URL is already null or will be cleaned up.
+  }, [selectedFile]);
 
   return (
     <div className="container mx-auto p-4 space-y-6 flex flex-col h-full">
