@@ -1,3 +1,4 @@
+
 'use client';
 import { useState } from "react";
 import {
@@ -12,19 +13,20 @@ import { Button } from "@/components/ui/button";
 import { BrainCircuit, Lightbulb, ShieldAlert, Sparkles, Target } from "lucide-react";
 import { getStudyInsights, StudyInsightsOutput } from "@/ai/flows/ai-study-insights";
 import { Skeleton } from "./ui/skeleton";
-import { useUser, useDoc, useMemoFirebase } from "@/firebase";
+import { useDoc, useMemoFirebase } from "@/firebase";
 import { doc, getFirestore } from "firebase/firestore";
+import { useUserStore } from "@/hooks/use-user-store";
 
 export function AIInsights() {
   const [insights, setInsights] = useState<StudyInsightsOutput | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const { user } = useUser();
   const firestore = getFirestore();
+  const { profileId } = useUserStore();
 
   const userProfileRef = useMemoFirebase(() => {
-    if (!user) return null;
-    return doc(firestore, 'userProfiles', user.uid);
-  }, [firestore, user]);
+    if (!profileId) return null;
+    return doc(firestore, 'userProfiles', profileId);
+  }, [firestore, profileId]);
 
   const { data: userProfile } = useDoc(userProfileRef);
 

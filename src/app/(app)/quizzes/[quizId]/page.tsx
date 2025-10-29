@@ -1,6 +1,7 @@
+
 'use client';
 
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo } from "react";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
@@ -10,10 +11,11 @@ import { CheckCircle, XCircle, ChevronLeft, Award } from "lucide-react";
 import Link from "next/link";
 import Confetti from 'react-confetti';
 import { cn } from "@/lib/utils";
-import { useUser, useFirestore, useDoc, useMemoFirebase } from "@/firebase";
-import { doc, runTransaction, serverTimestamp, increment } from "firebase/firestore";
+import { useFirestore } from "@/firebase";
+import { doc, runTransaction, increment } from "firebase/firestore";
 import { useToast } from "@/hooks/use-toast";
 import { useParams } from "next/navigation";
+import { useUserStore } from "@/hooks/use-user-store";
 
 type Question = {
   question: string;
@@ -108,22 +110,16 @@ export default function QuizPage() {
   const [isChecking, setIsChecking] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
 
-  const { user } = useUser();
+  const { profileId } = useUserStore();
   const firestore = useFirestore();
   const { toast } = useToast();
 
-  const userAccountRef = useMemoFirebase(() => {
-    if (!user) return null;
-    return doc(firestore, 'userAccounts', user.uid);
-  }, [firestore, user]);
-  const { data: userAccount } = useDoc(userAccountRef);
-
   const handleFinishQuiz = async (calculatedScore: number) => {
-    if (!user || !userAccount || isSaving) return;
+    if (!profileId || isSaving) return;
     setIsSaving(true);
     
-    const userProfileRef = doc(firestore, 'userProfiles', userAccount.profileId);
-    const quizAttemptRef = doc(firestore, `userProfiles/${userAccount.profileId}/quizAttempts`, `${quizId}_${Date.now()}`);
+    const userProfileRef = doc(firestore, 'userProfiles', profileId);
+    const quizAttemptRef = doc(firestore, `userProfiles/${profileId}/quizAttempts`, `${quizId}_${Date.now()}`);
 
     try {
       await runTransaction(firestore, async (transaction) => {

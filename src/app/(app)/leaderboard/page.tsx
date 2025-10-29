@@ -1,24 +1,22 @@
+
 'use client';
 import {
   Card,
   CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
 } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Crown, Medal, Trophy } from "lucide-react";
-import { PlaceHolderImages } from "@/lib/placeholder-images";
-import { useUser } from "@/firebase";
+import { useUser, useCollection, useMemoFirebase } from "@/firebase";
+import { collection, getFirestore, query, orderBy, limit } from "firebase/firestore";
+import { Skeleton } from "@/components/ui/skeleton";
+import { cn } from "@/lib/utils";
 
-const leaderboardData = [
-  { rank: 1, name: "Thandiwe", score: 9850, avatarId: "user-avatar-1" },
-  { rank: 2, name: "Chikondi", score: 9600, avatarId: "user-avatar-2" },
-  { rank: 3, name: "Limbani", score: 9420, avatarId: "user-avatar-3" },
-  { rank: 4, name: "Mphatso", score: 8900, avatarId: "user-avatar-4" },
-  { rank: 5, name: "Kondwani", score: 8750, avatarId: "user-avatar-5" },
-  { rank: 6, name: "Pemphero", score: 8500, avatarId: "user-avatar-6" },
-  { rank: 7, name: "Ganizani", score: 8210, avatarId: "user-avatar-7" },
-  { rank: 8, name: "Funani", score: 8050, avatarId: "user-avatar-8" },
-  { rank: 9, name: "Dalitso", score: 7900, avatarId: "user-avatar-9" },
-];
+const getInitials = (name: string) => {
+    return name.split(' ').map(n => n[0]).join('').toUpperCase();
+};
 
 const getRankIcon = (rank: number) => {
   if (rank === 1) return <Crown className="h-6 w-6 text-yellow-400 fill-yellow-400" />;
@@ -27,44 +25,78 @@ const getRankIcon = (rank: number) => {
   return <span className="font-bold text-lg w-6 text-center">{rank}</span>;
 };
 
-const getInitials = (name: string) => {
-    return name.split(' ').map(n => n[0]).join('').toUpperCase();
-};
+const avatarColors = [
+    "bg-gradient-to-br from-red-500 to-orange-500",
+    "bg-gradient-to-br from-green-500 to-emerald-500",
+    "bg-gradient-to-br from-blue-500 to-indigo-500",
+    "bg-gradient-to-br from-purple-500 to-violet-500",
+    "bg-gradient-to-br from-pink-500 to-rose-500",
+];
 
 export default function LeaderboardPage() {
     const { user } = useUser();
-    const currentUser = { rank: 8, name: user?.displayName || 'You', score: 8400, avatarId: "user-avatar", isCurrentUser: true };
-    const sortedLeaderboard = [...leaderboardData, currentUser].sort((a,b) => b.score - a.score).map((u, i) => ({...u, rank: i+1}));
+    const firestore = getFirestore();
+
+    const usersQuery = useMemoFirebase(() => {
+        return query(collection(firestore, 'userProfiles'), orderBy('averageScore', 'desc'), limit(10));
+    }, [firestore]);
+    
+    const { data: leaderboardData, isLoading } = useCollection(usersQuery);
+
+    const getAvatarColor = (id: string) => {
+        const hash = id.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+        return avatarColors[hash % avatarColors.length];
+    }
 
   return (
     <div className="space-y-6">
        <div>
         <h2 className="text-2xl font-bold">Leaderboard</h2>
-        <p className="text-muted-foreground">See how you rank against other learners this month!</p>
+        <p className="text-muted-foreground">See how you rank against other learners!</p>
       </div>
       <Card>
         <CardContent className="p-0">
-          <ul className="divide-y">
-            {sortedLeaderboard.map((userData) => {
-              const avatar = PlaceHolderImages.find(p => p.id === userData.avatarId);
-              return (
-                <li
-                  key={userData.rank}
-                  className={`flex items-center justify-between p-4 transition-colors ${userData.isCurrentUser ? "bg-primary/10" : "hover:bg-muted/50"}`}
-                >
-                  <div className="flex items-center gap-4">
-                    <div className="w-8 text-center flex justify-center">{getRankIcon(userData.rank)}</div>
-                    <Avatar className="h-10 w-10 border-2 border-muted">
-                      <AvatarImage src={user?.isCurrentUser ? user?.photoURL ?? avatar?.imageUrl : avatar?.imageUrl} alt={userData.name} data-ai-hint={avatar?.imageHint} />
-                      <AvatarFallback>{getInitials(userData.name)}</AvatarFallback>
-                    </Avatar>
-                    <span className={`font-medium ${userData.isCurrentUser ? "text-primary" : ""}`}>{userData.name}{userData.isCurrentUser ? ' (You)' : ''}</span>
-                  </div>
-                  <span className="font-bold text-lg text-primary">{userData.score.toLocaleString()} pts</span>
-                </li>
-              );
-            })}
-          </ul>
+          {isLoading ? (
+            <div className="p-4 space-y-2">
+                {[...Array(5)].map((_, i) => (
+                    <div key={i} className="flex items-center gap-4 p-2">
+                        <Skeleton className="h-8 w-8" />
+                        <Skeleton className="h-10 w-10 rounded-full" />
+                        <Skeleton className="h-6 flex-1" />
+                        <Skeleton className="h-6 w-20" />
+                    </div>
+                ))}
+            </div>
+          ) : (
+            <ul className="divide-y">
+              {leaderboardData?.map((userData, index) => {
+                const rank = index + 1;
+                const isCurrentUser = userData.id === user?.uid;
+
+                return (
+                  <li
+                    key={userData.id}
+                    className={cn("flex items-center justify-between p-4 transition-colors", isCurrentUser ? "bg-primary/10" : "hover:bg-muted/50")}
+                  >
+                    <div className="flex items-center gap-4">
+                      <div className="w-8 text-center flex justify-center">{getRankIcon(rank)}</div>
+                      <Avatar className="h-10 w-10 border-2 border-muted">
+                        {userData.profilePicture && <AvatarImage src={userData.profilePicture} alt={`${userData.firstName} ${userData.lastName}`} />}
+                        <AvatarFallback className={cn("font-bold text-white", getAvatarColor(userData.id))}>
+                          {getInitials(`${userData.firstName} ${userData.lastName}`)}
+                        </AvatarFallback>
+                      </Avatar>
+                      <span className={cn("font-medium", isCurrentUser ? "text-primary" : "")}>
+                        {`${userData.firstName} ${userData.lastName}`}
+                        {isCurrentUser ? ' (You)' : ''}
+                      </span>
+                    </div>
+                    <span className="font-bold text-lg text-primary">{(userData.averageScore || 0).toFixed(0)} pts</span>
+                  </li>
+                );
+              })}
+            </ul>
+          )}
         </CardContent>
       </Card>
     </div>

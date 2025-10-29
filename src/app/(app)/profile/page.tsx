@@ -1,3 +1,4 @@
+
 'use client';
 import {
   Card,
@@ -13,15 +14,17 @@ import { AIInsights } from "@/components/ai-insights";
 import { ProgressChart } from "@/components/progress-chart";
 import { useUser, useDoc, useMemoFirebase } from "@/firebase";
 import { doc, getFirestore } from "firebase/firestore";
+import { useUserStore } from "@/hooks/use-user-store";
 
 export default function ProfilePage() {
   const { user } = useUser();
   const firestore = getFirestore();
+  const { profileId } = useUserStore();
 
   const userProfileRef = useMemoFirebase(() => {
-    if (!user) return null;
-    return doc(firestore, 'userProfiles', user.uid);
-  }, [firestore, user]);
+    if (!profileId) return null;
+    return doc(firestore, 'userProfiles', profileId);
+  }, [firestore, profileId]);
 
   const { data: studentData } = useDoc(userProfileRef);
   
@@ -52,7 +55,7 @@ export default function ProfilePage() {
           <CardDescription>{profileData.gradeLevel}</CardDescription>
         </CardHeader>
         <CardContent className="flex flex-wrap justify-center gap-2">
-          {profileData.badges.map((badge) => (
+          {(profileData.badges || []).map((badge: string) => (
             <Badge key={badge} variant="secondary" className="text-sm py-1 px-3 bg-accent/20 text-accent-foreground border-accent/30">{badge}</Badge>
           ))}
         </CardContent>

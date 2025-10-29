@@ -1,3 +1,4 @@
+
 'use client';
 import { Button } from '@/components/ui/button';
 import {
@@ -12,7 +13,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useAuth, useFirestore } from '@/firebase';
 import { AuthError, createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
-import { doc, setDoc } from 'firebase/firestore';
+import { doc, setDoc, writeBatch } from 'firebase/firestore';
 import Link from 'next/link';
 import { useState } from 'react';
 import { useToast } from '@/hooks/use-toast';
@@ -49,10 +50,13 @@ export default function SignUpPage() {
       const user = userCredential.user;
       await updateProfile(user, { displayName: name });
 
-      // Create a user profile document in Firestore
-      const userProfileRef = doc(firestore, "userProfiles", user.uid);
-      await setDoc(userProfileRef, {
-          id: user.uid,
+      const batch = writeBatch(firestore);
+
+      // 1. Create UserProfile
+      const profileId = user.uid; // Using user's UID as profile ID for simplicity
+      const userProfileRef = doc(firestore, "userProfiles", profileId);
+      batch.set(userProfileRef, {
+          id: profileId,
           firstName: name.split(' ')[0] || '',
           lastName: name.split(' ').slice(1).join(' ') || '',
           email: user.email,
@@ -65,6 +69,18 @@ export default function SignUpPage() {
           badges: [],
           averageScore: 0,
       });
+
+      // 2. Create UserAccount to link auth UID to profileId
+      const userAccountRef = doc(firestore, "userAccounts", user.uid);
+      batch.set(userAccountRef, {
+        id: user.uid,
+        email: user.email,
+        username: name,
+        registrationDate: new Date().toISOString(),
+        profileId: profileId,
+      });
+      
+      await batch.commit();
       
       toast({
         title: 'Account created successfully!',
