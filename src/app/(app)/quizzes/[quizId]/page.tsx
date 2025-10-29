@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useMemo } from "react";
@@ -24,79 +25,41 @@ type Question = {
 };
 
 const quizData: { [key: string]: { title: string; questions: Question[] } } = {
-  "algebra-basics": {
-    title: "Algebra Basics",
+  "english-prepositions": {
+    title: "English Prepositions",
     questions: [
       {
-        question: "What is the value of 'x' in the equation x + 5 = 12?",
-        options: ["5", "7", "10", "12"],
-        answer: "7",
-        explanation: "To find x, you subtract 5 from both sides of the equation: 12 - 5 = 7.",
+        question: "You must abide ______ the school rules.",
+        options: ["by", "in", "from", "with"],
+        answer: "by",
+        explanation: "The verb 'abide' is followed by the preposition 'by' when it means to accept or act in accordance with a rule or decision.",
       },
       {
-        question: "Which of the following is a variable?",
-        options: ["y", "14", "+", "="],
-        answer: "y",
-        explanation: "A variable is a symbol, typically a letter, that represents an unknown value. 'y' is used here as a variable.",
+        question: "He was completely absorbed ______ his book.",
+        options: ["by", "in", "from", "with"],
+        answer: "in",
+        explanation: "The phrase 'absorbed in' means to be fully engrossed or occupied with something.",
       },
       {
-        question: "Simplify the expression: 3a + 2a",
-        options: ["5a", "6a", "3a2", "5a^2"],
-        answer: "5a",
-        explanation: "Since both terms have the same variable 'a', you can add their coefficients: 3 + 2 = 5. So, 3a + 2a = 5a.",
-      },
-    ],
-  },
-  "algebra-fundamentals": {
-    title: "Algebra Fundamentals",
-    questions: [
-      {
-        question: "What is the value of 'x' in the equation 2x = 10?",
-        options: ["2", "5", "8", "10"],
-        answer: "5",
-        explanation: "To find x, you divide both sides of the equation by 2: 10 / 2 = 5.",
+        question: "She decided to abstain ______ eating sugar.",
+        options: ["by", "in", "from", "with"],
+        answer: "from",
+        explanation: "The verb 'abstain' is followed by 'from' to indicate refraining from doing something.",
       },
        {
-        question: "Which expression is equivalent to 4(x + 2)?",
-        options: ["4x + 2", "4x + 8", "x + 8", "4x + 6"],
-        answer: "4x + 8",
-        explanation: "Using the distributive property, you multiply 4 by each term inside the parentheses: 4 * x and 4 * 2, which gives 4x + 8.",
+        question: "The man was accused ______ theft.",
+        options: ["of", "to", "with", "by"],
+        answer: "of",
+        explanation: "When accusing someone of a crime, the preposition 'of' is used.",
+      },
+       {
+        question: "She is accustomed ______ the hot weather.",
+        options: ["with", "by", "to", "for"],
+        answer: "to",
+        explanation: "The phrase 'accustomed to' means to be used to something.",
       },
     ],
   },
-  "cellular-biology": {
-      title: "Cellular Biology",
-      questions: [
-          {
-              question: "What is the powerhouse of the cell?",
-              options: ["Nucleus", "Ribosome", "Mitochondrion", "Chloroplast"],
-              answer: "Mitochondrion",
-              explanation: "Mitochondria are responsible for generating most of the cell's supply of adenosine triphosphate (ATP), used as a source of chemical energy.",
-          }
-      ]
-  },
-   "tenses-and-grammar": {
-      title: "Tenses and Grammar",
-      questions: [
-          {
-              question: "Which sentence is in the past tense?",
-              options: ["I will go to the market.", "I am going to the market.", "I went to the market.", "I go to the market."],
-              answer: "I went to the market.",
-              explanation: "The verb 'went' is the past tense form of 'go', indicating the action has already happened.",
-          }
-      ]
-  },
-   "advanced-calculus": {
-      title: "Advanced Calculus",
-      questions: [
-          {
-              question: "What is the derivative of x^2?",
-              options: ["2x", "x", "x^2/2", "2"],
-              answer: "2x",
-              explanation: "Using the power rule for differentiation, the derivative of x^n is n*x^(n-1). For x^2, this is 2*x^(2-1) = 2x.",
-          }
-      ]
-  }
 };
 
 export default function QuizPage() {

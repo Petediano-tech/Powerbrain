@@ -1,46 +1,20 @@
+
 'use client';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Sigma, Dna, Languages, Timer } from "lucide-react"
+import { Languages, Timer } from "lucide-react"
 import Link from "next/link";
 
 const quizzes = [
   {
-    id: "algebra-fundamentals",
-    title: "Algebra Fundamentals",
-    subject: "Mathematics",
-    icon: <Sigma className="h-6 w-6 text-primary" />,
-    difficulty: "Easy",
-    questions: 2,
-    timeLimit: 5,
-  },
-  {
-    id: "cellular-biology",
-    title: "Cellular Biology",
-    subject: "Biology",
-    icon: <Dna className="h-6 w-6 text-primary" />,
-    difficulty: "Moderate",
-    questions: 1,
-    timeLimit: 5,
-  },
-  {
-    id: "tenses-and-grammar",
-    title: "Tenses and Grammar",
+    id: "english-prepositions",
+    title: "English Prepositions",
     subject: "English",
     icon: <Languages className="h-6 w-6 text-primary" />,
     difficulty: "Easy",
-    questions: 1,
+    questions: 5,
     timeLimit: 5,
-  },
-  {
-    id: "advanced-calculus",
-    title: "Advanced Calculus",
-    subject: "Mathematics",
-    icon: <Sigma className="h-6 w-6 text-primary" />,
-    difficulty: "Advanced",
-    questions: 1,
-    timeLimit: 10,
   },
 ];
 
