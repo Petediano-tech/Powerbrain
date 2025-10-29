@@ -44,17 +44,24 @@ export default function DashboardPage() {
   const [fact, setFact] = useState('');
   const firestore = getFirestore();
 
-  const userProfileRef = useMemoFirebase(() => {
+  const userAccountRef = useMemoFirebase(() => {
     if (!user) return null;
-    return doc(firestore, 'userProfiles', user.uid);
+    return doc(firestore, 'userAccounts', user.uid);
   }, [firestore, user]);
-  
-  const recentQuizzesQuery = useMemoFirebase(() => {
-      if (!user) return null;
-      return query(collection(firestore, 'userProfiles', user.uid, 'quizAttempts'), orderBy('completedAt', 'desc'), limit(2));
-  }, [firestore, user]);
+  const { data: userAccount } = useDoc(userAccountRef);
 
+  const userProfileRef = useMemoFirebase(() => {
+    if (!userAccount) return null;
+    return doc(firestore, 'userProfiles', userAccount.profileId);
+  }, [userAccount]);
+  
   const { data: userProfile } = useDoc(userProfileRef);
+
+  const recentQuizzesQuery = useMemoFirebase(() => {
+      if (!userAccount) return null;
+      return query(collection(firestore, 'userProfiles', userAccount.profileId, 'quizAttempts'), orderBy('completedAt', 'desc'), limit(2));
+  }, [firestore, userAccount]);
+
   const { data: recentQuizzes } = useCollection(recentQuizzesQuery);
 
   useEffect(() => {
