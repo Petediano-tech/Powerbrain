@@ -86,7 +86,7 @@ export default function SignUpPage() {
           id: user.uid,
           name: name,
           averageScore: 0,
-          profilePicture: user.photoURL || null,
+          profilePicture: null,
       });
       
       await batch.commit();

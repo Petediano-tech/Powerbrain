@@ -164,11 +164,11 @@
       },
       "description": "Stores user profile details. Uses document id for security (profileId field from UserAccount). Includes user's personal information like first name, last name, date of birth, profile picture, grade level, and school ID."
     },
-    "leaderboard/{userId}": {
+    "/leaderboard/{userId}": {
       "schema": {
         "$ref": "#/entities/LeaderboardEntry"
       },
-      "description": "Stores public, denormalized data for the leaderboard. This collection is publicly readable for the leaderboard feature but write access is restricted."
+      "description": "Publicly readable collection for leaderboard data. Write access is restricted."
     }
   }
 }
