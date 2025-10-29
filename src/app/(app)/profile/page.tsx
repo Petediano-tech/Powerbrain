@@ -11,19 +11,19 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { BookOpenCheck, PencilRuler, CalendarDays, Clock } from "lucide-react";
 import { AIInsights } from "@/components/ai-insights";
 import { ProgressChart } from "@/components/progress-chart";
-import { useUser } from "@/firebase";
-
-const studentData = {
-  class: "Form 3",
-  studyStreaks: 5,
-  totalTimeStudied: 1240, // in minutes
-  quizzesCompleted: 23,
-  topicsMastered: 15,
-  badges: ["Scholar", "Quiz Master", "Creative Thinker", "Science Champion"],
-};
+import { useUser, useDoc, useMemoFirebase } from "@/firebase";
+import { doc, getFirestore } from "firebase/firestore";
 
 export default function ProfilePage() {
   const { user } = useUser();
+  const firestore = getFirestore();
+
+  const userProfileRef = useMemoFirebase(() => {
+    if (!user) return null;
+    return doc(firestore, 'userProfiles', user.uid);
+  }, [firestore, user]);
+
+  const { data: studentData } = useDoc(userProfileRef);
   
   const getInitials = (name: string) => {
     return name.split(' ').map(n => n[0]).join('').toUpperCase();
@@ -31,6 +31,14 @@ export default function ProfilePage() {
 
   const displayName = user?.displayName || "User";
   const userAvatarUrl = user?.photoURL;
+  const profileData = studentData || {
+    gradeLevel: 'Form 1',
+    studyStreaks: 0,
+    totalTimeStudied: 0,
+    quizzesCompleted: 0,
+    topicsMastered: 0,
+    badges: [],
+  };
 
   return (
     <div className="space-y-6">
@@ -41,10 +49,10 @@ export default function ProfilePage() {
             <AvatarFallback className="text-3xl">{getInitials(displayName)}</AvatarFallback>
           </Avatar>
           <CardTitle className="text-3xl">{displayName}</CardTitle>
-          <CardDescription>{studentData.class}</CardDescription>
+          <CardDescription>{profileData.gradeLevel}</CardDescription>
         </CardHeader>
         <CardContent className="flex flex-wrap justify-center gap-2">
-          {studentData.badges.map((badge) => (
+          {profileData.badges.map((badge) => (
             <Badge key={badge} variant="secondary" className="text-sm py-1 px-3 bg-accent/20 text-accent-foreground border-accent/30">{badge}</Badge>
           ))}
         </CardContent>
@@ -57,7 +65,7 @@ export default function ProfilePage() {
             <CalendarDays className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{studentData.studyStreaks} days</div>
+            <div className="text-2xl font-bold">{profileData.studyStreaks} days</div>
             <p className="text-xs text-muted-foreground">Active learning streak</p>
           </CardContent>
         </Card>
@@ -67,7 +75,7 @@ export default function ProfilePage() {
             <Clock className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{(studentData.totalTimeStudied / 60).toFixed(1)} hrs</div>
+            <div className="text-2xl font-bold">{(profileData.totalTimeStudied / 60).toFixed(1)} hrs</div>
             <p className="text-xs text-muted-foreground">Total time this month</p>
           </CardContent>
         </Card>
@@ -77,7 +85,7 @@ export default function ProfilePage() {
             <PencilRuler className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{studentData.quizzesCompleted}</div>
+            <div className="text-2xl font-bold">{profileData.quizzesCompleted}</div>
             <p className="text-xs text-muted-foreground">Across all subjects</p>
           </CardContent>
         </Card>
@@ -87,7 +95,7 @@ export default function ProfilePage() {
             <BookOpenCheck className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{studentData.topicsMastered}</div>
+            <div className="text-2xl font-bold">{profileData.topicsMastered}</div>
             <p className="text-xs text-muted-foreground">Knowledge is power</p>
           </CardContent>
         </Card>

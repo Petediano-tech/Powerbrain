@@ -12,32 +12,45 @@ import { Button } from "@/components/ui/button";
 import { BrainCircuit, Lightbulb, ShieldAlert, Sparkles, Target } from "lucide-react";
 import { getStudyInsights, StudyInsightsOutput } from "@/ai/flows/ai-study-insights";
 import { Skeleton } from "./ui/skeleton";
-
-// Mock student data to be sent to the AI
-const mockStudentAnalysisData = {
-  studyStreaks: 5,
-  totalTimeStudied: 1240,
-  quizzesCompleted: 23,
-  topicsMastered: 15,
-  performanceInMath: 88,
-  performanceInEnglish: 92,
-  performanceInScience: 75,
-  performanceInHistory: 81,
-  performanceInChichewa: 85,
-  recentMathScores: [85, 90, 88],
-  recentEnglishScores: [92, 95, 90],
-  favouriteSubject: "Mathematics",
-};
+import { useUser, useDoc, useMemoFirebase } from "@/firebase";
+import { doc, getFirestore } from "firebase/firestore";
 
 export function AIInsights() {
   const [insights, setInsights] = useState<StudyInsightsOutput | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const { user } = useUser();
+  const firestore = getFirestore();
+
+  const userProfileRef = useMemoFirebase(() => {
+    if (!user) return null;
+    return doc(firestore, 'userProfiles', user.uid);
+  }, [firestore, user]);
+
+  const { data: userProfile } = useDoc(userProfileRef);
 
   const handleGetInsights = async () => {
+    if (!userProfile) return;
+
     setIsLoading(true);
-    setInsights(null); // Clear previous insights
+    setInsights(null); 
+    
+    const insightData = {
+        studyStreaks: userProfile.studyStreaks || 0,
+        totalTimeStudied: userProfile.totalTimeStudied || 0,
+        quizzesCompleted: userProfile.quizzesCompleted || 0,
+        topicsMastered: userProfile.topicsMastered || 0,
+        performanceInMath: userProfile.performanceInMath || 70, // Default if not present
+        performanceInEnglish: userProfile.performanceInEnglish || 70,
+        performanceInScience: userProfile.performanceInScience || 70,
+        performanceInHistory: userProfile.performanceInHistory || 70,
+        performanceInChichewa: userProfile.performanceInChichewa || 70,
+        recentMathScores: userProfile.recentMathScores || [],
+        recentEnglishScores: userProfile.recentEnglishScores || [],
+        favouriteSubject: userProfile.favouriteSubject || "Not specified",
+    };
+
     try {
-      const result = await getStudyInsights(mockStudentAnalysisData);
+      const result = await getStudyInsights(insightData);
       setInsights(result);
     } catch (error) {
       console.error("Failed to get AI insights:", error);
@@ -99,7 +112,7 @@ export function AIInsights() {
         )}
       </CardContent>
       <CardFooter>
-        <Button onClick={handleGetInsights} disabled={isLoading} className="w-full bg-sky-blue hover:bg-sky-blue/90 text-background">
+        <Button onClick={handleGetInsights} disabled={isLoading || !userProfile} className="w-full bg-sky-blue hover:bg-sky-blue/90 text-background">
           {isLoading ? "Generating..." : "Generate My Insights"}
         </Button>
       </CardFooter>

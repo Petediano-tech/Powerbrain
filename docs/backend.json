@@ -77,13 +77,39 @@
         "schoolId": {
           "type": "string",
           "description": "Reference to School. (Relationship: UserProfile 1:N School)"
+        },
+        "studyStreaks": {
+          "type": "number",
+          "description": "Number of consecutive days the user has studied."
+        },
+        "totalTimeStudied": {
+          "type": "number",
+          "description": "Total time in minutes the user has studied."
+        },
+        "quizzesCompleted": {
+          "type": "number",
+          "description": "Total number of quizzes the user has completed."
+        },
+        "topicsMastered": {
+          "type": "number",
+          "description": "Total number of topics the user has mastered."
+        },
+        "badges": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "A list of badges the user has earned."
+        },
+        "averageScore": {
+          "type": "number",
+          "description": "The user's average score across all quizzes."
         }
       },
       "required": [
         "id",
         "firstName",
         "lastName",
-        "dateOfBirth",
         "gradeLevel"
       ]
     }

@@ -10,8 +10,9 @@ import {
 } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { useAuth } from '@/firebase';
+import { useAuth, useFirestore } from '@/firebase';
 import { AuthError, createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
+import { doc, setDoc } from 'firebase/firestore';
 import Link from 'next/link';
 import { useState } from 'react';
 import { useToast } from '@/hooks/use-toast';
@@ -27,6 +28,7 @@ export default function SignUpPage() {
   const [error, setError] = useState<string | null>(null);
   
   const auth = useAuth();
+  const firestore = useFirestore();
   const { toast } = useToast();
   const router = useRouter();
 
@@ -44,7 +46,25 @@ export default function SignUpPage() {
     
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-      await updateProfile(userCredential.user, { displayName: name });
+      const user = userCredential.user;
+      await updateProfile(user, { displayName: name });
+
+      // Create a user profile document in Firestore
+      const userProfileRef = doc(firestore, "userProfiles", user.uid);
+      await setDoc(userProfileRef, {
+          id: user.uid,
+          firstName: name.split(' ')[0] || '',
+          lastName: name.split(' ').slice(1).join(' ') || '',
+          email: user.email,
+          registrationDate: new Date().toISOString(),
+          gradeLevel: "Form 1",
+          studyStreaks: 0,
+          totalTimeStudied: 0,
+          quizzesCompleted: 0,
+          topicsMastered: 0,
+          badges: [],
+          averageScore: 0,
+      });
       
       toast({
         title: 'Account created successfully!',

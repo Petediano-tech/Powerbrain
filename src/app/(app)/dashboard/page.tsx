@@ -10,8 +10,9 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { BookCopy, FileText, PencilRuler, School, MoveRight } from "lucide-react";
 import Link from 'next/link';
-import { useUser } from "@/firebase";
+import { useUser, useDoc, useMemoFirebase } from "@/firebase";
 import { useEffect, useState } from "react";
+import { doc, getFirestore } from "firebase/firestore";
 
 const motivationalQuotes = [
   "The future belongs to those who believe in the beauty of their dreams. - Eleanor Roosevelt",
@@ -31,6 +32,14 @@ const quickAccess = [
 export default function DashboardPage() {
   const { user } = useUser();
   const [quote, setQuote] = useState('');
+  const firestore = getFirestore();
+
+  const userProfileRef = useMemoFirebase(() => {
+    if (!user) return null;
+    return doc(firestore, 'userProfiles', user.uid);
+  }, [firestore, user]);
+
+  const { data: userProfile } = useDoc(userProfileRef);
 
   useEffect(() => {
     setQuote(motivationalQuotes[Math.floor(Math.random() * motivationalQuotes.length)]);
@@ -39,9 +48,9 @@ export default function DashboardPage() {
   const userDetails = {
     name: user?.displayName?.split(' ')[0] || 'Learner',
     moodEmoji: '👋',
-    classLevel: 'Form 3',
+    classLevel: userProfile?.gradeLevel || 'Form 3',
   };
-  const studyScore = 78;
+  const studyScore = userProfile?.averageScore || 0;
 
   return (
     <div className="flex flex-col gap-6">
