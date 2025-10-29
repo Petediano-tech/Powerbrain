@@ -6,7 +6,7 @@ import Link from "next/link";
 import { capitalize } from "@/lib/utils";
 import { Progress } from "@/components/ui/progress";
 
-const chaptersData: { [key: string]: { id: string; title: string; description: string; isLocked?: boolean; progress?: number; }[] } = {
+export const chaptersData: { [key: string]: { id: string; title: string; description: string; isLocked?: boolean; progress?: number; }[] } = {
   mathematics: [
     { id: "algebra-basics", title: "Chapter 1: Algebra Basics", description: "Introduction to variables, equations, and expressions.", progress: 100 },
     { id: "geometry-intro", title: "Chapter 2: Introduction to Geometry", description: "Learn about shapes, lines, and angles.", progress: 45 },
@@ -15,7 +15,8 @@ const chaptersData: { [key: string]: { id: string; title: string; description: s
   ],
   english: [
     { id: "grammar-tenses", title: "Chapter 1: Tenses and Grammar", description: "Master past, present, and future tenses.", progress: 80 },
-    { id: "comprehension-skills", title: "Chapter 2: Comprehension Skills", description: "Improve your reading and understanding.", isLocked: true },
+    { id: "comprehension-skills", title: "Chapter 2: Comprehension Skills", description: "Improve your reading and understanding.", progress: 20 },
+    { id: "essay-writing", title: "Chapter 3: Essay Writing", description: "Learn to write compelling essays.", isLocked: true },
   ],
 };
 
