@@ -23,21 +23,25 @@ export default function DocumentReaderPage() {
     }
   };
 
-  // Create or revoke the object URL whenever the selected file changes.
   useEffect(() => {
+    // If there's a selected file, create a URL for it.
     if (selectedFile) {
       const url = URL.createObjectURL(selectedFile);
       setFileUrl(url);
 
-      // This is the cleanup function that will be called when the component unmounts
-      // or when the `selectedFile` dependency changes.
+      // Return a cleanup function.
+      // This function will be called when the component unmounts
+      // or when the `selectedFile` dependency changes (i.e., a new file is chosen).
       return () => {
         URL.revokeObjectURL(url);
-        setFileUrl(null);
+        // We don't nullify fileUrl here to avoid a flicker.
+        // It will be updated by the next run of the effect if a new file is selected.
       };
+    } else {
+      // If no file is selected, ensure the URL is null.
+      setFileUrl(null);
     }
-    // If there's no selected file, do nothing. The URL is already null or will be cleaned up.
-  }, [selectedFile]);
+  }, [selectedFile]); // This effect depends only on the selected file.
 
   return (
     <div className="container mx-auto p-4 space-y-6 flex flex-col h-full">
