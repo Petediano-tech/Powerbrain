@@ -1,12 +1,18 @@
+
+'use client';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Slider } from "@/components/ui/slider";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
+import { ChevronRight, FileText, Info, ShieldCheck, Trash2, Users, Download, Phone } from "lucide-react";
+import { Separator } from "@/components/ui/separator";
 
 export default function SettingsPage() {
   return (
-    <div className="space-y-8 max-w-2xl mx-auto">
+    <div className="space-y-8 max-w-2xl mx-auto pb-8">
       <div>
         <h2 className="text-2xl font-bold">Settings</h2>
         <p className="text-muted-foreground">Personalize your Power Brain experience.</p>
@@ -19,9 +25,11 @@ export default function SettingsPage() {
         </CardHeader>
         <CardContent className="space-y-6">
           <div className="flex items-center justify-between">
-            <Label htmlFor="dark-mode">Dark Mode</Label>
-            <Switch id="dark-mode" defaultChecked disabled />
-            {/* Note: In a real app, this would be tied to a theme provider state */}
+            <Label htmlFor="dark-mode" className="flex flex-col gap-1">
+              <span>Dark Mode</span>
+              <span className="text-xs font-normal text-muted-foreground">Coming soon!</span>
+            </Label>
+            <Switch id="dark-mode" disabled />
           </div>
           <div className="flex items-center justify-between">
             <Label htmlFor="language">Language</Label>
@@ -35,10 +43,26 @@ export default function SettingsPage() {
               </SelectContent>
             </Select>
           </div>
-          <div className="space-y-3">
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Accessibility</CardTitle>
+           <CardDescription>Make the app easier to use.</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-6">
+           <div className="space-y-3">
             <Label htmlFor="font-size">Font Size</Label>
             <Slider id="font-size" defaultValue={[16]} max={24} min={12} step={1} />
             <p className="text-center text-sm text-muted-foreground">Adjust for readability</p>
+          </div>
+          <div className="flex items-center justify-between">
+             <Label htmlFor="high-contrast" className="flex flex-col gap-1">
+                <span>High Contrast Mode</span>
+                <span className="text-xs font-normal text-muted-foreground">Coming soon!</span>
+             </Label>
+            <Switch id="high-contrast" disabled />
           </div>
         </CardContent>
       </Card>
@@ -57,24 +81,67 @@ export default function SettingsPage() {
             <Label htmlFor="quiz-reminders">Upcoming Quiz Reminders</Label>
             <Switch id="quiz-reminders" defaultChecked />
           </div>
-          <div className="flex items-center justify-between">
-            <Label htmlFor="missed-lessons">Missed Lesson Summaries</Label>
-            <Switch id="missed-lessons" />
-          </div>
         </CardContent>
       </Card>
 
       <Card>
         <CardHeader>
-          <CardTitle>Account</CardTitle>
+          <CardTitle>Data & Privacy</CardTitle>
           <CardDescription>Manage your account security and data.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          <p className="text-sm">Logged in as <span className="font-semibold text-primary">peter.phiri@example.com</span></p>
-           <div className="flex items-center justify-between">
-            <Label htmlFor="data-backup">Auto-backup to Google Drive</Label>
-            <Switch id="data-backup" />
-          </div>
+          <Button variant="outline" className="w-full justify-start gap-2 text-left">
+            <Download className="h-4 w-4" />
+            Export My Data
+          </Button>
+          <Button variant="destructive" className="w-full justify-start gap-2 text-left">
+            <Trash2 className="h-4 w-4" />
+            Delete My Account
+          </Button>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>About & Legal</CardTitle>
+          <CardDescription>Information about the app and legal documents.</CardDescription>
+        </CardHeader>
+        <CardContent className="divide-y">
+            <Link href="/about" className="flex items-center justify-between p-3 -m-3 hover:bg-muted/50 rounded-lg transition-colors">
+                <div className="flex items-center gap-3">
+                    <Info />
+                    <span>About Power Brain</span>
+                </div>
+                <ChevronRight className="h-5 w-5 text-muted-foreground" />
+            </Link>
+            <Link href="/terms" className="flex items-center justify-between p-3 -m-3 hover:bg-muted/50 rounded-lg transition-colors">
+                <div className="flex items-center gap-3">
+                    <FileText />
+                    <span>Terms of Service</span>
+                </div>
+                <ChevronRight className="h-5 w-5 text-muted-foreground" />
+            </Link>
+             <Link href="/privacy" className="flex items-center justify-between p-3 -m-3 hover:bg-muted/50 rounded-lg transition-colors">
+                <div className="flex items-center gap-3">
+                    <ShieldCheck />
+                    <span>Privacy Policy</span>
+                </div>
+                <ChevronRight className="h-5 w-5 text-muted-foreground" />
+            </Link>
+             <Link href="/contact" className="flex items-center justify-between p-3 -m-3 hover:bg-muted/50 rounded-lg transition-colors">
+                <div className="flex items-center gap-3">
+                    <Phone />
+                    <span>Contact Us</span>
+                </div>
+                <ChevronRight className="h-5 w-5 text-muted-foreground" />
+            </Link>
+            <Link href="/developers" className="flex items-center justify-between p-3 -m-3 hover:bg-muted/50 rounded-lg transition-colors">
+                <div className="flex items-center gap-3">
+                    <Users />
+                    <span>Developers</span>
+                </div>
+                <ChevronRight className="h-5 w-5 text-muted-foreground" />
+            </Link>
         </CardContent>
       </Card>
     </div>

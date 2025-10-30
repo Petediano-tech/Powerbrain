@@ -12,6 +12,7 @@ import {
   User,
   Settings,
   Layers,
+  Info,
 } from 'lucide-react';
 import {
   SidebarMenu,
@@ -32,6 +33,7 @@ const navItems = [
 const bottomNavItems = [
     { href: '/profile', label: 'My Profile', icon: User },
     { href: '/settings', label: 'Settings', icon: Settings },
+    { href: '/about', label: 'About', icon: Info },
 ];
 
 export function SidebarNav() {
