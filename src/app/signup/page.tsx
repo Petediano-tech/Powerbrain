@@ -1,3 +1,4 @@
+
 'use client';
 import { Button } from '@/components/ui/button';
 import {
@@ -67,6 +68,9 @@ export default function SignUpPage() {
           topicsMastered: 0,
           badges: [],
           averageScore: 0,
+          subscriptionTier: "free",
+          dailyChatCount: 0,
+          lastChatDate: new Date().toISOString().split('T')[0],
       });
 
       // 2. Create UserAccount to link auth UID to profileId

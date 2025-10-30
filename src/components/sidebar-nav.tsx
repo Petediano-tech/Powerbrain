@@ -1,3 +1,4 @@
+
 'use client';
 
 import Link from 'next/link';
@@ -13,6 +14,7 @@ import {
   Settings,
   Layers,
   Info,
+  Crown,
 } from 'lucide-react';
 import {
   SidebarMenu,
@@ -32,6 +34,7 @@ const navItems = [
 
 const bottomNavItems = [
     { href: '/profile', label: 'My Profile', icon: User },
+    { href: '/subscribe', label: 'VIP Plans', icon: Crown },
     { href: '/settings', label: 'Settings', icon: Settings },
     { href: '/about', label: 'About', icon: Info },
 ];

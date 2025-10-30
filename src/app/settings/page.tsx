@@ -7,7 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Slider } from "@/components/ui/slider";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { ChevronRight, FileText, Info, ShieldCheck, Trash2, Users, Download, Phone } from "lucide-react";
+import { ChevronRight, FileText, Info, ShieldCheck, Trash2, Users, Download, Phone, Crown } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 
 export default function SettingsPage() {
@@ -17,6 +17,27 @@ export default function SettingsPage() {
         <h2 className="text-2xl font-bold">Settings</h2>
         <p className="text-muted-foreground">Personalize your Power Brain experience.</p>
       </div>
+      
+      <Card>
+        <CardHeader>
+          <CardTitle>Subscription</CardTitle>
+          <CardDescription>Upgrade your plan to unlock more features.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="flex items-center justify-between p-4 bg-primary/10 rounded-lg">
+            <div>
+              <h4 className="font-semibold">You are on the Free Plan</h4>
+              <p className="text-sm text-muted-foreground">Limited AI chat and features.</p>
+            </div>
+            <Button asChild>
+              <Link href="/subscribe">
+                <Crown className="mr-2 h-4 w-4" />
+                Upgrade
+              </Link>
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
 
       <Card>
         <CardHeader>
