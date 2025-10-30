@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { BookCopy, FileText, PencilRuler, School, MoveRight, Layers, Bot } from "lucide-react";
+import { BookCopy, FileText, PencilRuler, School, Bot, Layers } from "lucide-react";
 import Link from 'next/link';
 import { useUser, useDoc, useMemoFirebase } from "@/firebase";
 import { useEffect, useState } from "react";

@@ -296,5 +296,4 @@ export default function QuizPage() {
     </Card>
   );
 }
-
     
