@@ -1,3 +1,4 @@
+
 'use client';
 import {
   Card,
@@ -69,21 +70,16 @@ export default function DashboardPage() {
     setFact(didYouKnowFacts[Math.floor(Math.random() * didYouKnowFacts.length)]);
   }, []);
 
-  const userDetails = {
-    name: user?.displayName?.split(' ')[0] || 'Learner',
-    moodEmoji: '👋',
-    classLevel: userProfile?.gradeLevel || 'Form 3',
-  };
   const studyScore = userProfile?.averageScore || 0;
 
   return (
     <div className="flex flex-col gap-6">
       <div className="flex flex-col gap-2">
         <h1 className="text-3xl font-bold tracking-tight">
-          {userDetails.moodEmoji} Hello {userDetails.name}!
+          Welcome to Power Brain
         </h1>
         <p className="text-muted-foreground">
-          Ready to supercharge your brain today? You are in {userDetails.classLevel}.
+          Your journey to smarter learning starts now.
         </p>
       </div>
 
