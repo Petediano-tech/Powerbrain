@@ -9,10 +9,10 @@ import { useToast } from "@/hooks/use-toast";
 import { Separator } from "@/components/ui/separator";
 
 const plans = [
-    { name: "VIP 1", price: "K1,000", features: ["15 AI Questions/Day", "Basic Support"], monthly: true },
-    { name: "VIP 2", price: "K2,000", features: ["30 AI Questions/Day", "Priority Support"], monthly: true },
-    { name: "VIP 3", price: "K3,000", features: ["50 AI Questions/Day", "Priority Support"], monthly: true },
-    { name: "VIP 4", price: "K5,000", features: ["100 AI Questions/Day", "24/7 Support"], monthly: true },
+    { name: "Spark Plan", price: "K1,000", features: ["15 AI Questions/Day", "Basic Support"], monthly: true },
+    { name: "Ignite Plan", price: "K2,000", features: ["30 AI Questions/Day", "Priority Support"], monthly: true },
+    { name: "Blaze Plan", price: "K3,000", features: ["50 AI Questions/Day", "Priority Support"], monthly: true },
+    { name: "Quantum Plan", price: "K5,000", features: ["100 AI Questions/Day", "24/7 Support"], monthly: true },
 ];
 
 const powerPlan = {
@@ -107,7 +107,7 @@ export default function SubscribePage() {
                            Enter the phone number: <strong className="text-primary font-mono">+265987066051</strong>.
                         </li>
                          <li>
-                           Enter the exact amount for your chosen plan (e.g., 1000 for VIP 1).
+                           Enter the exact amount for your chosen plan (e.g., 1000 for Spark Plan).
                         </li>
                         <li>
                             Confirm the transaction with your PIN. You will receive an SMS confirmation from Airtel.
