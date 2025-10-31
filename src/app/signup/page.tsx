@@ -107,9 +107,9 @@ export default function SignUpPage() {
 
   return (
     <div className="w-full h-screen lg:grid lg:min-h-[600px] lg:grid-cols-2 xl:min-h-[800px]">
-       <div className="hidden bg-gradient-to-br from-primary to-primary/70 lg:flex flex-col items-center justify-center p-10 text-primary-foreground">
+       <div className="hidden bg-gradient-to-br from-[#7F00FF] to-[#E100FF] lg:flex flex-col items-center justify-center p-10 text-white">
         <div className="text-center space-y-4">
-          <div className="flex justify-center">
+          <div className="flex justify-center p-4 bg-white/20 rounded-full w-fit mx-auto backdrop-blur-sm">
             <Logo />
           </div>
           <h1 className="text-4xl font-bold">Power Brain</h1>
