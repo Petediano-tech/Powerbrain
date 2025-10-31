@@ -98,7 +98,7 @@ export default function LoginPage() {
         </div>
       </div>
       <div className="flex items-center justify-center py-12">
-        <Card className="w-full max-w-sm border-0 shadow-none sm:border sm:shadow-sm">
+        <Card className="w-full max-w-sm border-0 shadow-none sm:border sm:shadow-sm bg-card">
           <CardHeader className="text-center">
             <CardTitle className="text-2xl pt-4">Welcome Back!</CardTitle>
             <CardDescription>
@@ -140,7 +140,7 @@ export default function LoginPage() {
                 <span className="w-full border-t" />
               </div>
               <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-background px-2 text-muted-foreground">
+                <span className="bg-card px-2 text-muted-foreground">
                   Or continue with
                 </span>
               </div>

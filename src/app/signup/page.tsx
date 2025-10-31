@@ -119,7 +119,7 @@ export default function SignUpPage() {
         </div>
       </div>
        <div className="flex items-center justify-center py-12">
-          <Card className="w-full max-w-sm border-0 shadow-none sm:border sm:shadow-sm">
+          <Card className="w-full max-w-sm border-0 shadow-none sm:border sm:shadow-sm bg-card">
             <CardHeader className="text-center">
               <CardTitle className="text-2xl pt-4">Create an Account</CardTitle>
               <CardDescription>
