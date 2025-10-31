@@ -24,11 +24,10 @@ import {
 } from '@/components/ui/sidebar';
 
 const navItems = [
-  { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
+  { href: '/dashboard', label: 'Home', icon: LayoutDashboard },
   { href: '/subjects', label: 'Subjects', icon: BookCopy },
   { href: '/quizzes', label: 'Quizzes', icon: PencilRuler },
   { href: '/tutor', label: 'Brainy', icon: Bot },
-  { href: '/flashcards', label: 'Flashcards', icon: Layers },
   { href: '/teacher', label: "Teacher's Corner", icon: School },
 ];
 

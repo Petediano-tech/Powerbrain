@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { BookCopy, FileText, PencilRuler, School, Bot, Layers } from "lucide-react";
+import { BookCopy, FileText, PencilRuler, School, Bot } from "lucide-react";
 import Link from 'next/link';
 import { useUser, useDoc, useMemoFirebase } from "@/firebase";
 import { useEffect, useState } from "react";
@@ -35,7 +35,6 @@ const didYouKnowFacts = [
 const quickAccess = [
     { name: 'Start Learning', description: 'Browse subjects and chapters.', href: '/subjects', icon: BookCopy },
     { name: 'Take a Quiz', description: 'Test your knowledge.', href: '/quizzes', icon: PencilRuler },
-    { name: 'Practice Flashcards', description: 'Memorize key concepts.', href: '/flashcards', icon: Layers },
     { name: 'Talk to Brainy', description: 'Your AI-powered tutor.', href: '/tutor', icon: Bot }
 ];
 
