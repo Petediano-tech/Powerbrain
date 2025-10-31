@@ -6,6 +6,7 @@ import { CheckCircle, Crown, Star } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { useToast } from "@/hooks/use-toast";
+import { Separator } from "@/components/ui/separator";
 
 const plans = [
     { name: "VIP 1", price: "K1,000", features: ["15 AI Questions/Day", "Basic Support"], monthly: true },
