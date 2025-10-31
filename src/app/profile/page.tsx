@@ -17,9 +17,10 @@ import { doc, getFirestore } from "firebase/firestore";
 import { useUserStore } from "@/hooks/use-user-store";
 import { useMemo } from "react";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function ProfilePage() {
-  const { user } = useUser();
+  const { user, isUserLoading } = useUser();
   const firestore = getFirestore();
   const { profileId } = useUserStore();
 
@@ -28,7 +29,7 @@ export default function ProfilePage() {
     return doc(firestore, 'userProfiles', profileId);
   }, [firestore, profileId]);
 
-  const { data: studentData } = useDoc(userProfileRef);
+  const { data: studentData, isLoading: isProfileLoading } = useDoc(userProfileRef);
   
   const getInitials = (name: string) => {
     if (!name) return 'U';
@@ -46,10 +47,11 @@ export default function ProfilePage() {
   }, [user]);
 
   const displayName = useMemo(() => {
-    if (user?.displayName) return user.displayName;
     if (studentData) {
-      return `${studentData.firstName} ${studentData.lastName}`.trim();
+      const name = `${studentData.firstName} ${studentData.lastName}`.trim();
+      if(name) return name;
     }
+    if (user?.displayName) return user.displayName;
     return "Learner";
   }, [user, studentData]);
 
@@ -61,6 +63,39 @@ export default function ProfilePage() {
     topicsMastered: 0,
     badges: [],
   };
+
+  const isLoading = isUserLoading || isProfileLoading;
+
+  if (isLoading) {
+    return (
+        <div className="space-y-6">
+        <Card>
+            <CardHeader className="flex flex-col items-center text-center">
+                <Skeleton className="h-24 w-24 rounded-full mb-4" />
+                <Skeleton className="h-8 w-40" />
+                <Skeleton className="h-5 w-20" />
+            </CardHeader>
+            <CardContent className="flex flex-wrap justify-center gap-2">
+                <Skeleton className="h-8 w-24" />
+                <Skeleton className="h-8 w-24" />
+            </CardContent>
+        </Card>
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+            {[...Array(4)].map((_, i) => (
+                <Card key={i}>
+                    <CardHeader className="pb-2">
+                        <Skeleton className="h-4 w-2/3" />
+                    </CardHeader>
+                    <CardContent>
+                        <Skeleton className="h-7 w-1/3" />
+                        <Skeleton className="h-3 w-1/2 mt-2" />
+                    </CardContent>
+                </Card>
+            ))}
+        </div>
+        </div>
+    )
+  }
 
   return (
     <div className="space-y-6">
@@ -77,6 +112,7 @@ export default function ProfilePage() {
           {(profileData.badges || []).map((badge: string) => (
             <Badge key={badge} variant="secondary" className="text-sm py-1 px-3 bg-accent/20 text-accent-foreground border-accent/30">{badge}</Badge>
           ))}
+           {profileData.badges?.length === 0 && <p className="text-sm text-muted-foreground">No badges earned yet. Keep learning!</p>}
         </CardContent>
       </Card>
       
