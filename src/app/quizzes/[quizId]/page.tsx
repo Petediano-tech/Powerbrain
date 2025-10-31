@@ -11,61 +11,17 @@ import { CheckCircle, XCircle, ChevronLeft, Award } from "lucide-react";
 import Link from "next/link";
 import Confetti from 'react-confetti';
 import { cn } from "@/lib/utils";
-import { useFirestore } from "@/firebase";
-import { doc, runTransaction, increment } from "firebase/firestore";
+import { useFirestore, useDoc, useCollection, useMemoFirebase } from "@/firebase";
+import { doc, runTransaction, increment, collection } from "firebase/firestore";
 import { useToast } from "@/hooks/use-toast";
 import { useParams } from "next/navigation";
 import { useUserStore } from "@/hooks/use-user-store";
-
-type Question = {
-  question: string;
-  options: string[];
-  answer: string;
-  explanation: string;
-};
-
-const quizData: { [key: string]: { title: string; questions: Question[] } } = {
-  "english-prepositions": {
-    title: "English Prepositions",
-    questions: [
-      {
-        question: "You must abide ______ the school rules.",
-        options: ["by", "in", "from", "with"],
-        answer: "by",
-        explanation: "The verb 'abide' is followed by the preposition 'by' when it means to accept or act in accordance with a rule or decision.",
-      },
-      {
-        question: "He was completely absorbed ______ his book.",
-        options: ["by", "in", "from", "with"],
-        answer: "in",
-        explanation: "The phrase 'absorbed in' means to be fully engrossed or occupied with something.",
-      },
-      {
-        question: "She decided to abstain ______ eating sugar.",
-        options: ["by", "in", "from", "with"],
-        answer: "from",
-        explanation: "The verb 'abstain' is followed by 'from' to indicate refraining from doing something.",
-      },
-       {
-        question: "The man was accused ______ theft.",
-        options: ["of", "to", "with", "by"],
-        answer: "of",
-        explanation: "When accusing someone of a crime, the preposition 'of' is used.",
-      },
-       {
-        question: "She is accustomed ______ the hot weather.",
-        options: ["with", "by", "to", "for"],
-        answer: "to",
-        explanation: "The phrase 'accustomed to' means to be used to something.",
-      },
-    ],
-  },
-};
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function QuizPage() {
   const params = useParams();
   const quizId = params.quizId as string;
-  const quiz = quizData[quizId];
+  
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedAnswers, setSelectedAnswers] = useState<{[key: number]: string}>({});
   const [showResults, setShowResults] = useState(false);
@@ -76,8 +32,16 @@ export default function QuizPage() {
   const firestore = useFirestore();
   const { toast } = useToast();
 
+  const quizRef = useMemoFirebase(() => doc(firestore, 'quizzes', quizId), [firestore, quizId]);
+  const { data: quiz, isLoading: isLoadingQuiz } = useDoc(quizRef);
+
+  const questionsRef = useMemoFirebase(() => collection(firestore, 'quizzes', quizId, 'questions'), [firestore, quizId]);
+  const { data: questions, isLoading: isLoadingQuestions } = useCollection(questionsRef);
+
+  const isLoading = isLoadingQuiz || isLoadingQuestions;
+
   const handleFinishQuiz = async (calculatedScore: number) => {
-    if (!profileId || isSaving) return;
+    if (!profileId || isSaving || !quiz || !questions) return;
     setIsSaving(true);
     
     const userProfileRef = doc(firestore, 'userProfiles', profileId);
@@ -99,7 +63,7 @@ export default function QuizPage() {
         transaction.update(userProfileRef, {
           quizzesCompleted: increment(1),
           averageScore: newAverageScore,
-          totalTimeStudied: increment(quiz.questions.length * 30), // Add 30s per question
+          totalTimeStudied: increment(questions.length * 30), // Add 30s per question
         });
 
         transaction.set(quizAttemptRef, {
@@ -108,7 +72,6 @@ export default function QuizPage() {
           score: calculatedScore,
           completedAt: new Date().toISOString(),
         });
-
       });
 
       setShowResults(true);
@@ -125,11 +88,35 @@ export default function QuizPage() {
     }
   };
   
-  if (!quiz) {
+  if (isLoading) {
+    return (
+        <Card className="max-w-2xl mx-auto">
+            <CardHeader>
+                <Skeleton className="h-8 w-3/4" />
+                <Skeleton className="h-4 w-1/4" />
+                <Skeleton className="h-2 w-full mt-2" />
+            </CardHeader>
+            <CardContent className="space-y-6">
+                <Skeleton className="h-6 w-full" />
+                <div className="space-y-3">
+                    <Skeleton className="h-12 w-full" />
+                    <Skeleton className="h-12 w-full" />
+                    <Skeleton className="h-12 w-full" />
+                    <Skeleton className="h-12 w-full" />
+                </div>
+            </CardContent>
+            <CardFooter>
+                <Skeleton className="h-10 w-full" />
+            </CardFooter>
+        </Card>
+    )
+  }
+
+  if (!quiz || !questions || questions.length === 0) {
     return (
         <Card className="m-auto max-w-lg text-center p-8">
             <CardTitle>Quiz Not Found</CardTitle>
-            <CardDescription>This quiz does not exist or is under construction.</CardDescription>
+            <CardDescription>This quiz does not exist or has no questions yet.</CardDescription>
             <Button asChild className="mt-4">
                 <Link href="/quizzes"><ChevronLeft className="mr-2"/> Back to Quizzes</Link>
             </Button>
@@ -137,7 +124,7 @@ export default function QuizPage() {
     )
   }
 
-  const { title, questions } = quiz;
+  const { title } = quiz;
   const currentQuestion = questions[currentQuestionIndex];
   const progress = showResults ? 100 : ((currentQuestionIndex) / questions.length) * 100;
 
@@ -160,6 +147,7 @@ export default function QuizPage() {
   };
   
   const score = useMemo(() => {
+    if (!questions) return 0;
     return questions.reduce((correctAnswers, question, index) => {
       return selectedAnswers[index] === question.answer ? correctAnswers + 1 : correctAnswers;
     }, 0);
@@ -233,7 +221,7 @@ export default function QuizPage() {
           className="space-y-3"
           disabled={isChecking}
         >
-          {currentQuestion.options.map((option) => {
+          {currentQuestion.options.map((option: string) => {
             const isSelected = selectedAnswer === option;
             let labelClass = "";
             if(isChecking && isSelected) {
@@ -296,4 +284,3 @@ export default function QuizPage() {
     </Card>
   );
 }
-    

@@ -7,41 +7,14 @@
       "type": "object",
       "description": "Represents a user account within the Power Brain application.",
       "properties": {
-        "id": {
-          "type": "string",
-          "description": "Unique identifier for the user account."
-        },
-        "email": {
-          "type": "string",
-          "description": "Email address of the user.",
-          "format": "email"
-        },
-        "username": {
-          "type": "string",
-          "description": "Username chosen by the user."
-        },
-        "registrationDate": {
-          "type": "string",
-          "description": "Date and time when the user registered.",
-          "format": "date-time"
-        },
-        "lastLogin": {
-          "type": "string",
-          "description": "Date and time of the user's last login.",
-          "format": "date-time"
-        },
-        "profileId": {
-          "type": "string",
-          "description": "Reference to UserProfile. (Relationship: UserAccount 1:1 UserProfile)"
-        }
+        "id": { "type": "string", "description": "Unique identifier for the user account." },
+        "email": { "type": "string", "description": "Email address of the user.", "format": "email" },
+        "username": { "type": "string", "description": "Username chosen by the user." },
+        "registrationDate": { "type": "string", "description": "Date and time when the user registered.", "format": "date-time" },
+        "lastLogin": { "type": "string", "description": "Date and time of the user's last login.", "format": "date-time" },
+        "profileId": { "type": "string", "description": "Reference to UserProfile. (Relationship: UserAccount 1:1 UserProfile)" }
       },
-      "required": [
-        "id",
-        "email",
-        "username",
-        "registrationDate",
-        "profileId"
-      ]
+      "required": ["id", "email", "username", "registrationDate", "profileId"]
     },
     "UserProfile": {
       "$schema": "http://json-schema.org/draft-07/schema#",
@@ -49,89 +22,27 @@
       "type": "object",
       "description": "Represents the profile information of a user.",
       "properties": {
-        "id": {
-          "type": "string",
-          "description": "Unique identifier for the user profile."
-        },
-        "firstName": {
-          "type": "string",
-          "description": "First name of the user."
-        },
-        "lastName": {
-          "type": "string",
-          "description": "Last name of the user."
-        },
-        "dateOfBirth": {
-          "type": "string",
-          "description": "Date of birth of the user.",
-          "format": "date-time"
-        },
-        "profilePicture": {
-          "type": "string",
-          "description": "URL of the user's profile picture.",
-          "format": "uri"
-        },
-        "gradeLevel": {
-          "type": "string",
-          "description": "Grade level of the user (e.g., Form 1, Std 8)."
-        },
-        "schoolId": {
-          "type": "string",
-          "description": "Reference to School. (Relationship: UserProfile 1:N School)"
-        },
-        "studyStreaks": {
-          "type": "number",
-          "description": "Number of consecutive days the user has studied."
-        },
-        "totalTimeStudied": {
-          "type": "number",
-          "description": "Total time in minutes the user has studied."
-        },
-        "quizzesCompleted": {
-          "type": "number",
-          "description": "Total number of quizzes the user has completed."
-        },
-        "topicsMastered": {
-          "type": "number",
-          "description": "Total number of topics the user has mastered."
-        },
-        "badges": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          },
-          "description": "A list of badges the user has earned."
-        },
-        "averageScore": {
-          "type": "number",
-          "description": "The user's average score across all quizzes."
-        },
-        "subscriptionTier": {
-            "type": "string",
-            "enum": ["free", "vip1", "vip2", "vip3", "vip4", "power"],
-            "description": "The user's current subscription tier."
-        },
-        "dailyChatCount": {
-            "type": "number",
-            "description": "Number of AI tutor questions asked today."
-        },
-        "lastChatDate": {
-            "type": "string",
-            "format": "date",
-            "description": "The date of the last chat interaction, in YYYY-MM-DD format."
-        }
+        "id": { "type": "string", "description": "Unique identifier for the user profile." },
+        "firstName": { "type": "string", "description": "First name of the user." },
+        "lastName": { "type": "string", "description": "Last name of the user." },
+        "dateOfBirth": { "type": "string", "description": "Date of birth of the user.", "format": "date-time" },
+        "profilePicture": { "type": "string", "description": "URL of the user's profile picture.", "format": "uri" },
+        "gradeLevel": { "type": "string", "description": "Grade level of the user (e.g., Form 1, Std 8)." },
+        "schoolId": { "type": "string", "description": "Reference to School. (Relationship: UserProfile 1:N School)" },
+        "studyStreaks": { "type": "number", "description": "Number of consecutive days the user has studied." },
+        "totalTimeStudied": { "type": "number", "description": "Total time in minutes the user has studied." },
+        "quizzesCompleted": { "type": "number", "description": "Total number of quizzes the user has completed." },
+        "topicsMastered": { "type": "number", "description": "Total number of topics the user has mastered." },
+        "badges": { "type": "array", "items": { "type": "string" }, "description": "A list of badges the user has earned." },
+        "averageScore": { "type": "number", "description": "The user's average score across all quizzes." },
+        "subscriptionTier": { "type": "string", "enum": ["free", "vip1", "vip2", "vip3", "vip4", "power"], "description": "The user's current subscription tier." },
+        "dailyChatCount": { "type": "number", "description": "Number of AI tutor questions asked today." },
+        "lastChatDate": { "type": "string", "format": "date", "description": "The date of the last chat interaction, in YYYY-MM-DD format." }
       },
-      "required": [
-        "id",
-        "firstName",
-        "lastName",
-        "gradeLevel"
-      ]
+      "required": ["id", "firstName", "lastName", "gradeLevel"]
     },
     "Note": {
-      "title": "Note",
-      "type": "object",
-      "description": "Represents a single note or document as text content.",
+      "title": "Note", "type": "object", "description": "Represents a single note or document as text content.",
       "properties": {
         "title": { "type": "string", "description": "Title of the note." },
         "subject": { "type": "string", "description": "Subject category of the note." },
@@ -142,30 +53,79 @@
         "createdAt": { "type": "string", "format": "date-time", "description": "Timestamp when the note was created." }
       },
       "required": ["title", "subject", "author", "content", "createdAt"]
+    },
+    "Subject": {
+      "title": "Subject", "type": "object", "description": "Represents a single educational subject.",
+      "properties": {
+        "id": { "type": "string", "description": "Unique identifier for the subject." },
+        "name": { "type": "string", "description": "Name of the subject." },
+        "icon": { "type": "string", "description": "Lucide icon name for the subject." }
+      },
+      "required": ["id", "name", "icon"]
+    },
+    "Chapter": {
+      "title": "Chapter", "type": "object", "description": "Represents a chapter within a subject.",
+      "properties": {
+        "id": { "type": "string", "description": "Unique identifier for the chapter." },
+        "title": { "type": "string", "description": "Title of the chapter." },
+        "description": { "type": "string", "description": "A short description of the chapter." },
+        "isLocked": { "type": "boolean", "description": "Whether the chapter requires a subscription to access." }
+      },
+      "required": ["id", "title", "description"]
+    },
+    "Quiz": {
+      "title": "Quiz", "type": "object", "description": "Represents a quiz for a particular subject.",
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string" },
+        "subject": { "type": "string" },
+        "difficulty": { "type": "string", "enum": ["Easy", "Medium", "Hard"] },
+        "questions": { "type": "number", "description": "Number of questions in the quiz." },
+        "timeLimit": { "type": "number", "description": "Time limit in minutes." }
+      },
+      "required": ["id", "title", "subject", "difficulty", "questions"]
+    },
+    "Question": {
+      "title": "Question", "type": "object", "description": "Represents a single question in a quiz.",
+      "properties": {
+        "id": { "type": "string" },
+        "question": { "type": "string" },
+        "options": { "type": "array", "items": { "type": "string" } },
+        "answer": { "type": "string" },
+        "explanation": { "type": "string" }
+      },
+      "required": ["id", "question", "options", "answer", "explanation"]
     }
   },
-  "auth": {
-    "providers": [
-      "password",
-      "google.com"
-    ]
-  },
+  "auth": { "providers": ["password", "google.com"] },
   "firestore": {
     "userAccounts/{userId}": {
-      "schema": {
-        "$ref": "#/entities/UserAccount"
-      },
-      "description": "Stores user account information. Uses path-based ownership for security. Includes standard user profile information such as email, username, registration date and last login."
+      "schema": { "$ref": "#/entities/UserAccount" },
+      "description": "Stores user account information."
     },
     "userProfiles/{profileId}": {
-      "schema": {
-        "$ref": "#/entities/UserProfile"
-      },
-      "description": "Stores user profile details. Uses document id for security (profileId field from UserAccount). Includes user's personal information like first name, last name, date of birth, profile picture, gradeLevel, and school ID."
+      "schema": { "$ref": "#/entities/UserProfile" },
+      "description": "Stores user profile details."
     },
     "notes/{noteId}": {
-        "schema": { "$ref": "#/entities/Note" },
-        "description": "Stores metadata for uploaded notes. Publicly readable so students can browse available notes, but only authenticated teachers can create new entries."
+      "schema": { "$ref": "#/entities/Note" },
+      "description": "Stores metadata for uploaded notes."
+    },
+    "subjects/{subjectId}": {
+      "schema": { "$ref": "#/entities/Subject" },
+      "description": "Stores all available subjects."
+    },
+    "subjects/{subjectId}/chapters/{chapterId}": {
+      "schema": { "$ref": "#/entities/Chapter" },
+      "description": "Stores chapters for a given subject."
+    },
+    "quizzes/{quizId}": {
+      "schema": { "$ref": "#/entities/Quiz" },
+      "description": "Stores quiz metadata."
+    },
+    "quizzes/{quizId}/questions/{questionId}": {
+      "schema": { "$ref": "#/entities/Question" },
+      "description": "Stores the questions for a specific quiz."
     }
   }
 }
