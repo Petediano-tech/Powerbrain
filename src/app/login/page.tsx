@@ -86,7 +86,7 @@ export default function LoginPage() {
 
   return (
     <div className="w-full h-screen lg:grid lg:min-h-[600px] lg:grid-cols-2 xl:min-h-[800px]">
-      <div className="hidden bg-gradient-to-br from-[#7F00FF] to-[#E100FF] lg:flex flex-col items-center justify-center p-10 text-white">
+      <div className="hidden bg-gradient-to-br from-primary to-pink-gradient lg:flex flex-col items-center justify-center p-10 text-white">
         <div className="text-center space-y-4">
           <div className="flex justify-center p-4 bg-white/20 rounded-full w-fit mx-auto backdrop-blur-sm">
             <Logo />

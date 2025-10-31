@@ -57,7 +57,8 @@ export default {
         },
         'sky-blue': {
           DEFAULT: 'hsl(var(--sky-blue))',
-        }
+        },
+        'pink-gradient': 'hsl(var(--pink-gradient))',
       },
       borderRadius: {
         lg: 'var(--radius)',

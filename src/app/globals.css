@@ -4,7 +4,7 @@
 
 @layer base {
   :root {
-    --background: 255 75% 99%; /* Ghost White #F8F8FF */
+    --background: 255 75% 99%; /* #F8F8FF Ghost White */
     --foreground: 240 6% 10%; /* #1C1C1C */
 
     --card: 255 75% 99%;
@@ -14,10 +14,10 @@
     --popover-foreground: 240 6% 10%;
 
     --primary: 270 100% 50%; /* #7F00FF */
-    --primary-foreground: 336 100% 95%; /* Lighter pink for text on primary */
+    --primary-foreground: 336 100% 95%;
 
-    --secondary: 0 0% 93%; /* Lighter Grey for secondary elements */
-    --secondary-foreground: 240 6% 10%;
+    --secondary: 240 10% 3.9%; /* #0E0E0E - For dark theme compatibility */
+    --secondary-foreground: 0 0% 98%;
 
     --muted: 0 0% 96.1%;
     --muted-foreground: 240 3.8% 46.1%;
@@ -33,36 +33,47 @@
     --ring: 270 100% 50%;
 
     --radius: 0.8rem;
+    
+    --chart-1: 270 100% 50%;
+    --chart-2: 326 100% 56%;
+    --chart-3: 165 100% 50%;
+    --chart-4: 40 96% 56%;
+    --chart-5: 210 96% 56%;
+    --sky-blue: 196 96% 56%;
+
+    --pink-gradient: 326 100% 56%;
   }
 
   .dark {
-    --background: 270 15% 8%; /* Dark Eggplant */
-    --foreground: 270 20% 90%; /* Light Lavender */
+    --background: 240 10% 3.9%; /* #0A0A0A */
+    --foreground: 0 0% 98%; /* #FAFAFA */
 
-    --card: 270 15% 10%;
-    --card-foreground: 270 20% 90%;
+    --card: 240 10% 3.9%;
+    --card-foreground: 0 0% 98%;
 
-    --popover: 270 15% 8%;
-    --popover-foreground: 270 20% 90%;
+    --popover: 240 10% 3.9%;
+    --popover-foreground: 0 0% 98%;
 
-    --primary: 270 100% 65%; /* Brighter Purple for dark mode */
+    --primary: 270 100% 65%;
     --primary-foreground: 336 100% 96%;
 
-    --secondary: 270 15% 15%; /* #0E0E0E */
-    --secondary-foreground: 270 20% 90%;
+    --secondary: 240 3.7% 15.9%; /* #27272A */
+    --secondary-foreground: 0 0% 98%;
 
-    --muted: 270 15% 15%;
-    --muted-foreground: 270 10% 65%;
+    --muted: 240 3.7% 15.9%;
+    --muted-foreground: 240 5% 64.9%;
 
-    --accent: 165 100% 55%; /* Brighter Accent */
-    --accent-foreground: 270 15% 8%;
+    --accent: 165 100% 55%;
+    --accent-foreground: 240 10% 3.9%;
 
-    --destructive: 0 72.2% 50.6%;
+    --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 98%;
 
-    --border: 270 15% 18%;
-    --input: 270 15% 18%;
+    --border: 240 3.7% 15.9%;
+    --input: 240 3.7% 15.9%;
     --ring: 270 100% 65%;
+    
+    --pink-gradient: 326 100% 56%;
   }
 }
 
