@@ -1,25 +1,46 @@
-
 'use client';
-import { SidebarProvider } from "./ui/sidebar";
-import { AppHeader } from "./app-header";
+
 import { usePathname } from "next/navigation";
+import { capitalize } from "@/lib/utils";
+import { BottomNav } from "./bottom-nav";
+
+function getPageTitle(pathname: string) {
+    if (pathname === '/home') return null; // Home page has its own header
+    if (pathname === '/tutor') return 'AI Chat';
+    if (pathname.startsWith('/subjects')) return 'Subjects';
+    if (pathname.startsWith('/quizzes')) return 'Quizzes';
+    if (pathname === '/repository') return 'Resources';
+    if (pathname === '/profile') return 'Profile';
+    if (pathname === '/dashboard') return 'Dashboard';
+    if (pathname === '/settings') return 'Settings';
+    if (pathname === '/teacher') return "Teacher's Corner";
+
+    const pageName = pathname.split('/').pop() || 'Home';
+    return capitalize(pageName.replace('-', ' '));
+}
 
 export function AppShell({ children }: { children: React.ReactNode }) {
     const pathname = usePathname();
-    const isProfilePage = pathname === '/profile';
+    const pageTitle = getPageTitle(pathname);
 
-    if (isProfilePage) {
-        return <main className="min-w-0">{children}</main>;
+    // Don't show shell on certain full-page routes
+    if (pathname === '/profile' || pathname.includes('/notes/view')) {
+         return <main className="min-w-0 flex-1">{children}</main>;
     }
 
     return (
-        <SidebarProvider>
-            <div className="flex h-svh flex-col min-w-0">
-              <AppHeader />
-              <main className="flex-1 overflow-y-auto p-4 md:p-6 lg:p-8">
+        <div className="flex flex-col min-h-screen">
+            {pageTitle && (
+                <header className="sticky top-0 z-10 flex h-16 shrink-0 items-center justify-center border-b bg-background px-4">
+                    <h1 className="text-lg font-bold">
+                        {pageTitle}
+                    </h1>
+                </header>
+            )}
+            <main className="flex-1 overflow-y-auto p-4 md:p-6 lg:p-8">
                 {children}
-              </main>
-            </div>
-        </SidebarProvider>
+            </main>
+            <BottomNav />
+        </div>
     )
 }
