@@ -89,7 +89,7 @@ export default function SignUpPage() {
         description: "Welcome to Power Brain.",
       });
 
-      router.push('/dashboard');
+      router.push('/home');
 
     } catch (error) {
        console.error(error);
@@ -111,16 +111,16 @@ export default function SignUpPage() {
             <div className="flex justify-center p-4 bg-white/20 rounded-full w-fit mx-auto backdrop-blur-sm">
                 <Logo />
             </div>
-            <h1 className="text-4xl font-bold text-white">Power Brain</h1>
+            <h1 className="text-4xl font-bold text-white">Get Started with Power Brain</h1>
             <p className="text-xl max-w-md text-white/90">
-                Empowering every learner to dream, learn, and achieve without limits.
+                Join the digital learning movement in Malawi.
             </p>
         </div>
         <Card className="w-full max-w-sm">
             <CardHeader className="text-center">
               <CardTitle className="text-2xl pt-4">Create an Account</CardTitle>
               <CardDescription>
-                Join the digital learning movement in Malawi.
+                It's free and only takes a minute.
               </CardDescription>
             </CardHeader>
             <CardContent>

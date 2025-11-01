@@ -1,0 +1,99 @@
+
+'use client';
+import { useState } from 'react';
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  type CarouselApi,
+} from '@/components/ui/carousel';
+import { Button } from '@/components/ui/button';
+import { Logo } from '@/components/logo';
+import Image from 'next/image';
+import Link from 'next/link';
+import { cn } from '@/lib/utils';
+import { PlaceHolderImages } from '@/lib/placeholder-images';
+
+const onboardingSlides = [
+  {
+    image: 'https://picsum.photos/seed/1/600/400',
+    imageHint: 'students learning',
+    title: 'Welcome to Power Brain',
+    description: 'Your Digital Partner in Malawian Education.',
+  },
+  {
+    image: 'https://picsum.photos/seed/2/600/400',
+    imageHint: 'AI tutor',
+    title: 'Learn with Brainy',
+    description: 'Your personal AI tutor, available 24/7 to help you succeed.',
+  },
+  {
+    image: 'https://picsum.photos/seed/3/600/400',
+    imageHint: 'quizzes tests',
+    title: 'Test Your Knowledge',
+    description:
+      'Take quizzes and track your progress to master any subject.',
+  },
+];
+
+export default function WelcomePage() {
+  const [api, setApi] = useState<CarouselApi>();
+  const [current, setCurrent] = useState(0);
+
+  return (
+    <div className="flex min-h-screen flex-col bg-background">
+      <header className="flex h-16 items-center justify-between px-4">
+        <Logo />
+      </header>
+
+      <main className="flex-1">
+        <Carousel setApi={setApi} className="h-full">
+          <CarouselContent>
+            {onboardingSlides.map((slide, index) => (
+              <CarouselItem key={index} className="h-full">
+                <div className="flex h-full flex-col items-center justify-center gap-8 p-4 text-center">
+                  <Image
+                    src={slide.image}
+                    alt={slide.title}
+                    width={350}
+                    height={250}
+                    data-ai-hint={slide.imageHint}
+                    className="aspect-[4/3] w-full max-w-sm rounded-lg object-cover"
+                  />
+                  <div className="space-y-2">
+                    <h1 className="text-3xl font-bold">{slide.title}</h1>
+                    <p className="text-muted-foreground">{slide.description}</p>
+                  </div>
+                </div>
+              </CarouselItem>
+            ))}
+          </CarouselContent>
+        </Carousel>
+      </main>
+
+      <footer className="p-6">
+        <div className="mb-6 flex justify-center gap-2">
+          {onboardingSlides.map((_, index) => (
+            <button
+              key={index}
+              onClick={() => api?.scrollTo(index)}
+              className={cn(
+                'h-2 w-2 rounded-full bg-primary transition-all',
+                current === index ? 'w-4 opacity-100' : 'opacity-30'
+              )}
+              aria-label={`Go to slide ${index + 1}`}
+            />
+          ))}
+        </div>
+        <div className="space-y-3">
+          <Button size="lg" className="w-full bg-[#F5A623] hover:bg-[#F5A623]/90 text-primary-foreground" asChild>
+            <Link href="/signup">Get Started</Link>
+          </Button>
+          <Button variant="ghost" className="w-full" asChild>
+            <Link href="/login">Already have an account? Log In</Link>
+          </Button>
+        </div>
+      </footer>
+    </div>
+  );
+}

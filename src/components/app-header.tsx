@@ -1,3 +1,4 @@
+
 'use client';
 import {
   Sidebar,
@@ -25,7 +26,7 @@ import { Button } from './ui/button';
 import { Settings } from 'lucide-react';
 
 function getPageTitle(pathname: string) {
-    if (pathname === '/' || pathname === '/dashboard') return 'Home';
+    if (pathname === '/home') return 'Home';
     if (pathname === '/tutor') return 'Brainy';
     const pageName = pathname.split('/').pop() || 'Home';
     return capitalize(pageName.replace('-', ' '));

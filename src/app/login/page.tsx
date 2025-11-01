@@ -44,7 +44,7 @@ export default function LoginPage() {
         title: 'Logged in successfully!',
         description: "Welcome back to Power Brain.",
       });
-      router.push('/dashboard');
+      router.push('/home');
     } catch (error) {
       console.error(error);
       const authError = error as AuthError;
@@ -69,7 +69,7 @@ export default function LoginPage() {
         title: 'Logged in successfully!',
         description: "Welcome back to Power Brain.",
       });
-      router.push('/dashboard');
+      router.push('/home');
     } catch (error) {
        console.error(error);
       const authError = error as AuthError;
@@ -90,16 +90,16 @@ export default function LoginPage() {
             <div className="flex justify-center p-4 bg-white/20 rounded-full w-fit mx-auto backdrop-blur-sm">
                 <Logo />
             </div>
-            <h1 className="text-4xl font-bold text-white">Power Brain</h1>
+            <h1 className="text-4xl font-bold text-white">Welcome Back!</h1>
             <p className="text-xl max-w-md text-white/90">
-                Empowering every learner to dream, learn, and achieve without limits.
+                Sign in to continue your learning journey.
             </p>
         </div>
         <Card className="w-full max-w-sm">
           <CardHeader className="text-center">
-            <CardTitle className="text-2xl pt-4">Welcome Back!</CardTitle>
+            <CardTitle className="text-2xl pt-4">Sign In</CardTitle>
             <CardDescription>
-              Sign in to continue your learning journey.
+              Use your credentials to access your account.
             </CardDescription>
           </CardHeader>
           <CardContent>
