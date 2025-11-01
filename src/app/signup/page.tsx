@@ -106,20 +106,17 @@ export default function SignUpPage() {
   };
 
   return (
-    <div className="w-full h-screen lg:grid lg:min-h-[600px] lg:grid-cols-2 xl:min-h-[800px]">
-       <div className="hidden bg-gradient-to-br from-primary to-pink-gradient lg:flex flex-col items-center justify-center p-10 text-white">
-        <div className="text-center space-y-4">
-          <div className="flex justify-center p-4 bg-white/20 rounded-full w-fit mx-auto backdrop-blur-sm">
-            <Logo />
-          </div>
-          <h1 className="text-4xl font-bold">Power Brain</h1>
-          <p className="text-xl max-w-md">
-            Empowering every learner to dream, learn, and achieve without limits.
-          </p>
+    <div className="w-full h-screen flex flex-col items-center justify-center bg-gradient-to-br from-primary to-pink-gradient p-4">
+        <div className="text-center space-y-4 mb-8">
+            <div className="flex justify-center p-4 bg-white/20 rounded-full w-fit mx-auto backdrop-blur-sm">
+                <Logo />
+            </div>
+            <h1 className="text-4xl font-bold text-white">Power Brain</h1>
+            <p className="text-xl max-w-md text-white/90">
+                Empowering every learner to dream, learn, and achieve without limits.
+            </p>
         </div>
-      </div>
-       <div className="flex items-center justify-center py-12">
-          <Card className="w-full max-w-sm border-0 shadow-none sm:border sm:shadow-sm bg-card">
+        <Card className="w-full max-w-sm">
             <CardHeader className="text-center">
               <CardTitle className="text-2xl pt-4">Create an Account</CardTitle>
               <CardDescription>
@@ -179,7 +176,6 @@ export default function SignUpPage() {
               </p>
             </CardFooter>
           </Card>
-      </div>
     </div>
   );
 }
