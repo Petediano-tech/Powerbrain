@@ -1,44 +1,125 @@
 'use client';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { BarChart2, UploadCloud } from "lucide-react";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { useUser } from "@/firebase";
+import { BarChart, FileQuestion, FileUp, Megaphone, PlusCircle } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
+import { Bar, BarChart as RechartsBarChart, ResponsiveContainer, XAxis, YAxis } from "recharts"
+
+const quickActions = [
+    { name: "New Resource", icon: <PlusCircle />, href: "#" },
+    { name: "Assignment", icon: <FileUp />, href: "#" },
+    { name: "Announcement", icon: <Megaphone />, href: "#" },
+]
+
+const classes = [
+    { name: "Standard 8 Maths", students: 32, notifications: 1, gradient: "from-orange-400 to-rose-400" },
+    { name: "Form 2 English", students: 28, notifications: 0, gradient: "from-blue-400 to-indigo-500" },
+]
+
+const recentActivity = [
+    { type: "submission", user: "Tionge", action: "submitted", subject: "Algebra Quiz", time: "5 minutes ago", icon: <FileQuestion className="h-5 w-5"/> },
+    { type: "question", user: "Chisomo", action: "asked a question in", subject: "Form 2 English", time: "12 minutes ago", icon: <FileQuestion className="h-5 w-5"/> },
+    { type: "upload", user: "You", action: "shared", subject: "Biology Diagrams PDF", time: "30 minutes ago", icon: <FileUp className="h-5 w-5"/> },
+]
+
+const progressData = [
+  { name: 'Jan', score: 65 },
+  { name: 'Feb', score: 59 },
+  { name: 'Mar', score: 80 },
+  { name: 'Apr', score: 81 },
+  { name: 'May', score: 56 },
+  { name: 'Jun', score: 72 },
+  { name: 'Jul', score: 85 },
+]
 
 export default function TeacherPage() {
-  return (
-    <div className="space-y-8">
-      <div>
-        <h2 className="text-2xl font-bold">Teacher's Corner</h2>
-        <p className="text-muted-foreground">Manage your digital classroom and track student progress.</p>
-      </div>
+    const { user } = useUser();
+    const displayName = user?.displayName || 'Atikonda';
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2"><UploadCloud /> Upload Notes</CardTitle>
-            <CardDescription>Share study materials with your students.</CardDescription>
-          </CardHeader>
-          <CardContent className="text-center py-10 flex flex-col items-center justify-center">
-             <UploadCloud className="h-12 w-12 text-muted-foreground/50 mb-4" />
-            <p className="text-muted-foreground">The note upload feature is currently under improvement.</p>
-            <p className="text-xs text-muted-foreground">You can add notes by editing the `src/lib/notes-data.ts` file.</p>
-          </CardContent>
+  return (
+    <div className="space-y-6 text-foreground bg-background p-4 md:p-0">
+        <div className="flex items-center gap-4">
+            <Avatar className="h-12 w-12 border-2 border-primary">
+                {user?.photoURL && <AvatarImage src={user.photoURL} alt={displayName} />}
+                <AvatarFallback className="text-lg bg-muted">{displayName.charAt(0)}</AvatarFallback>
+            </Avatar>
+            <h1 className="text-3xl font-bold tracking-tight">Good Morning, {displayName}!</h1>
+        </div>
+
+        <div className="grid grid-cols-3 gap-4">
+            {quickActions.map(action => (
+                 <Card key={action.name} className="bg-card/80 hover:bg-card transition-colors text-center p-4 h-full flex flex-col items-center justify-center cursor-pointer">
+                    <div className="p-3 text-primary mb-2">
+                        {action.icon}
+                    </div>
+                    <p className="font-semibold text-sm">{action.name}</p>
+                </Card>
+            ))}
+        </div>
+
+        <div>
+            <h2 className="text-xl font-bold mb-4">My Classes</h2>
+            <div className="flex space-x-4 overflow-x-auto pb-4 -mx-4 px-4">
+                 {classes.map((cls) => (
+                    <Card key={cls.name} className={`min-w-[220px] flex-shrink-0 text-white bg-gradient-to-br ${cls.gradient} relative overflow-hidden`}>
+                        <CardHeader>
+                            {cls.notifications > 0 && 
+                                <Badge className="absolute top-3 right-3 bg-red-500 text-white border-0 w-6 h-6 justify-center p-0">{cls.notifications}</Badge>
+                            }
+                            <CardTitle>{cls.name}</CardTitle>
+                            <CardDescription className="text-white/80">{cls.students} Students</CardDescription>
+                        </CardHeader>
+                    </Card>
+                 ))}
+            </div>
+        </div>
+
+        <Card className="bg-card/80">
+            <CardHeader>
+                <CardTitle>Student Progress</CardTitle>
+                <CardDescription>Overall class performance for Standard 8 Maths.</CardDescription>
+            </CardHeader>
+            <CardContent>
+                <div className="h-48">
+                    <ResponsiveContainer width="100%" height="100%">
+                        <RechartsBarChart data={progressData}>
+                        <XAxis dataKey="name" stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false}/>
+                        <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} />
+                        <Bar dataKey="score" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
+                        </RechartsBarChart>
+                    </ResponsiveContainer>
+                </div>
+                 <div className="flex items-center justify-between mt-4">
+                     <p className="text-sm text-muted-foreground">Last updated: 1 hour ago</p>
+                    <Button asChild variant="secondary">
+                        <Link href="#">View Details</Link>
+                    </Button>
+                 </div>
+            </CardContent>
         </Card>
-        
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2"><BarChart2 /> View Student Performance</CardTitle>
-            <CardDescription>Access analytics and performance charts.</CardDescription>
-          </CardHeader>
-          <CardContent className="text-center py-10 flex flex-col items-center justify-center">
-            <BarChart2 className="h-12 w-12 text-muted-foreground/50 mb-4" />
-            <p className="text-muted-foreground">Performance dashboards are coming soon.</p>
-            <p className="text-xs text-muted-foreground">This feature is under active development.</p>
-          </CardContent>
-          <CardFooter>
-            <Button variant="outline" className="w-full" disabled>Go to Analytics</Button>
-          </CardFooter>
-        </Card>
-      </div>
+
+        <div>
+             <h2 className="text-xl font-bold mb-4">Recent Activity</h2>
+             <div className="space-y-3">
+                 {recentActivity.map((activity, index) => (
+                    <Card key={index} className="bg-card/80 p-4">
+                        <div className="flex items-center gap-4">
+                            <div className="p-2 bg-muted rounded-full text-primary">{activity.icon}</div>
+                            <div>
+                                <p className="font-medium text-sm">
+                                    <span className="font-bold">{activity.user}</span> {activity.action} <span className="font-bold">"{activity.subject}"</span>
+                                </p>
+                                <p className="text-xs text-muted-foreground">{activity.time}</p>
+                            </div>
+                        </div>
+                    </Card>
+                 ))}
+             </div>
+        </div>
     </div>
   );
 }

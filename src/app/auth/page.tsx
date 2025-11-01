@@ -1,4 +1,3 @@
-
 'use client';
 import { Button } from '@/components/ui/button';
 import {
@@ -35,6 +34,7 @@ export default function AuthPage() {
   const [name, setName] = useState('');
   const [signUpEmail, setSignUpEmail] = useState('');
   const [signUpPassword, setSignUpPassword] = useState('');
+  const [role, setRole] = useState('student');
   
   // Login State
   const [loginEmail, setLoginEmail] = useState('');
@@ -98,6 +98,7 @@ export default function AuthPage() {
           firstName: name.split(' ')[0] || '',
           lastName: name.split(' ').slice(1).join(' ') || '',
           email: user.email,
+          role: role,
           registrationDate: new Date().toISOString(),
           gradeLevel: "Form 1",
           studyStreaks: 0,
@@ -231,7 +232,7 @@ export default function AuthPage() {
               {error && isSignUp && <p className="text-sm text-destructive">{error}</p>}
                <div className="space-y-2">
                   <Label className="text-white/80">I am a...</Label>
-                  <Tabs defaultValue='student' className='w-full'>
+                  <Tabs defaultValue={role} onValueChange={setRole} className='w-full'>
                       <TabsList className="grid w-full grid-cols-2 bg-[#232634] rounded-lg h-12 p-1">
                           <TabsTrigger value="student" className="rounded-md data-[state=active]:bg-primary data-[state=active]:text-primary-foreground text-white/70">Student</TabsTrigger>
                           <TabsTrigger value="teacher" className="rounded-md data-[state=active]:bg-primary data-[state=active]:text-primary-foreground text-white/70">Teacher</TabsTrigger>
@@ -325,5 +326,3 @@ export default function AuthPage() {
     </div>
   );
 }
-
-    

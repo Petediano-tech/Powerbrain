@@ -1,10 +1,8 @@
-
 'use client';
 import { useUser } from '@/firebase';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import WelcomePage from './welcome/page';
-import { AppShell } from '@/components/app-shell';
 
 export default function AppRootPage() {
     const { user, isUserLoading } = useUser();

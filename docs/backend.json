@@ -37,9 +37,10 @@
         "averageScore": { "type": "number", "description": "The user's average score across all quizzes." },
         "subscriptionTier": { "type": "string", "enum": ["free", "vip1", "vip2", "vip3", "vip4", "power"], "description": "The user's current subscription tier." },
         "dailyChatCount": { "type": "number", "description": "Number of AI tutor questions asked today." },
-        "lastChatDate": { "type": "string", "format": "date", "description": "The date of the last chat interaction, in YYYY-MM-DD format." }
+        "lastChatDate": { "type": "string", "format": "date", "description": "The date of the last chat interaction, in YYYY-MM-DD format." },
+        "role": { "type": "string", "enum": ["student", "teacher"], "description": "The role of the user within the application." }
       },
-      "required": ["id", "firstName", "lastName", "gradeLevel"]
+      "required": ["id", "firstName", "lastName", "gradeLevel", "role"]
     },
     "Note": {
       "title": "Note", "type": "object", "description": "Represents a single note or document as text content.",
