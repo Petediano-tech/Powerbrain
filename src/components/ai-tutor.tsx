@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
@@ -6,7 +5,7 @@ import { CornerDownLeft, Bot, Sparkles, PencilRuler, BookOpen, Crown } from 'luc
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { aiSmartTutor } from '@/ai/flows/ai-smart-tutor';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { ScrollArea } from './ui/scroll-area';
 import { cn } from '@/lib/utils';
 import { useUser, useDoc, useMemoFirebase, useFirestore } from '@/firebase';
@@ -38,10 +37,12 @@ const promptSuggestions = [
     }
 ];
 
-const FREE_TIER_LIMIT = 3;
+const FREE_TIER_LIMIT = 15;
 
 export function AITutor() {
-  const [messages, setMessages] = useState<Message[]>([]);
+  const [messages, setMessages] = useState<Message[]>([
+    { role: 'assistant', content: "Hello! I'm Brainy, here to help you learn. What topic are we exploring today?" }
+  ]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
@@ -58,6 +59,7 @@ export function AITutor() {
   const { data: userProfile } = useDoc(userProfileRef);
 
   const getInitials = (name: string) => {
+    if (!name) return 'U';
     return name
       .split(' ')
       .map((n) => n[0])
@@ -121,8 +123,7 @@ export function AITutor() {
   }
 
   const handleSuggestionClick = (prompt: string) => {
-      setInput(prompt);
-      inputRef.current?.focus();
+      handleSendMessage(prompt);
   }
   
   const handleTextareaKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
@@ -134,13 +135,20 @@ export function AITutor() {
 
   const isLimitReached = useMemo(() => {
     if (!userProfile) return false;
-    if (userProfile.subscriptionTier && userProfile.subscriptionTier !== 'free') return false; // Not a free user
+    // Power users have no limit
+    if (userProfile.subscriptionTier && (userProfile.subscriptionTier === 'power')) return false; 
     
     const today = new Date().toISOString().split('T')[0];
     const lastChat = userProfile.lastChatDate;
     const count = userProfile.dailyChatCount || 0;
 
-    return lastChat === today && count >= FREE_TIER_LIMIT;
+    let limit = FREE_TIER_LIMIT;
+    if(userProfile.subscriptionTier === 'vip1') limit = 15;
+    if(userProfile.subscriptionTier === 'vip2') limit = 30;
+    if(userProfile.subscriptionTier === 'vip3') limit = 50;
+    if(userProfile.subscriptionTier === 'vip4') limit = 100;
+
+    return lastChat === today && count >= limit;
   }, [userProfile]);
 
   return (
@@ -148,26 +156,7 @@ export function AITutor() {
         <div className="flex-1 overflow-hidden">
             <ScrollArea className="h-full pr-4" ref={scrollAreaRef}>
                 <div className="space-y-6 pb-6">
-                {messages.length === 0 && !isLoading && !isLimitReached ? (
-                    <div className="flex flex-col items-center justify-center h-full pt-16 text-center">
-                        <div className="mb-4">
-                           <Logo />
-                        </div>
-                        <h2 className="text-2xl font-semibold text-foreground/80">How can Brainy help you today?</h2>
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-8 w-full">
-                            {promptSuggestions.map((suggestion) => (
-                                <button key={suggestion.title} onClick={() => handleSuggestionClick(suggestion.prompt)} className="p-4 border rounded-lg text-left hover:bg-muted transition-colors">
-                                    <div className="flex items-center gap-3 mb-2">
-                                        {suggestion.icon}
-                                        <h3 className="font-semibold">{suggestion.title}</h3>
-                                    </div>
-                                    <p className="text-sm text-muted-foreground">{suggestion.prompt}</p>
-                                </button>
-                            ))}
-                        </div>
-                    </div>
-                ) : (
-                    messages.map((message, index) => (
+                {messages.map((message, index) => (
                     <div
                         key={index}
                         className={cn(
@@ -177,6 +166,7 @@ export function AITutor() {
                     >
                         {message.role === 'assistant' && (
                         <Avatar className="h-9 w-9 bg-primary/20 text-primary border border-primary/30">
+                            <AvatarImage src="/ai-avatar.png" alt="Brainy" />
                             <AvatarFallback><Bot size={20}/></AvatarFallback>
                         </Avatar>
                         )}
@@ -192,16 +182,24 @@ export function AITutor() {
                         </div>
                         {message.role === 'user' && (
                         <Avatar className="h-9 w-9">
+                            {user?.photoURL && <AvatarImage src={user.photoURL} alt={user.displayName || "User"} />}
                             <AvatarFallback>{getInitials(user?.displayName || "U")}</AvatarFallback>
                         </Avatar>
                         )}
                     </div>
                     ))
+                }
+                {messages.length === 1 && (
+                    <div className="flex gap-2 justify-start ml-12">
+                        <Button variant="outline" size="sm" onClick={() => handleSuggestionClick("Explain Photosynthesis")}>Explain Photosynthesis</Button>
+                        <Button variant="outline" size="sm" onClick={() => handleSuggestionClick("Quiz me on History")}>Quiz me on History</Button>
+                    </div>
                 )}
                 {isLoading && (
                     <div className="flex items-start gap-4 justify-start">
                         <Avatar className="h-9 w-9 bg-primary/20 text-primary border border-primary/30">
-                            <AvatarFallback><Bot size={20}/></AvatarFallback>
+                           <AvatarImage src="/ai-avatar.png" alt="Brainy" />
+                           <AvatarFallback><Bot size={20}/></AvatarFallback>
                         </Avatar>
                         <div className="max-w-md rounded-xl px-4 py-3 text-sm bg-muted shadow-sm">
                         <div className="flex items-center gap-2">
@@ -216,7 +214,7 @@ export function AITutor() {
                     <div className="text-center p-8 rounded-lg bg-muted/50 border border-dashed flex flex-col items-center">
                         <Crown className="h-12 w-12 text-yellow-500 mb-4" />
                         <h3 className="text-xl font-bold">Daily Limit Reached</h3>
-                        <p className="text-muted-foreground mt-2 mb-4">You've used all your free questions for today.</p>
+                        <p className="text-muted-foreground mt-2 mb-4">You've used all your questions for today.</p>
                         <Button asChild>
                             <Link href="/subscribe">Upgrade to VIP to Continue</Link>
                         </Button>
@@ -230,7 +228,7 @@ export function AITutor() {
                 <Textarea
                     ref={inputRef}
                     id="message"
-                    placeholder={isLimitReached ? "Upgrade to send more messages" : "Explain the water cycle..."}
+                    placeholder={isLimitReached ? "Upgrade to send more messages" : "Ask me anything..."}
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
                     onKeyDown={handleTextareaKeyDown}
