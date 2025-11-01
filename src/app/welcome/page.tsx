@@ -1,6 +1,6 @@
 
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Carousel,
   CarouselContent,
@@ -39,6 +39,14 @@ const onboardingSlides = [
 export default function WelcomePage() {
   const [api, setApi] = useState<CarouselApi>();
   const [current, setCurrent] = useState(0);
+
+  useEffect(() => {
+    if (!api) return;
+    setCurrent(api.selectedScrollSnap());
+    api.on('select', () => {
+        setCurrent(api.selectedScrollSnap());
+    });
+  }, [api]);
 
   return (
     <div className="flex min-h-screen flex-col bg-background">
@@ -86,14 +94,16 @@ export default function WelcomePage() {
           ))}
         </div>
         <div className="space-y-3">
-          <Button size="lg" className="w-full bg-[#F5A623] hover:bg-[#F5A623]/90 text-primary-foreground" asChild>
-            <Link href="/signup">Get Started</Link>
+          <Button size="lg" className="w-full" asChild>
+            <Link href="/auth">Get Started</Link>
           </Button>
           <Button variant="ghost" className="w-full" asChild>
-            <Link href="/login">Already have an account? Log In</Link>
+            <Link href="/auth">Already have an account? Log In</Link>
           </Button>
         </div>
       </footer>
     </div>
   );
 }
+
+    
