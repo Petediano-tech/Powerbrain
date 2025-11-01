@@ -9,40 +9,46 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { BookCopy, FileText, PencilRuler, School, Bot } from "lucide-react";
+import { BookCopy, FileText, PencilRuler, School, Bot, Book, BookA, FileDown, CalendarClock, User } from "lucide-react";
 import Link from 'next/link';
 import { useUser, useDoc, useMemoFirebase } from "@/firebase";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { doc, getFirestore, collection, query, orderBy, limit } from "firebase/firestore";
-import { useCollection } from "@/firebase/firestore/use-collection";
-import { DashboardNotes } from "@/components/dashboard-notes";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { PlaceHolderImages } from "@/lib/placeholder-images";
+import { MyCourses } from "@/components/my-courses";
+import Image from "next/image";
 
-const motivationalQuotes = [
-  "The future belongs to those who believe in the beauty of their dreams. - Eleanor Roosevelt",
-  "The only way to do great work is to love what you do. - Steve Jobs",
-  "Success is not final, failure is not fatal: it is the courage to continue that counts. - Winston Churchill",
-  "Believe you can and you're halfway there. - Theodore Roosevelt",
-  "Your time is limited, so don't waste it living someone else's life. - Steve Jobs"
+const studyTools = [
+    { name: 'Glossary', href: '#', icon: BookA },
+    { name: 'Practice Quizzes', href: '/quizzes', icon: PencilRuler },
+    { name: 'Downloads', href: '#', icon: FileDown },
+    { name: 'Study Planner', href: '#', icon: CalendarClock }
 ];
 
-const didYouKnowFacts = [
-    "The shortest war in history was between Britain and Zanzibar on August 27, 1896. Zanzibar surrendered after 38 minutes.",
-    "A single cloud can weigh more than 1 million pounds.",
-    "The human brain takes in 11 million bits of information every second but is aware of only 40.",
-    "A day on Venus is longer than a year on Venus. It takes Venus 243 Earth days to rotate once, but only 225 Earth days to orbit the sun.",
-    "There are more trees on Earth than stars in the Milky Way galaxy."
-];
-
-const quickAccess = [
-    { name: 'Start Learning', description: 'Browse subjects and chapters.', href: '/subjects', icon: BookCopy },
-    { name: 'Take a Quiz', description: 'Test your knowledge.', href: '/quizzes', icon: PencilRuler },
-    { name: 'Talk to Brainy', description: 'Your AI-powered tutor.', href: '/tutor', icon: Bot }
+const upcomingDeadlines = [
+    {
+        title: 'Biology Assignment',
+        due: 'Due in 2 days',
+        image: 'https://picsum.photos/seed/bioassign/200/100',
+        imageHint: 'biology microscope'
+    },
+    {
+        title: 'Algebra Quiz',
+        due: 'Due in 4 days',
+        image: 'https://picsum.photos/seed/algeq/200/100',
+        imageHint: 'math equations'
+    },
+    {
+        title: 'History Essay',
+        due: 'Due in 7 days',
+        image: 'https://picsum.photos/seed/histessay/200/100',
+        imageHint: 'history books'
+    },
 ];
 
 export default function DashboardPage() {
   const { user } = useUser();
-  const [quote, setQuote] = useState('');
-  const [fact, setFact] = useState('');
   const firestore = getFirestore();
 
   const userAccountRef = useMemoFirebase(() => {
@@ -58,130 +64,104 @@ export default function DashboardPage() {
   
   const { data: userProfile } = useDoc(userProfileRef);
 
-  const recentQuizzesQuery = useMemoFirebase(() => {
-      if (!userAccount) return null;
-      return query(collection(firestore, 'userProfiles', userAccount.profileId, 'quizAttempts'), orderBy('completedAt', 'desc'), limit(2));
-  }, [firestore, userAccount]);
+  const getInitials = (name: string) => {
+    if (!name) return 'U';
+    return name.split(' ').map(n => n[0]).join('').toUpperCase();
+  };
 
-  const { data: recentQuizzes } = useCollection(recentQuizzesQuery);
+  const displayName = useMemo(() => {
+    if (userProfile) {
+      const name = `${userProfile.firstName} ${userProfile.lastName}`.trim();
+      if(name) return name;
+    }
+    if (user?.displayName) return user.displayName;
+    return "Learner";
+  }, [user, userProfile]);
 
-  useEffect(() => {
-    setQuote(motivationalQuotes[Math.floor(Math.random() * motivationalQuotes.length)]);
-    setFact(didYouKnowFacts[Math.floor(Math.random() * didYouKnowFacts.length)]);
-  }, []);
+  const userAvatarUrl = useMemo(() => {
+    if (user?.photoURL) return user.photoURL;
+    if (user?.uid) {
+        const hash = user.uid.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+        const avatarIndex = hash % PlaceHolderImages.length;
+        return PlaceHolderImages[avatarIndex]?.imageUrl;
+    }
+    return PlaceHolderImages[0]?.imageUrl;
+  }, [user]);
 
-  const studyScore = userProfile?.averageScore || 0;
+  const coursesInProgress = 4;
+  const completedLessons = 28;
+  const overallProgress = 68;
 
   return (
-    <div className="flex flex-col gap-6">
-      <div className="flex flex-col gap-2">
-        <h1 className="text-3xl font-bold tracking-tight">
-          Welcome to Power Brain
+    <div className="flex flex-col gap-8">
+      <div className="flex items-center gap-4">
+        <Avatar className="h-12 w-12 border-2 border-primary">
+            {userAvatarUrl && <AvatarImage src={userAvatarUrl} alt={displayName} />}
+            <AvatarFallback className="text-lg">{getInitials(displayName)}</AvatarFallback>
+        </Avatar>
+        <h1 className="text-2xl font-bold tracking-tight">
+          Hello, {displayName.split(' ')[0]}!
         </h1>
-        <p className="text-muted-foreground">
-          Your journey to smarter learning starts now.
-        </p>
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-3">
-        <div className="lg:col-span-2 space-y-6">
-          <div className="grid gap-4 md:grid-cols-2">
-            {quickAccess.map((item) => (
-              <Card key={item.name} className="hover:border-primary transition-colors shadow-sm hover:shadow-primary/20">
-                <Link href={item.href} className="block h-full">
-                  <CardHeader>
-                      <div className={`flex items-center justify-center rounded-lg p-2 w-fit bg-primary/10 text-primary`}>
-                        <item.icon className="h-5 w-5" />
-                      </div>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="font-semibold">{item.name}</p>
-                    <p className="text-sm text-muted-foreground">{item.description}</p>
-                  </CardContent>
-                </Link>
-              </Card>
-            ))}
-          </div>
-          <DashboardNotes />
-        </div>
-        <div className="lg:col-span-1 space-y-6">
-           <Card>
-                <CardHeader>
-                    <CardTitle>Your Study Score</CardTitle>
-                    <CardDescription>Based on your recent quiz scores.</CardDescription>
-                </CardHeader>
-                <CardContent className="flex flex-col gap-3">
-                    <div className="flex items-center gap-4">
-                    <span className="text-4xl font-bold text-primary">{studyScore.toFixed(0)}%</span>
-                    <Progress value={studyScore} className="h-3 w-full" />
-                    </div>
-                    <p className="text-xs text-muted-foreground">Your average score across all quizzes.</p>
+      <div className="grid gap-4 md:grid-cols-3">
+        <Card className="md:col-span-3">
+          <CardContent className="pt-6">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 items-center">
+              <div className="md:col-span-1">
+                <p className="text-sm text-muted-foreground">Courses in Progress</p>
+                <p className="text-3xl font-bold">{coursesInProgress}</p>
+              </div>
+              <div className="md:col-span-1">
+                <p className="text-sm text-muted-foreground">Completed Lessons</p>
+                <p className="text-3xl font-bold">{completedLessons}</p>
+              </div>
+              <div className="md:col-span-2">
+                 <p className="text-sm text-muted-foreground">Overall Progress</p>
+                <div className="flex items-center gap-3">
+                  <Progress value={overallProgress} className="h-2 w-full" />
+                  <span className="text-sm font-semibold">{overallProgress}%</span>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      <div>
+        <h2 className="text-xl font-bold mb-4">Upcoming Deadlines</h2>
+        <div className="flex space-x-4 overflow-x-auto pb-4 -mx-4 px-4">
+          {upcomingDeadlines.map((item) => (
+            <Card key={item.title} className="min-w-[220px] flex-shrink-0">
+                <CardContent className="p-0">
+                    <Image src={item.image} alt={item.title} width={220} height={100} className="rounded-t-lg object-cover w-full h-[100px]" data-ai-hint={item.imageHint} />
                 </CardContent>
-            </Card>
-            <Card>
-              <CardHeader>
-                <CardTitle>Quote of the Day</CardTitle>
+              <CardHeader className="p-4">
+                <CardTitle className="text-base">{item.title}</CardTitle>
+                <CardDescription className="text-amber-500 font-semibold">{item.due}</CardDescription>
               </CardHeader>
-              <CardContent>
-                <blockquote className="border-l-4 border-primary pl-4 italic text-sm">
-                  {quote}
-                </blockquote>
-              </CardContent>
             </Card>
-            <Card>
-              <CardHeader>
-                <CardTitle>Did You Know?</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm text-muted-foreground">{fact}</p>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardHeader>
-                <CardTitle>Teacher's Corner</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <Button className="w-full" asChild variant={'secondary'}>
-                    <Link href={'/teacher'}>
-                        <School className="mr-2"/>
-                        Go to Teacher Area
-                    </Link>
-                </Button>
-              </CardContent>
-            </Card>
+          ))}
         </div>
       </div>
-       <Card>
-        <CardHeader>
-          <CardTitle>Recent Quizzes</CardTitle>
-          <CardDescription>Review your latest quiz attempts.</CardDescription>
-        </CardHeader>
-        <CardContent>
-          {recentQuizzes && recentQuizzes.length > 0 ? (
-            <ul className="space-y-4">
-              {recentQuizzes.map((quizAttempt) => (
-                <li key={quizAttempt.id} className="flex items-center justify-between hover:bg-muted/50 p-3 rounded-lg -m-3">
-                  <div>
-                    <p className="font-medium">{quizAttempt.quizTitle}</p>
-                    <p className="text-sm text-muted-foreground">Completed {new Date(quizAttempt.completedAt).toLocaleDateString()}</p>
-                  </div>
-                  <div className="flex items-center gap-4">
-                    <span className="font-semibold text-lg text-primary">{quizAttempt.score}%</span>
-                    <Button variant="outline" size="sm" asChild>
-                      <Link href={`/quizzes/${quizAttempt.quizId}`}>Review</Link>
-                    </Button>
-                  </div>
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <div className="text-center text-muted-foreground p-8">
-              <p>You haven't completed any quizzes yet.</p>
-              <Button variant="link" asChild><Link href="/quizzes">Take a quiz now!</Link></Button>
-            </div>
-          )}
-        </CardContent>
-      </Card>
+
+      <div>
+        <h2 className="text-xl font-bold mb-4">Study Tools</h2>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          {studyTools.map((tool) => (
+            <Link key={tool.name} href={tool.href}>
+                <Card className="text-center p-4 h-full flex flex-col items-center justify-center hover:bg-muted transition-colors">
+                    <div className="p-3 bg-primary/10 rounded-full mb-2">
+                        <tool.icon className="h-6 w-6 text-primary" />
+                    </div>
+                    <p className="font-semibold text-sm">{tool.name}</p>
+                </Card>
+            </Link>
+          ))}
+        </div>
+      </div>
+
+      <MyCourses />
 
     </div>
   );

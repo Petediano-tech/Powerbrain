@@ -59,6 +59,24 @@
       "description": "User profile avatar 9",
       "imageUrl": "https://images.unsplash.com/photo-1517841905240-472988babdf9?q=80&w=1287&auto=format&fit=crop",
       "imageHint": "person dog"
+    },
+    {
+      "id": "deadline-bio",
+      "description": "Biology assignment deadline image",
+      "imageUrl": "https://images.unsplash.com/photo-1758206523826-a65d4cf070aa?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxMHx8YmlvbG9neSUyMG1pY3Jvc2NvcGV8ZW58MHx8fHwxNzYyMDA3NzgzfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "biology microscope"
+    },
+    {
+      "id": "deadline-alg",
+      "description": "Algebra quiz deadline image",
+      "imageUrl": "https://images.unsplash.com/photo-1758685848895-e724272475d2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw2fHxtYXRoJTIwZXF1YXRpb25zfGVufDB8fHx8MTc2MTkxOTk1OXww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "math equations"
+    },
+    {
+      "id": "deadline-hist",
+      "description": "History essay deadline image",
+      "imageUrl": "https://images.unsplash.com/photo-1632038585992-fecf8a0cf59d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxoaXN0b3J5JTIwYm9va3N8ZW58MHx8fHwxNzYxOTIzOTM0fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "history books"
     }
   ]
 }

@@ -23,7 +23,7 @@ import { useAuth } from '@/firebase';
 import { signOut } from 'firebase/auth';
 import { useUser } from '@/firebase';
 import { Button } from './ui/button';
-import { Settings } from 'lucide-react';
+import { Bell, Settings } from 'lucide-react';
 
 function getPageTitle(pathname: string) {
     if (pathname === '/home') return 'Home';
@@ -61,7 +61,11 @@ export function AppHeader() {
         <h1 className="text-lg font-semibold md:text-xl">
           {pageTitle}
         </h1>
-        <div className="ml-auto flex items-center gap-4">
+        <div className="ml-auto flex items-center gap-2">
+            <Button variant="ghost" size="icon">
+                <Bell className="h-5 w-5" />
+                <span className="sr-only">Notifications</span>
+            </Button>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="icon">
