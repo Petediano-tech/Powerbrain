@@ -14,7 +14,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { capitalize } from '@/lib/utils';
 import Link from 'next/link';
 import { Logo } from './logo';
@@ -23,11 +23,14 @@ import { useAuth } from '@/firebase';
 import { signOut } from 'firebase/auth';
 import { useUser } from '@/firebase';
 import { Button } from './ui/button';
-import { Bell, Settings } from 'lucide-react';
+import { Bell, User } from 'lucide-react';
+import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
+import { useMemo } from 'react';
 
 function getPageTitle(pathname: string) {
     if (pathname === '/home') return 'Home';
     if (pathname === '/tutor') return 'Brainy';
+    if (pathname === '/profile') return 'My Profile';
     const pageName = pathname.split('/').pop() || 'Home';
     return capitalize(pageName.replace('-', ' '));
 }
@@ -35,13 +38,29 @@ function getPageTitle(pathname: string) {
 export function AppHeader() {
   const pathname = usePathname();
   const pageTitle = getPageTitle(pathname);
+  const router = useRouter();
 
   const { user } = useUser();
   const auth = useAuth();
 
-  const handleLogout = () => {
-    signOut(auth);
+  const handleLogout = async () => {
+    await signOut(auth);
+    router.push('/welcome');
   };
+
+  const getInitials = (name: string) => {
+    if (!name) return 'U';
+    return name
+      .split(' ')
+      .map((n) => n[0])
+      .join('')
+      .toUpperCase();
+  };
+
+  const displayName = useMemo(() => {
+    if (user?.displayName) return user.displayName;
+    return 'User';
+  }, [user]);
   
   return (
     <>
@@ -68,9 +87,11 @@ export function AppHeader() {
             </Button>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon">
-                  <Settings className="h-5 w-5" />
-                  <span className="sr-only">Open user menu</span>
+                <Button variant="ghost" className="relative h-9 w-9 rounded-full">
+                  <Avatar className="h-9 w-9">
+                    {user?.photoURL && <AvatarImage src={user.photoURL} alt={displayName} />}
+                    <AvatarFallback>{getInitials(displayName)}</AvatarFallback>
+                  </Avatar>
                 </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-56">

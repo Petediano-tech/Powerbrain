@@ -1,180 +1,222 @@
 
 'use client';
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { BookOpenCheck, PencilRuler, CalendarDays, Clock } from "lucide-react";
-import { AIInsights } from "@/components/ai-insights";
-import { ProgressChart } from "@/components/progress-chart";
-import { useUser, useDoc, useMemoFirebase } from "@/firebase";
-import { doc, getFirestore } from "firebase/firestore";
-import { useUserStore } from "@/hooks/use-user-store";
-import { useMemo } from "react";
-import { PlaceHolderImages } from "@/lib/placeholder-images";
-import { Skeleton } from "@/components/ui/skeleton";
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from '@/components/ui/avatar';
+import { Button } from '@/components/ui/button';
+import { useAuth, useDoc, useMemoFirebase, useUser } from '@/firebase';
+import { useUserStore } from '@/hooks/use-user-store';
+import { capitalize } from '@/lib/utils';
+import { signOut } from 'firebase/auth';
+import { doc, getFirestore } from 'firebase/firestore';
+import {
+  ArrowLeft,
+  Book,
+  ChevronRight,
+  GraduationCap,
+  Heart,
+  HelpCircle,
+  KeyRound,
+  LogOut,
+  Mail,
+  MapPin,
+  Moon,
+  Pencil,
+  Phone,
+  ShieldAlert,
+  Star,
+  Bell,
+} from 'lucide-react';
+import Link from 'next/link';
+import { useMemo } from 'react';
+import { ProfileListItem } from '@/components/profile-list-item';
+import { Switch } from '@/components/ui/switch';
+import { useRouter } from 'next/navigation';
+import { Skeleton } from '@/components/ui/skeleton';
 
 export default function ProfilePage() {
   const { user, isUserLoading } = useUser();
+  const auth = useAuth();
   const firestore = getFirestore();
   const { profileId } = useUserStore();
+  const router = useRouter();
 
   const userProfileRef = useMemoFirebase(() => {
     if (!profileId) return null;
     return doc(firestore, 'userProfiles', profileId);
   }, [firestore, profileId]);
 
-  const { data: studentData, isLoading: isProfileLoading } = useDoc(userProfileRef);
-  
+  const { data: userProfile, isLoading: isProfileLoading } = useDoc(userProfileRef);
+
   const getInitials = (name: string) => {
     if (!name) return 'U';
-    return name.split(' ').map(n => n[0]).join('').toUpperCase();
+    return name
+      .split(' ')
+      .map((n) => n[0])
+      .join('')
+      .toUpperCase();
   };
-  
-  const userAvatarUrl = useMemo(() => {
-    if (user?.photoURL) return user.photoURL;
-    if (user?.uid) {
-        const hash = user.uid.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
-        const avatarIndex = hash % PlaceHolderImages.length;
-        return PlaceHolderImages[avatarIndex]?.imageUrl;
-    }
-    return PlaceHolderImages[0]?.imageUrl;
-  }, [user]);
 
   const displayName = useMemo(() => {
-    if (studentData) {
-      const name = `${studentData.firstName} ${studentData.lastName}`.trim();
-      if(name) return name;
+    if (userProfile) {
+      const name = `${userProfile.firstName} ${userProfile.lastName}`.trim();
+      if (name) return name;
     }
     if (user?.displayName) return user.displayName;
-    return "Learner";
-  }, [user, studentData]);
+    return 'Power Brain User';
+  }, [user, userProfile]);
 
-  const profileData = studentData || {
-    gradeLevel: 'Form 1',
-    studyStreaks: 0,
-    totalTimeStudied: 0,
-    quizzesCompleted: 0,
-    topicsMastered: 0,
-    badges: [],
+  const handleLogout = async () => {
+    await signOut(auth);
+    router.push('/welcome');
   };
 
   const isLoading = isUserLoading || isProfileLoading;
 
   if (isLoading) {
     return (
-        <div className="space-y-6">
-        <Card>
-            <CardHeader className="flex flex-col items-center text-center">
-                <Skeleton className="h-24 w-24 rounded-full mb-4" />
-                <Skeleton className="h-8 w-40" />
-                <Skeleton className="h-5 w-20" />
-            </CardHeader>
-            <CardContent className="flex flex-wrap justify-center gap-2">
-                <Skeleton className="h-8 w-24" />
-                <Skeleton className="h-8 w-24" />
-            </CardContent>
-        </Card>
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-            {[...Array(4)].map((_, i) => (
-                <Card key={i}>
-                    <CardHeader className="pb-2">
-                        <Skeleton className="h-4 w-2/3" />
-                    </CardHeader>
-                    <CardContent>
-                        <Skeleton className="h-7 w-1/3" />
-                        <Skeleton className="h-3 w-1/2 mt-2" />
-                    </CardContent>
-                </Card>
-            ))}
+      <div className="bg-[#090B1A] text-white min-h-screen p-4">
+        <div className="flex items-center gap-4 mb-8">
+          <Skeleton className="h-10 w-10 rounded-full" />
+          <Skeleton className="h-6 w-24" />
         </div>
+        <div className="flex flex-col items-center gap-4">
+          <Skeleton className="h-28 w-28 rounded-full relative" />
+          <Skeleton className="h-7 w-40" />
+          <Skeleton className="h-5 w-20" />
         </div>
-    )
+
+        <div className="mt-10 space-y-8">
+            <div>
+                <Skeleton className="h-5 w-32 mb-4" />
+                <div className="bg-[#232634] rounded-lg p-2 space-y-2">
+                    <Skeleton className="h-12 w-full" />
+                    <Skeleton className="h-12 w-full" />
+                </div>
+            </div>
+             <div>
+                <Skeleton className="h-5 w-32 mb-4" />
+                <div className="bg-[#232634] rounded-lg p-2 space-y-2">
+                    <Skeleton className="h-12 w-full" />
+                    <Skeleton className="h-12 w-full" />
+                </div>
+            </div>
+        </div>
+      </div>
+    );
   }
 
   return (
-    <div className="space-y-6">
-      <Card>
-        <CardHeader className="flex flex-col items-center text-center">
-          <Avatar className="h-24 w-24 mb-4 border-4 border-primary">
-            {userAvatarUrl && <AvatarImage src={userAvatarUrl} alt={displayName} />}
-            <AvatarFallback className="text-3xl">{getInitials(displayName)}</AvatarFallback>
-          </Avatar>
-          <CardTitle className="text-3xl">{displayName}</CardTitle>
-          <CardDescription>{profileData.gradeLevel}</CardDescription>
-        </CardHeader>
-        <CardContent className="flex flex-wrap justify-center gap-2">
-          {(profileData.badges || []).map((badge: string) => (
-            <Badge key={badge} variant="secondary" className="text-sm py-1 px-3 bg-accent/20 text-accent-foreground border-accent/30">{badge}</Badge>
-          ))}
-           {profileData.badges?.length === 0 && <p className="text-sm text-muted-foreground">No badges earned yet. Keep learning!</p>}
-        </CardContent>
-      </Card>
-      
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Study Streaks</CardTitle>
-            <CalendarDays className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{profileData.studyStreaks} days</div>
-            <p className="text-xs text-muted-foreground">Active learning streak</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Time Studied</CardTitle>
-            <Clock className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{(profileData.totalTimeStudied / 60).toFixed(1)} hrs</div>
-            <p className="text-xs text-muted-foreground">Total time this month</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Quizzes Completed</CardTitle>
-            <PencilRuler className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{profileData.quizzesCompleted}</div>
-            <p className="text-xs text-muted-foreground">Across all subjects</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Topics Mastered</CardTitle>
-            <BookOpenCheck className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{profileData.topicsMastered}</div>
-            <p className="text-xs text-muted-foreground">Knowledge is power</p>
-          </CardContent>
-        </Card>
+    <div className="bg-[#090B1A] text-white min-h-screen">
+      <div className="p-4 flex items-center gap-4 sticky top-0 bg-[#090B1A]/80 backdrop-blur-sm z-10">
+        <Button variant="ghost" size="icon" onClick={() => router.back()}>
+          <ArrowLeft />
+        </Button>
+        <h1 className="text-xl font-bold">Profile</h1>
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-5">
-        <div className="lg:col-span-3">
-          <AIInsights />
+      <div className="flex flex-col items-center p-4 gap-2 text-center">
+        <div className="relative">
+          <Avatar className="h-28 w-28 border-4 border-primary">
+            {user?.photoURL && <AvatarImage src={user.photoURL} alt={displayName} />}
+            <AvatarFallback className="text-4xl bg-muted/80 text-foreground">
+              {getInitials(displayName)}
+            </AvatarFallback>
+          </Avatar>
+          <Button
+            size="icon"
+            className="absolute bottom-0 right-0 rounded-full border-4 border-[#090B1A]"
+          >
+            <Pencil className="h-5 w-5" />
+          </Button>
         </div>
-        <div className="lg:col-span-2">
-          <Card>
-            <CardHeader>
-              <CardTitle>Subject Performance</CardTitle>
-              <CardDescription>Your average scores over the last month.</CardDescription>
-            </CardHeader>
-            <CardContent className="pl-2">
-              <ProgressChart />
-            </CardContent>
-          </Card>
+        <h2 className="text-2xl font-bold mt-2">{displayName}</h2>
+        <p className="text-amber-400 font-semibold">{capitalize(userProfile?.role || 'student')}</p>
+      </div>
+
+      <div className="p-4 space-y-8">
+        {/* Personal Information */}
+        <div>
+          <h3 className="font-semibold text-lg mb-2">Personal Information</h3>
+          <div className="bg-[#1C1E2D] rounded-xl p-2 space-y-1">
+            <ProfileListItem
+              icon={Mail}
+              label="Email"
+              value={user?.email || 'N/A'}
+            />
+            <ProfileListItem
+              icon={Phone}
+              label="Phone Number"
+              value={userProfile?.phoneNumber || '+265 123 456 789'}
+            />
+            <ProfileListItem
+              icon={MapPin}
+              label="Location"
+              value={userProfile?.location || 'Lilongwe, Malawi'}
+            />
+          </div>
+        </div>
+
+        {/* Academic Information */}
+        <div>
+          <h3 className="font-semibold text-lg mb-2">Academic Information</h3>
+          <div className="bg-[#1C1E2D] rounded-xl p-2 space-y-1">
+            <ProfileListItem
+              icon={GraduationCap}
+              label="School"
+              value={userProfile?.schoolId || 'Kamuzu Academy'}
+            />
+            <ProfileListItem
+              icon={Star}
+              label="Grade / Form"
+              value={userProfile?.gradeLevel || 'Form 4'}
+            />
+             <ProfileListItem
+              icon={Book}
+              label="Subjects of Interest"
+              value={userProfile?.subjectsOfInterest?.join(', ') || 'Mathematics, Physics'}
+            />
+          </div>
+        </div>
+
+        {/* Settings */}
+        <div>
+          <h3 className="font-semibold text-lg mb-2">Settings</h3>
+          <div className="bg-[#1C1E2D] rounded-xl p-2 space-y-1">
+            <ProfileListItem
+              icon={Bell}
+              label="Notification Preferences"
+              value=""
+            />
+            <ProfileListItem
+              icon={Moon}
+              label="Dark Mode"
+              value={<Switch defaultChecked disabled className="data-[state=checked]:bg-primary"/>}
+              isAction={false}
+            />
+             <ProfileListItem
+              icon={KeyRound}
+              label="Change Password"
+              value=""
+            />
+            <ProfileListItem
+              icon={HelpCircle}
+              label="Help & Support"
+              value=""
+            />
+          </div>
         </div>
       </div>
+      
+      <div className="p-6 mt-4">
+        <Button variant="destructive" className="w-full h-12 bg-red-600/20 text-red-400 hover:bg-red-600/30" onClick={handleLogout}>
+          <LogOut className="mr-2" />
+          Log Out
+        </Button>
+      </div>
+
     </div>
   );
 }
