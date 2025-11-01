@@ -27,6 +27,7 @@ const navItems = [
   { href: '/home', label: 'Home', icon: LayoutDashboard },
   { href: '/subjects', label: 'Subjects', icon: BookCopy },
   { href: '/quizzes', label: 'Quizzes', icon: PencilRuler },
+  { href: '/repository', label: 'Repository', icon: Layers },
   { href: '/tutor', label: 'Brainy', icon: Bot },
   { href: '/teacher', label: "Teacher's Corner", icon: School },
 ];
