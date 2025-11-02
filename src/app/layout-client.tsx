@@ -5,7 +5,7 @@ import { AppShell } from "@/components/app-shell";
 export default function RootLayoutClient({ children }: { children: React.ReactNode }) {
     const pathname = usePathname();
 
-    const noShellRoutes = ['/welcome', '/auth', '/login', '/signup'];
+    const noShellRoutes = ['/welcome', '/auth'];
 
     if (noShellRoutes.includes(pathname)) {
         return <>{children}</>;
