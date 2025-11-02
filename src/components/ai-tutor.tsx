@@ -13,6 +13,7 @@ import { Logo } from './logo';
 import { doc, runTransaction, increment, updateDoc, getDoc, serverTimestamp } from 'firebase/firestore';
 import { useUserStore } from '@/hooks/use-user-store';
 import Link from 'next/link';
+import { useToast } from '@/hooks/use-toast';
 
 interface Message {
   role: 'user' | 'assistant';
@@ -51,6 +52,7 @@ export function AITutor() {
   
   const { profileId } = useUserStore();
   const firestore = useFirestore();
+  const { toast } = useToast();
 
   const userProfileRef = useMemoFirebase(() => {
     if (!profileId) return null;
@@ -77,10 +79,14 @@ export function AITutor() {
   }, [messages, isLoading]);
 
   const handleSendMessage = async (prompt: string) => {
-    if (!prompt.trim() || !userProfileRef || !userProfile) return;
+    if (!prompt.trim() || !userProfileRef) return;
 
     if (isLimitReached) {
-        // Optionally show a toast or alert here
+        toast({
+            variant: "destructive",
+            title: "Daily Limit Reached",
+            description: "You've used all your AI questions for today. Upgrade to VIP to continue.",
+        });
         return;
     }
 
@@ -90,28 +96,37 @@ export function AITutor() {
     setIsLoading(true);
 
     try {
-        const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
-        const lastChat = userProfile.lastChatDate;
-        
-        let newCount;
-        // If the last chat was not today, reset the count. Otherwise, increment.
-        if (lastChat !== today) {
-            newCount = 1; 
-        } else {
-            newCount = (userProfile.dailyChatCount || 0) + 1;
-        }
+        // Atomically update the chat count before calling the AI
+        await runTransaction(firestore, async (transaction) => {
+            const profileDoc = await transaction.get(userProfileRef);
+            if (!profileDoc.exists()) {
+                throw "User profile does not exist!";
+            }
 
-        // Update firestore document
-        await updateDoc(userProfileRef, {
-            dailyChatCount: newCount,
-            lastChatDate: today,
+            const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+            const lastChat = profileDoc.data().lastChatDate;
+            let newCount;
+
+            // If the last chat was not today, reset the count. Otherwise, increment.
+            if (lastChat !== today) {
+                newCount = 1;
+            } else {
+                newCount = (profileDoc.data().dailyChatCount || 0) + 1;
+            }
+            
+            transaction.update(userProfileRef, {
+                dailyChatCount: newCount,
+                lastChatDate: today,
+            });
         });
 
+        // Now call the AI
         const response = await aiSmartTutor({ query: prompt, gradeLevel: userProfile?.gradeLevel || 'Form 3' });
         const assistantMessage: Message = { role: 'assistant', content: response.response };
         setMessages((prev) => [...prev, assistantMessage]);
+
     } catch (error) {
-      console.error('Error fetching AI response:', error);
+      console.error('Error sending message:', error);
       const errorMessage: Message = { role: 'assistant', content: 'Sorry, I encountered an error. Please try again.' };
       setMessages((prev) => [...prev, errorMessage]);
     } finally {
@@ -249,5 +264,3 @@ export function AITutor() {
     </div>
   );
 }
-
-    
