@@ -1,7 +1,6 @@
-
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Sparkles, PencilRuler, BookOpen, ArrowUp, BrainCircuit } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
@@ -12,6 +11,7 @@ import { cn } from '@/lib/utils';
 import { useUser, useDoc, useMemoFirebase, useFirestore } from '@/firebase';
 import { doc } from 'firebase/firestore';
 import { useUserStore } from '@/hooks/use-user-store';
+import { useToast } from '@/hooks/use-toast';
 
 interface Message {
   role: 'user' | 'assistant';
@@ -112,13 +112,11 @@ export function AITutor() {
   }
   
   const renderMessageContent = (content: string) => {
-    // Basic markdown for bold text **text**
     const parts = content.split(/(\*\*.*?\*\*)/g);
     return parts.map((part, index) => {
       if (part.startsWith('**') && part.endsWith('**')) {
         return <strong key={index}>{part.slice(2, -2)}</strong>;
       }
-      // Handle newlines
       const lines = part.split('\n').map((line, lineIndex) => (
         <React.Fragment key={lineIndex}>
           {line}
@@ -229,4 +227,3 @@ export function AITutor() {
     </div>
   );
 }
-    
