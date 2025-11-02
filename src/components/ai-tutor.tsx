@@ -1,8 +1,8 @@
 
 'use client';
 
-import { useState, useRef, useEffect, useMemo } from 'react';
-import { Sparkles, PencilRuler, BookOpen, Crown, ArrowUp, BrainCircuit } from 'lucide-react';
+import { useState, useRef, useEffect } from 'react';
+import { Sparkles, PencilRuler, BookOpen, ArrowUp, BrainCircuit } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { aiSmartTutor } from '@/ai/flows/ai-smart-tutor';
@@ -10,10 +10,8 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { ScrollArea } from './ui/scroll-area';
 import { cn } from '@/lib/utils';
 import { useUser, useDoc, useMemoFirebase, useFirestore } from '@/firebase';
-import { doc, runTransaction } from 'firebase/firestore';
+import { doc } from 'firebase/firestore';
 import { useUserStore } from '@/hooks/use-user-store';
-import Link from 'next/link';
-import { useToast } from '@/hooks/use-toast';
 
 interface Message {
   role: 'user' | 'assistant';
@@ -38,8 +36,6 @@ const promptSuggestions = [
     }
 ];
 
-const FREE_TIER_LIMIT = 15;
-
 export function AITutor() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
@@ -50,7 +46,6 @@ export function AITutor() {
   
   const { profileId } = useUserStore();
   const firestore = useFirestore();
-  const { toast } = useToast();
 
   const userProfileRef = useMemoFirebase(() => {
     if (!profileId) return null;
@@ -85,16 +80,7 @@ export function AITutor() {
   }, [messages, isLoading]);
 
   const handleSendMessage = async (prompt: string) => {
-    if (!prompt.trim() || !userProfileRef) return;
-
-    if (isLimitReached) {
-        toast({
-            variant: "destructive",
-            title: "Daily Limit Reached",
-            description: "You've used all your AI questions for today. Upgrade to VIP to continue.",
-        });
-        return;
-    }
+    if (!prompt.trim()) return;
 
     const userMessage: Message = { role: 'user', content: prompt };
     setMessages((prev) => [...prev, userMessage]);
@@ -102,32 +88,9 @@ export function AITutor() {
     setIsLoading(true);
 
     try {
-        await runTransaction(firestore, async (transaction) => {
-            const profileDoc = await transaction.get(userProfileRef);
-            if (!profileDoc.exists()) {
-                throw "User profile does not exist!";
-            }
-
-            const today = new Date().toISOString().split('T')[0];
-            const lastChat = profileDoc.data().lastChatDate;
-            let newCount;
-
-            if (lastChat !== today) {
-                newCount = 1;
-            } else {
-                newCount = (profileDoc.data().dailyChatCount || 0) + 1;
-            }
-            
-            transaction.update(userProfileRef, {
-                dailyChatCount: newCount,
-                lastChatDate: today,
-            });
-        });
-
-        const response = await aiSmartTutor({ query: prompt, gradeLevel: userProfile?.gradeLevel || 'Form 3' });
-        const assistantMessage: Message = { role: 'assistant', content: response.response };
-        setMessages((prev) => [...prev, assistantMessage]);
-
+      const response = await aiSmartTutor({ query: prompt, gradeLevel: userProfile?.gradeLevel || 'Form 3' });
+      const assistantMessage: Message = { role: 'assistant', content: response.response };
+      setMessages((prev) => [...prev, assistantMessage]);
     } catch (error) {
       console.error('Error sending message:', error);
       const errorMessage: Message = { role: 'assistant', content: 'Sorry, I encountered an error. Please try again.' };
@@ -144,25 +107,9 @@ export function AITutor() {
   }
 
   const handleSuggestionClick = (prompt: string) => {
-      handleSendMessage(prompt);
+      setInput(prompt);
+      inputRef.current?.focus();
   }
-
-  const isLimitReached = useMemo(() => {
-    if (!userProfile) return false;
-    if (userProfile.subscriptionTier && (userProfile.subscriptionTier === 'power')) return false; 
-    
-    const today = new Date().toISOString().split('T')[0];
-    const lastChat = userProfile.lastChatDate;
-    const count = userProfile.dailyChatCount || 0;
-
-    let limit = FREE_TIER_LIMIT;
-    if(userProfile.subscriptionTier === 'vip1') limit = 15;
-    if(userProfile.subscriptionTier === 'vip2') limit = 30;
-    if(userProfile.subscriptionTier === 'vip3') limit = 50;
-    if(userProfile.subscriptionTier === 'vip4') limit = 100;
-
-    return lastChat === today && count >= limit;
-  }, [userProfile]);
   
   const renderMessageContent = (content: string) => {
     // Basic markdown for bold text **text**
@@ -171,7 +118,14 @@ export function AITutor() {
       if (part.startsWith('**') && part.endsWith('**')) {
         return <strong key={index}>{part.slice(2, -2)}</strong>;
       }
-      return part;
+      // Handle newlines
+      const lines = part.split('\n').map((line, lineIndex) => (
+        <React.Fragment key={lineIndex}>
+          {line}
+          {lineIndex < part.split('\n').length - 1 && <br />}
+        </React.Fragment>
+      ));
+      return <span key={index}>{lines}</span>;
     });
   };
 
@@ -200,7 +154,7 @@ export function AITutor() {
                         )}
                         <div className="flex-1">
                           <p className="font-bold mb-1">{message.role === 'assistant' ? "Brainy" : "You"}</p>
-                          <div className="prose prose-sm dark:prose-invert max-w-none text-foreground">
+                          <div className="prose prose-sm dark:prose-invert max-w-none text-foreground space-y-2">
                             {renderMessageContent(message.content)}
                           </div>
                         </div>
@@ -237,16 +191,6 @@ export function AITutor() {
                         </div>
                     </div>
                 )}
-                 {isLimitReached && (
-                    <div className="text-center p-8 rounded-lg bg-muted/50 border border-dashed flex flex-col items-center">
-                        <Crown className="h-12 w-12 text-yellow-500 mb-4" />
-                        <h3 className="text-xl font-bold">Daily Limit Reached</h3>
-                        <p className="text-muted-foreground mt-2 mb-4">You've used all your questions for today.</p>
-                        <Button asChild>
-                            <Link href="/subscribe">Upgrade to VIP to Continue</Link>
-                        </Button>
-                    </div>
-                 )}
                 </div>
             </ScrollArea>
         </div>
@@ -257,7 +201,7 @@ export function AITutor() {
                     <Textarea
                         ref={inputRef}
                         id="message"
-                        placeholder={isLimitReached ? "Upgrade to send more messages" : "Ask me anything..."}
+                        placeholder="Ask me anything..."
                         value={input}
                         onChange={(e) => setInput(e.target.value)}
                         onKeyDown={(e) => {
@@ -266,12 +210,12 @@ export function AITutor() {
                                 handleFormSubmit(e);
                             }
                         }}
-                        disabled={isLoading || isLimitReached || isProfileLoading}
+                        disabled={isLoading || isProfileLoading}
                         autoComplete="off"
                         rows={1}
                         className="pr-12 resize-none border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 p-0 shadow-none"
                     />
-                    <Button type="submit" size="icon" disabled={isLoading || !input.trim() || isLimitReached || isProfileLoading} className="absolute right-2.5 top-1/2 -translate-y-1/2 h-8 w-8 rounded-full">
+                    <Button type="submit" size="icon" disabled={isLoading || !input.trim() || isProfileLoading} className="absolute right-2.5 top-1/2 -translate-y-1/2 h-8 w-8 rounded-full">
                         <ArrowUp className="h-4 w-4" />
                         <span className="sr-only">Send Message</span>
                     </Button>
@@ -285,3 +229,4 @@ export function AITutor() {
     </div>
   );
 }
+    
