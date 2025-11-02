@@ -9,7 +9,7 @@ const developers = [
     {
         name: "Firebase Studio AI",
         role: "Lead AI Architect & Developer",
-        avatar: "/ai-avatar.png", // Placeholder, you might want a real image
+        avatar: "https://images.unsplash.com/photo-1590086782792-42dd2350140d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxwZXJzb24lMjBwb3J0cmFpdHxlbnwwfHx8fDE3NjE2NjU3ODF8MA&ixlib=rb-4.1.0&q=80&w=1080",
         description: "The core AI engine responsible for application logic, UI generation, and feature implementation.",
         github: "https://firebase.google.com/studio"
     },
@@ -37,6 +37,7 @@ export default function DevelopersPage() {
                   {developers.map((dev) => (
                       <div key={dev.name} className="flex flex-col sm:flex-row items-center gap-6 text-center sm:text-left">
                           <Avatar className="h-20 w-20">
+                              <AvatarImage src={dev.avatar} />
                               <AvatarFallback>{dev.name.charAt(0)}</AvatarFallback>
                           </Avatar>
                           <div className="space-y-1">
