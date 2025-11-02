@@ -11,6 +11,7 @@ import { Separator } from "@/components/ui/separator";
 import { useCollection, useFirestore, useMemoFirebase } from "@/firebase";
 import { collection, query } from "firebase/firestore";
 import { Skeleton } from "@/components/ui/skeleton";
+import { subjectsData } from "@/lib/subjects-data";
 
 export default function SubjectChaptersPage({ params }: { params: { subjectName: string } }) {
   const subjectId = params.subjectName; // subjectName is now the ID
@@ -22,8 +23,10 @@ export default function SubjectChaptersPage({ params }: { params: { subjectName:
   );
   const { data: chapters, isLoading } = useCollection(chaptersQuery);
 
-  const subjectName = subjectId.replace('-', ' ');
-  const subjectNotes = notesData.filter(note => note.subject.toLowerCase() === subjectName);
+  const subject = subjectsData.find(s => s.id === subjectId);
+  const subjectName = subject ? subject.name : subjectId.replace('-', ' ');
+
+  const subjectNotes = notesData.filter(note => note.subject.toLowerCase() === subjectName.toLowerCase());
   
   // Dummy progress data for UI. In a real app this would be user-specific.
   const progressData: {[key: string]: number} = {
