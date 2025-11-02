@@ -10,7 +10,7 @@ import { ScrollArea } from './ui/scroll-area';
 import { cn } from '@/lib/utils';
 import { useUser, useDoc, useMemoFirebase, useFirestore } from '@/firebase';
 import { Logo } from './logo';
-import { doc, runTransaction, increment } from 'firebase/firestore';
+import { doc, runTransaction, increment, updateDoc, getDoc, serverTimestamp } from 'firebase/firestore';
 import { useUserStore } from '@/hooks/use-user-store';
 import Link from 'next/link';
 
@@ -56,7 +56,7 @@ export function AITutor() {
     if (!profileId) return null;
     return doc(firestore, 'userProfiles', profileId);
   }, [firestore, profileId]);
-  const { data: userProfile } = useDoc(userProfileRef);
+  const { data: userProfile, isLoading: isProfileLoading } = useDoc(userProfileRef);
 
   const getInitials = (name: string) => {
     if (!name) return 'U';
@@ -77,31 +77,34 @@ export function AITutor() {
   }, [messages, isLoading]);
 
   const handleSendMessage = async (prompt: string) => {
-    if (!prompt.trim() || !userProfileRef) return;
+    if (!prompt.trim() || !userProfileRef || !userProfile) return;
+
+    if (isLimitReached) {
+        // Optionally show a toast or alert here
+        return;
+    }
 
     const userMessage: Message = { role: 'user', content: prompt };
     setMessages((prev) => [...prev, userMessage]);
+    setInput('');
     setIsLoading(true);
 
     try {
-        await runTransaction(firestore, async (transaction) => {
-            const profileDoc = await transaction.get(userProfileRef);
-            if (!profileDoc.exists()) {
-                throw new Error("User profile not found!");
-            }
-            
-            const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
-            const lastChat = profileDoc.data().lastChatDate;
-            let currentCount = profileDoc.data().dailyChatCount || 0;
+        const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+        const lastChat = userProfile.lastChatDate;
+        
+        let newCount;
+        // If the last chat was not today, reset the count. Otherwise, increment.
+        if (lastChat !== today) {
+            newCount = 1; 
+        } else {
+            newCount = (userProfile.dailyChatCount || 0) + 1;
+        }
 
-            if (lastChat !== today) {
-                currentCount = 0; // Reset count for the new day
-            }
-            
-            transaction.update(userProfileRef, {
-                dailyChatCount: increment(1),
-                lastChatDate: today,
-            });
+        // Update firestore document
+        await updateDoc(userProfileRef, {
+            dailyChatCount: newCount,
+            lastChatDate: today,
         });
 
         const response = await aiSmartTutor({ query: prompt, gradeLevel: userProfile?.gradeLevel || 'Form 3' });
@@ -116,10 +119,10 @@ export function AITutor() {
     }
   };
 
+
   const handleFormSubmit = async (e: React.FormEvent) => {
       e.preventDefault();
       handleSendMessage(input);
-      setInput('');
   }
 
   const handleSuggestionClick = (prompt: string) => {
@@ -154,8 +157,8 @@ export function AITutor() {
   return (
     <div className="h-full flex flex-col">
         <div className="flex-1 overflow-hidden">
-            <ScrollArea className="h-full pr-4" ref={scrollAreaRef}>
-                <div className="space-y-6 pb-20">
+            <ScrollArea className="h-full pr-4 pb-20" ref={scrollAreaRef}>
+                <div className="space-y-6">
                 {messages.map((message, index) => (
                     <div
                         key={index}
@@ -232,12 +235,12 @@ export function AITutor() {
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
                     onKeyDown={handleTextareaKeyDown}
-                    disabled={isLoading || isLimitReached}
+                    disabled={isLoading || isLimitReached || isProfileLoading}
                     autoComplete="off"
                     rows={1}
                     className="pr-12 min-h-[48px] resize-none"
                 />
-                <Button type="submit" size="icon" disabled={isLoading || !input.trim() || isLimitReached} className="absolute right-2.5 top-1/2 -translate-y-1/2 flex-shrink-0">
+                <Button type="submit" size="icon" disabled={isLoading || !input.trim() || isLimitReached || isProfileLoading} className="absolute right-2.5 top-1/2 -translate-y-1/2 flex-shrink-0">
                     <CornerDownLeft className="h-4 w-4" />
                     <span className="sr-only">Send Message</span>
                 </Button>
@@ -246,3 +249,5 @@ export function AITutor() {
     </div>
   );
 }
+
+    
