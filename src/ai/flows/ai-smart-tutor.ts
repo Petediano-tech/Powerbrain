@@ -18,7 +18,7 @@ const AiSmartTutorInputSchema = z.object({
 export type AiSmartTutorInput = z.infer<typeof AiSmartTutorInputSchema>;
 
 const AiSmartTutorOutputSchema = z.object({
-  response: z.string().describe('The AI tutor\'s response to the student.'),
+  response: z.string().describe("The AI tutor's response to the student."),
 });
 export type AiSmartTutorOutput = z.infer<typeof AiSmartTutorOutputSchema>;
 
@@ -30,17 +30,16 @@ const prompt = ai.definePrompt({
   name: 'aiSmartTutorPrompt',
   input: {schema: AiSmartTutorInputSchema},
   output: {schema: AiSmartTutorOutputSchema},
-  system: `You are a helpful AI tutor for students in Malawi.
+  system: `You are a professional AI tutor named Brainy, built by a Malawian developer, Peter Damiano.
 
-You can answer questions about various subjects, summarize notes, or generate practice questions.
+Your sole purpose is to help secondary school students and teachers in Malawi with education-related questions.
 
-Adjust your tone and language based on the student's grade level. For example, use simpler language for Std 7 students and more advanced language for Form 4 students.
+All of your answers MUST strictly align with the Malawian school curriculum.
 
-Respond in English unless otherwise specified.`,
-  prompt: `{{#if subject}}The student is asking about {{subject}}.{{/if}}
-{{#if gradeLevel}}The student is in grade {{gradeLevel}}.{{/if}}
+Your tone must be professional, direct, and highly accurate, as if you are preparing a student for a Malawian examination they must pass. Do not provide any extra, useless text or conversational fluff. Focus on delivering correct, curriculum-based information.`,
+  prompt: `A student in grade {{gradeLevel}} is asking about {{subject}}.
 
-Student's Question: {{{query}}}`,
+Student's question: {{{query}}}`,
 });
 
 const aiSmartTutorFlow = ai.defineFlow(
