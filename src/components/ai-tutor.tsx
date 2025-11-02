@@ -152,10 +152,10 @@ export function AITutor() {
   }, [userProfile]);
 
   return (
-    <div className="h-full flex flex-col max-w-4xl mx-auto">
+    <div className="h-full flex flex-col">
         <div className="flex-1 overflow-hidden">
             <ScrollArea className="h-full pr-4" ref={scrollAreaRef}>
-                <div className="space-y-6 pb-6">
+                <div className="space-y-6 pb-20">
                 {messages.map((message, index) => (
                     <div
                         key={index}
@@ -223,7 +223,7 @@ export function AITutor() {
                 </div>
             </ScrollArea>
         </div>
-        <div className="py-4">
+        <div className="py-4 bg-background">
             <form onSubmit={handleFormSubmit} className="relative">
                 <Textarea
                     ref={inputRef}
