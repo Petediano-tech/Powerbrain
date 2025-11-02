@@ -1,6 +1,8 @@
+
 'use client';
 import { usePathname } from "next/navigation";
 import { AppShell } from "@/components/app-shell";
+import { AppSidebar } from "@/components/app-sidebar";
 
 export default function RootLayoutClient({ children }: { children: React.ReactNode }) {
     const pathname = usePathname();
@@ -13,8 +15,11 @@ export default function RootLayoutClient({ children }: { children: React.ReactNo
     
     // Render the AppShell for all other routes
     return (
-        <AppShell>
-            {children}
-        </AppShell>
+        <>
+            <AppSidebar />
+            <AppShell>
+                {children}
+            </AppShell>
+        </>
     )
 }

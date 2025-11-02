@@ -5,6 +5,8 @@ import { Toaster } from "@/components/ui/toaster";
 import { FirebaseClientProvider } from '@/firebase/client-provider';
 import { Poppins } from 'next/font/google';
 import { Analytics } from '@vercel/analytics/react';
+import RootLayoutClient from './layout-client';
+import { SidebarProvider } from '@/components/ui/sidebar';
 
 const poppins = Poppins({
   subsets: ['latin'],
@@ -29,7 +31,9 @@ export default function RootLayout({
       </head>
       <body className={`${poppins.variable} font-body antialiased bg-background text-foreground`}>
         <FirebaseClientProvider>
-            {children}
+          <SidebarProvider>
+            <RootLayoutClient>{children}</RootLayoutClient>
+          </SidebarProvider>
         </FirebaseClientProvider>
         <Toaster />
         <Analytics />
