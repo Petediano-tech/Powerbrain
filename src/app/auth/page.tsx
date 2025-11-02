@@ -1,3 +1,4 @@
+
 'use client';
 import { Button } from '@/components/ui/button';
 import {
@@ -108,8 +109,6 @@ export default function AuthPage() {
           badges: [],
           averageScore: 0,
           subscriptionTier: "free",
-          dailyChatCount: 0,
-          lastChatDate: new Date().toISOString().split('T')[0],
       });
 
       const userAccountRef = doc(firestore, "userAccounts", user.uid);

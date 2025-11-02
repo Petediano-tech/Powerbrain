@@ -30,20 +30,17 @@ const upcomingDeadlines = [
     {
         title: 'Biology Assignment',
         due: 'Due in 2 days',
-        image: 'https://picsum.photos/seed/bioassign/200/100',
-        imageHint: 'biology microscope'
+        imageId: 'deadline-bio'
     },
     {
         title: 'Algebra Quiz',
         due: 'Due in 4 days',
-        image: 'https://picsum.photos/seed/algeq/200/100',
-        imageHint: 'math equations'
+        imageId: 'deadline-alg'
     },
     {
         title: 'History Essay',
         due: 'Due in 7 days',
-        image: 'https://picsum.photos/seed/histessay/200/100',
-        imageHint: 'history books'
+        imageId: 'deadline-hist'
     },
 ];
 
@@ -88,9 +85,9 @@ export default function DashboardPage() {
     return PlaceHolderImages[0]?.imageUrl;
   }, [user]);
 
-  const coursesInProgress = 4;
-  const completedLessons = 28;
-  const overallProgress = 68;
+  const coursesInProgress = userProfile?.topicsMastered || 0;
+  const completedLessons = userProfile?.quizzesCompleted || 0;
+  const overallProgress = userProfile?.averageScore || 0;
 
   return (
     <div className="flex flex-col gap-8">
@@ -109,18 +106,18 @@ export default function DashboardPage() {
           <CardContent className="pt-6">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 items-center">
               <div className="md:col-span-1">
-                <p className="text-sm text-muted-foreground">Courses in Progress</p>
+                <p className="text-sm text-muted-foreground">Topics Mastered</p>
                 <p className="text-3xl font-bold">{coursesInProgress}</p>
               </div>
               <div className="md:col-span-1">
-                <p className="text-sm text-muted-foreground">Completed Lessons</p>
+                <p className="text-sm text-muted-foreground">Quizzes Completed</p>
                 <p className="text-3xl font-bold">{completedLessons}</p>
               </div>
               <div className="md:col-span-2">
                  <p className="text-sm text-muted-foreground">Overall Progress</p>
                 <div className="flex items-center gap-3">
                   <Progress value={overallProgress} className="h-2 w-full" />
-                  <span className="text-sm font-semibold">{overallProgress}%</span>
+                  <span className="text-sm font-semibold">{overallProgress.toFixed(0)}%</span>
                 </div>
               </div>
             </div>
@@ -131,17 +128,20 @@ export default function DashboardPage() {
       <div>
         <h2 className="text-xl font-bold mb-4">Upcoming Deadlines</h2>
         <div className="flex space-x-4 overflow-x-auto pb-4 -mx-4 px-4">
-          {upcomingDeadlines.map((item) => (
-            <Card key={item.title} className="min-w-[220px] flex-shrink-0">
-                <CardContent className="p-0">
-                    <Image src={item.image} alt={item.title} width={220} height={100} className="rounded-t-lg object-cover w-full h-[100px]" data-ai-hint={item.imageHint} />
-                </CardContent>
-              <CardHeader className="p-4">
-                <CardTitle className="text-base">{item.title}</CardTitle>
-                <CardDescription className="text-amber-500 font-semibold">{item.due}</CardDescription>
-              </CardHeader>
-            </Card>
-          ))}
+          {upcomingDeadlines.map((item) => {
+            const image = PlaceHolderImages.find(img => img.id === item.imageId);
+            return (
+                <Card key={item.title} className="min-w-[220px] flex-shrink-0">
+                    <CardContent className="p-0">
+                       {image && <Image src={image.imageUrl} alt={item.title} width={220} height={100} className="rounded-t-lg object-cover w-full h-[100px]" data-ai-hint={image.imageHint} />}
+                    </CardContent>
+                  <CardHeader className="p-4">
+                    <CardTitle className="text-base">{item.title}</CardTitle>
+                    <CardDescription className="text-amber-500 font-semibold">{item.due}</CardDescription>
+                  </CardHeader>
+                </Card>
+            )
+          })}
         </div>
       </div>
 
