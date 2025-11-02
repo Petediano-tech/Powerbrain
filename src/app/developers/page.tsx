@@ -3,8 +3,27 @@ import React from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { ArrowLeft, Code, Mail, Phone, MapPin, Youtube, Facebook } from "lucide-react";
+import { ArrowLeft, Code, Mail, Phone, MapPin } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+
+const TikTokIcon = () => (
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" className="h-5 w-5">
+        <path d="M12.52.02C13.83 0 15.14.01 16.44 0a5.55 5.55 0 0 1 4.23 2.04c1.47 1.6 2.33 3.43 2.33 5.66v.29c0 4.1-2.14 7.63-5.54 9.28a6.47 6.47 0 0 1-2.9.89 6.7 6.7 0 0 1-5.2-2.14 6.47 6.47 0 0 1-2.4-4.55V8.5a6.4 6.4 0 0 1 1.4-4.2C10.1 2.2 11.23.02 12.52.02Z"/>
+    </svg>
+);
+
+const FacebookIcon = () => (
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" className="h-5 w-5">
+        <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
+    </svg>
+);
+
+const YouTubeIcon = () => (
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" className="h-5 w-5">
+        <path d="M21.58 7.19c-.23-.86-.9-1.52-1.76-1.75C18.25 5 12 5 12 5s-6.25 0-7.82.44c-.86.23-1.52.9-1.76 1.75C2 8.75 2 12 2 12s0 3.25.42 4.81c.23.86.9 1.52 1.76 1.75C5.75 19 12 19 12 19s6.25 0 7.82-.44c.86-.23 1.52-.9 1.76-1.75C22 15.25 22 12 22 12s0-3.25-.42-4.81zM9.5 15.5V8.5l6.5 3.5-6.5 3.5z"></path>
+    </svg>
+);
+
 
 const developer = {
     name: "Peter Damiano",
@@ -14,9 +33,9 @@ const developer = {
     email: "peterdamianotech@gmail.com",
     location: "Dzenje SFP, Mulanje, Malawi",
     socials: [
-        { name: "TikTok", url: "https://www.tiktok.com/@petediano", icon: ()=><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5"><path d="M12.52.02C13.83 0 15.14.01 16.44 0a5.55 5.55 0 0 1 4.23 2.04c1.47 1.6 2.33 3.43 2.33 5.66v.29c0 4.1-2.14 7.63-5.54 9.28a6.47 6.47 0 0 1-2.9.89 6.7 6.7 0 0 1-5.2-2.14 6.47 6.47 0 0 1-2.4-4.55V8.5a6.4 6.4 0 0 1 1.4-4.2C10.1 2.2 11.23.02 12.52.02Zm.01 2.18c-1.39 0-2.58.46-3.56 1.4-1.28 1.2-1.92 2.7-1.92 4.54v.13c0 2.9 1.4 5.2 3.81 6.5a4.4 4.4 0 0 0 2.28.68 4.47 4.47 0 0 0 4.19-2.73c.1-.28.18-.57.22-.88a.49.49 0 0 0-.5-.53h-1.5a.5.5 0 0 1-.5-.45v-4.5a.5.5 0 0 1 .5-.5h4.19a.5.5 0 0 0 .5-.5v-1.78a3.3 3.3 0 0 0-1.8-3.1 3.5 3.5 0 0 0-2.4-.44h-4.38Z"/></svg> },
-        { name: "Facebook", url: "https://www.facebook.com/profile.php?id=100086106805333", icon: Facebook },
-        { name: "YouTube", url: "https://www.youtube.com/@PeterDamiano-f9y", icon: Youtube },
+        { name: "TikTok", url: "https://www.tiktok.com/@petediano", icon: TikTokIcon },
+        { name: "Facebook", url: "https://www.facebook.com/profile.php?id=100086106805333", icon: FacebookIcon },
+        { name: "YouTube", url: "https://www.youtube.com/@PeterDamiano-f9y", icon: YouTubeIcon },
     ]
 };
 
@@ -85,5 +104,3 @@ export default function DevelopersPage() {
         </div>
     )
 }
-
-    
