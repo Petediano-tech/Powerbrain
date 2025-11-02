@@ -13,8 +13,7 @@ import { collection, query } from "firebase/firestore";
 import { Skeleton } from "@/components/ui/skeleton";
 import { subjectsData } from "@/lib/subjects-data";
 
-export default function SubjectChaptersPage({ params }: { params: { subjectName: string } }) {
-  const subjectId = params.subjectName; // subjectName is now the ID
+export default function SubjectChaptersPage({ params: { subjectName: subjectId } }: { params: { subjectName: string } }) {
   const firestore = useFirestore();
 
   const chaptersQuery = useMemoFirebase(
@@ -126,7 +125,7 @@ export default function SubjectChaptersPage({ params }: { params: { subjectName:
                         </CardHeader>
                         <CardFooter>
                              <Button className="w-full" asChild>
-                                <Link href={`/notes/view?pdf=${encodeURIComponent(note.pdfUrl)}&subject=${params.subjectName}`}>
+                                <Link href={`/notes/view?pdf=${encodeURIComponent(note.pdfUrl)}&subject=${subjectId}`}>
                                     <BookOpen className="mr-2 h-4 w-4" />
                                     Read Note
                                 </Link>
