@@ -2,7 +2,7 @@
 'use client';
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { ChevronRight, User, UniversalAccess, BookOpen, Crown, Info, ArrowLeft, Timer } from "lucide-react";
+import { ChevronRight, User, Accessibility, Crown, Info, ArrowLeft, Timer } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 const settingsItems = [
@@ -14,7 +14,7 @@ const settingsItems = [
     },
     {
         href: "/settings/accessibility",
-        icon: UniversalAccess,
+        icon: Accessibility,
         title: "Accessibility",
         description: "Customize theme, font, and notifications."
     },
