@@ -3,6 +3,9 @@
 import { usePathname } from "next/navigation";
 import { capitalize } from "@/lib/utils";
 import { SidebarTrigger } from "./ui/sidebar";
+import { Button } from "./ui/button";
+import Link from "next/link";
+import { Settings } from "lucide-react";
 
 function getPageTitle(pathname: string) {
     if (pathname === '/home') return null; // Home page has its own header
@@ -24,7 +27,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     const pageTitle = getPageTitle(pathname);
 
     // Don't show shell on certain full-page routes
-    if (pathname === '/profile' || pathname.includes('/notes/view')) {
+    if (pathname === '/profile' || pathname.includes('/notes/view') || pathname === '/settings') {
          return <main className="min-w-0 flex-1">{children}</main>;
     }
 
@@ -36,7 +39,11 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                     <h1 className="text-lg font-bold">
                         {pageTitle}
                     </h1>
-                    <div className="w-7"></div>
+                     <Button asChild variant="ghost" size="icon">
+                        <Link href="/settings">
+                            <Settings className="h-5 w-5" />
+                        </Link>
+                    </Button>
                 </header>
             )}
             <main className="flex-1 overflow-y-auto p-4 md:p-6 lg:p-8">
