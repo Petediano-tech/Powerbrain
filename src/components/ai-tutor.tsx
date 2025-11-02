@@ -2,7 +2,7 @@
 'use client';
 
 import { useState, useRef, useEffect, useMemo } from 'react';
-import { Bot, Sparkles, PencilRuler, BookOpen, Crown, ArrowUp, BrainCircuit } from 'lucide-react';
+import { Sparkles, PencilRuler, BookOpen, Crown, ArrowUp, BrainCircuit } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { aiSmartTutor } from '@/ai/flows/ai-smart-tutor';
@@ -146,13 +146,6 @@ export function AITutor() {
   const handleSuggestionClick = (prompt: string) => {
       handleSendMessage(prompt);
   }
-  
-  const handleTextareaKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-        e.preventDefault();
-        handleSendMessage(input);
-    }
-  }
 
   const isLimitReached = useMemo(() => {
     if (!userProfile) return false;
@@ -267,7 +260,12 @@ export function AITutor() {
                         placeholder={isLimitReached ? "Upgrade to send more messages" : "Ask me anything..."}
                         value={input}
                         onChange={(e) => setInput(e.target.value)}
-                        onKeyDown={handleTextareaKeyDown}
+                        onKeyDown={(e) => {
+                            if (e.key === 'Enter' && !e.shiftKey) {
+                                e.preventDefault();
+                                handleFormSubmit(e);
+                            }
+                        }}
                         disabled={isLoading || isLimitReached || isProfileLoading}
                         autoComplete="off"
                         rows={1}
