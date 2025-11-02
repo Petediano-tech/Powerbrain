@@ -1,3 +1,4 @@
+
 'use client';
 import { usePathname } from 'next/navigation';
 import { Home, BookCopy, BrainCircuit, User } from 'lucide-react';
@@ -9,6 +10,7 @@ import {
   SidebarMenuItem,
   SidebarMenuButton,
   SidebarFooter,
+  useSidebar,
 } from '@/components/ui/sidebar';
 import { Logo } from './logo';
 import { useUser } from '@/firebase';
@@ -21,12 +23,13 @@ import { PlaceHolderImages } from '@/lib/placeholder-images';
 const navItems = [
   { href: '/home', label: 'Home', icon: Home },
   { href: '/subjects', label: 'Subjects', icon: BookCopy },
-  { href: '/tutor', label: 'AI Chat', icon: BrainCircuit },
+  { href: '/tutor', label: 'Brainy AI', icon: BrainCircuit },
 ];
 
 export function AppSidebar() {
   const pathname = usePathname();
   const { user } = useUser();
+  const { setOpenMobile } = useSidebar();
 
   const getInitials = (name: string) => {
     if (!name) return 'U';
@@ -63,7 +66,7 @@ export function AppSidebar() {
              const isActive = item.href === '/home' ? pathname === item.href : pathname.startsWith(item.href);
              return (
                 <SidebarMenuItem key={item.label}>
-                    <Link href={item.href} className="w-full">
+                    <Link href={item.href} className="w-full" onClick={() => setOpenMobile(false)}>
                         <SidebarMenuButton isActive={isActive}>
                             <item.icon />
                             {item.label}
@@ -75,7 +78,7 @@ export function AppSidebar() {
         </SidebarMenu>
       </SidebarContent>
       <SidebarFooter>
-        <Link href="/profile">
+        <Link href="/profile" onClick={() => setOpenMobile(false)}>
             <div className={cn("flex items-center gap-3 p-2 rounded-lg transition-colors", pathname.startsWith('/profile') && 'bg-muted')}>
                 <Avatar className="h-9 w-9">
                     {userAvatarUrl && <AvatarImage src={userAvatarUrl} alt={displayName} />}

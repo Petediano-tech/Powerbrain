@@ -10,7 +10,7 @@ import { Settings } from "lucide-react";
 
 function getPageTitle(pathname: string) {
     if (pathname === '/home') return 'Home';
-    if (pathname === '/tutor') return 'AI Chat';
+    if (pathname === '/tutor') return 'Brainy AI';
     if (pathname.startsWith('/subjects')) return 'Subjects';
     if (pathname.startsWith('/quizzes')) return 'Quizzes';
     if (pathname === '/repository') return 'Resources';
