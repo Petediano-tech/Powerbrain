@@ -14,25 +14,18 @@ import { doc, getFirestore } from 'firebase/firestore';
 import {
   ArrowLeft,
   Book,
-  ChevronRight,
   GraduationCap,
-  Heart,
-  HelpCircle,
-  KeyRound,
-  LogOut,
   Mail,
   MapPin,
-  Moon,
   Pencil,
   Phone,
-  ShieldAlert,
   Star,
-  Bell,
+  Settings,
+  LogOut,
 } from 'lucide-react';
 import Link from 'next/link';
 import { useMemo } from 'react';
 import { ProfileListItem } from '@/components/profile-list-item';
-import { Switch } from '@/components/ui/switch';
 import { useRouter } from 'next/navigation';
 import { Skeleton } from '@/components/ui/skeleton';
 
@@ -180,32 +173,18 @@ export default function ProfilePage() {
             />
           </div>
         </div>
-
-        {/* Settings */}
+        
+        {/* App Settings */}
         <div>
-          <h3 className="font-semibold text-lg mb-2">Settings</h3>
+          <h3 className="font-semibold text-lg mb-2">Application</h3>
           <div className="bg-card rounded-xl p-2 space-y-1 border">
-            <ProfileListItem
-              icon={Bell}
-              label="Notification Preferences"
-              value=""
-            />
-            <ProfileListItem
-              icon={Moon}
-              label="Dark Mode"
-              value={<Switch />}
-              isAction={false}
-            />
-             <ProfileListItem
-              icon={KeyRound}
-              label="Change Password"
-              value=""
-            />
-            <ProfileListItem
-              icon={HelpCircle}
-              label="Help & Support"
-              value=""
-            />
+            <Link href="/settings">
+                <ProfileListItem
+                    icon={Settings}
+                    label="Settings"
+                    value="App preferences, privacy and more"
+                />
+            </Link>
           </div>
         </div>
       </div>
