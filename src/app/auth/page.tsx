@@ -170,27 +170,27 @@ export default function AuthPage() {
 
 
   return (
-    <div className="w-full min-h-screen flex flex-col items-center justify-center bg-[#090B1A] p-4">
+    <div className="w-full min-h-screen flex flex-col items-center justify-center bg-background p-4">
       <div className="text-center space-y-2 mb-8">
-        <div className="flex justify-center p-4 bg-primary/20 rounded-full w-fit mx-auto backdrop-blur-sm">
+        <div className="flex justify-center p-4 bg-primary/10 rounded-full w-fit mx-auto">
           <Logo />
         </div>
-        <h1 className="text-4xl font-bold text-white">Power Brain</h1>
-        <p className="text-lg text-white/70">
+        <h1 className="text-4xl font-bold text-foreground">Power Brain</h1>
+        <p className="text-lg text-muted-foreground">
             Learning for Malawi's Future
         </p>
       </div>
 
       <Tabs defaultValue="signup" className="w-full max-w-sm" onValueChange={(value) => setIsSignUp(value === 'signup')}>
-        <TabsList className="grid w-full grid-cols-2 bg-[#232634] rounded-full h-12 p-1.5">
-          <TabsTrigger value="signup" className="rounded-full data-[state=active]:bg-[#363A4D] data-[state=active]:text-white text-white/70">Sign Up</TabsTrigger>
-          <TabsTrigger value="login" className="rounded-full data-[state=active]:bg-[#363A4D] data-[state=active]:text-white text-white/70">Log In</TabsTrigger>
+        <TabsList className="grid w-full grid-cols-2">
+          <TabsTrigger value="signup">Sign Up</TabsTrigger>
+          <TabsTrigger value="login">Log In</TabsTrigger>
         </TabsList>
         
         <TabsContent value="signup" className="mt-8">
             <form onSubmit={handleEmailSignUp} className="space-y-4">
               <div className="space-y-2">
-                <Label className="text-white/80" htmlFor="name">Full Name</Label>
+                <Label htmlFor="name">Full Name</Label>
                 <Input
                   id="name"
                   type="text"
@@ -199,11 +199,11 @@ export default function AuthPage() {
                   onChange={(e) => setName(e.target.value)}
                   required
                   disabled={isLoading}
-                  className="bg-[#232634] border-0 text-white placeholder:text-white/50 rounded-lg h-12"
+                  className="h-12"
                 />
               </div>
               <div className="space-y-2">
-                <Label className="text-white/80" htmlFor="email-signup">Email Address</Label>
+                <Label htmlFor="email-signup">Email Address</Label>
                 <Input
                   id="email-signup"
                   type="email"
@@ -212,11 +212,11 @@ export default function AuthPage() {
                   onChange={(e) => setSignUpEmail(e.target.value)}
                   required
                   disabled={isLoading}
-                  className="bg-[#232634] border-0 text-white placeholder:text-white/50 rounded-lg h-12"
+                  className="h-12"
                 />
               </div>
               <div className="space-y-2">
-                <Label className="text-white/80" htmlFor="password-signup">Password</Label>
+                <Label htmlFor="password-signup">Password</Label>
                 <Input
                   id="password-signup"
                   type="password"
@@ -225,21 +225,21 @@ export default function AuthPage() {
                   onChange={(e) => setSignUpPassword(e.target.value)}
                   required
                   disabled={isLoading}
-                  className="bg-[#232634] border-0 text-white placeholder:text-white/50 rounded-lg h-12"
+                  className="h-12"
                 />
               </div>
               {error && isSignUp && <p className="text-sm text-destructive">{error}</p>}
                <div className="space-y-2">
-                  <Label className="text-white/80">I am a...</Label>
+                  <Label>I am a...</Label>
                   <Tabs defaultValue={role} onValueChange={setRole} className='w-full'>
-                      <TabsList className="grid w-full grid-cols-2 bg-[#232634] rounded-lg h-12 p-1">
-                          <TabsTrigger value="student" className="rounded-md data-[state=active]:bg-primary data-[state=active]:text-primary-foreground text-white/70">Student</TabsTrigger>
-                          <TabsTrigger value="teacher" className="rounded-md data-[state=active]:bg-primary data-[state=active]:text-primary-foreground text-white/70">Teacher</TabsTrigger>
+                      <TabsList className="grid w-full grid-cols-2 h-12 p-1">
+                          <TabsTrigger value="student">Student</TabsTrigger>
+                          <TabsTrigger value="teacher">Teacher</TabsTrigger>
                       </TabsList>
                   </Tabs>
                </div>
 
-              <Button type="submit" className="w-full h-12 rounded-lg bg-primary hover:bg-primary/90 text-white font-bold" disabled={isLoading}>
+              <Button type="submit" className="w-full h-12" disabled={isLoading}>
                 {isLoading ? 'Creating Account...' : 'Create Account'}
               </Button>
             </form>
@@ -248,7 +248,7 @@ export default function AuthPage() {
         <TabsContent value="login" className="mt-8">
             <form onSubmit={handleEmailSignIn} className="space-y-4">
                <div className="space-y-2">
-                <Label className="text-white/80" htmlFor="email-login">Email Address</Label>
+                <Label htmlFor="email-login">Email Address</Label>
                 <Input
                   id="email-login"
                   type="email"
@@ -257,11 +257,11 @@ export default function AuthPage() {
                   onChange={(e) => setLoginEmail(e.target.value)}
                   required
                   disabled={isLoading}
-                  className="bg-[#232634] border-0 text-white placeholder:text-white/50 rounded-lg h-12"
+                  className="h-12"
                 />
               </div>
               <div className="space-y-2">
-                <Label className="text-white/80" htmlFor="password-login">Password</Label>
+                <Label htmlFor="password-login">Password</Label>
                 <Input
                   id="password-login"
                   type="password"
@@ -270,11 +270,11 @@ export default function AuthPage() {
                   onChange={(e) => setLoginPassword(e.target.value)}
                   required
                   disabled={isLoading}
-                   className="bg-[#232634] border-0 text-white placeholder:text-white/50 rounded-lg h-12"
+                  className="h-12"
                 />
               </div>
                {error && !isSignUp && <p className="text-sm text-destructive">{error}</p>}
-              <Button type="submit" className="w-full h-12 rounded-lg bg-primary hover:bg-primary/90 text-white font-bold" disabled={isLoading}>
+              <Button type="submit" className="w-full h-12" disabled={isLoading}>
                 {isLoading ? 'Logging In...' : 'Log In'}
               </Button>
             </form>
@@ -288,10 +288,10 @@ export default function AuthPage() {
 
             <div className="relative my-6">
               <div className="absolute inset-0 flex items-center">
-                <span className="w-full border-t border-white/20" />
+                <span className="w-full border-t" />
               </div>
               <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-[#090B1A] px-2 text-white/50">
+                <span className="bg-background px-2 text-muted-foreground">
                   Or
                 </span>
               </div>
@@ -299,7 +299,7 @@ export default function AuthPage() {
 
             <Button
               variant="outline"
-              className="w-full h-12 rounded-lg bg-[#232634] border-0 text-white hover:bg-[#363A4D] hover:text-white"
+              className="w-full h-12"
               onClick={handleGoogleSignIn}
               disabled={isLoading}
             >

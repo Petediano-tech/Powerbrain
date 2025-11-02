@@ -77,7 +77,7 @@ export default function ProfilePage() {
 
   if (isLoading) {
     return (
-      <div className="bg-[#090B1A] text-white min-h-screen p-4">
+      <div className="bg-background text-foreground min-h-screen p-4">
         <div className="flex items-center gap-4 mb-8">
           <Skeleton className="h-10 w-10 rounded-full" />
           <Skeleton className="h-6 w-24" />
@@ -91,14 +91,14 @@ export default function ProfilePage() {
         <div className="mt-10 space-y-8">
             <div>
                 <Skeleton className="h-5 w-32 mb-4" />
-                <div className="bg-[#232634] rounded-lg p-2 space-y-2">
+                <div className="bg-muted rounded-lg p-2 space-y-2">
                     <Skeleton className="h-12 w-full" />
                     <Skeleton className="h-12 w-full" />
                 </div>
             </div>
              <div>
                 <Skeleton className="h-5 w-32 mb-4" />
-                <div className="bg-[#232634] rounded-lg p-2 space-y-2">
+                <div className="bg-muted rounded-lg p-2 space-y-2">
                     <Skeleton className="h-12 w-full" />
                     <Skeleton className="h-12 w-full" />
                 </div>
@@ -109,8 +109,8 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="bg-[#090B1A] text-white min-h-screen">
-      <div className="p-4 flex items-center gap-4 sticky top-0 bg-[#090B1A]/80 backdrop-blur-sm z-10">
+    <div className="bg-background text-foreground min-h-screen">
+      <div className="p-4 flex items-center gap-4 sticky top-0 bg-background/80 backdrop-blur-sm z-10">
         <Button variant="ghost" size="icon" onClick={() => router.back()}>
           <ArrowLeft />
         </Button>
@@ -121,26 +121,26 @@ export default function ProfilePage() {
         <div className="relative">
           <Avatar className="h-28 w-28 border-4 border-primary">
             {user?.photoURL && <AvatarImage src={user.photoURL} alt={displayName} />}
-            <AvatarFallback className="text-4xl bg-muted/80 text-foreground">
+            <AvatarFallback className="text-4xl bg-muted text-foreground">
               {getInitials(displayName)}
             </AvatarFallback>
           </Avatar>
           <Button
             size="icon"
-            className="absolute bottom-0 right-0 rounded-full border-4 border-[#090B1A]"
+            className="absolute bottom-0 right-0 rounded-full border-4 border-background"
           >
             <Pencil className="h-5 w-5" />
           </Button>
         </div>
         <h2 className="text-2xl font-bold mt-2">{displayName}</h2>
-        <p className="text-amber-400 font-semibold">{capitalize(userProfile?.role || 'student')}</p>
+        <p className="text-primary font-semibold">{capitalize(userProfile?.role || 'student')}</p>
       </div>
 
       <div className="p-4 space-y-8">
         {/* Personal Information */}
         <div>
           <h3 className="font-semibold text-lg mb-2">Personal Information</h3>
-          <div className="bg-[#1C1E2D] rounded-xl p-2 space-y-1">
+          <div className="bg-card rounded-xl p-2 space-y-1 border">
             <ProfileListItem
               icon={Mail}
               label="Email"
@@ -162,7 +162,7 @@ export default function ProfilePage() {
         {/* Academic Information */}
         <div>
           <h3 className="font-semibold text-lg mb-2">Academic Information</h3>
-          <div className="bg-[#1C1E2D] rounded-xl p-2 space-y-1">
+          <div className="bg-card rounded-xl p-2 space-y-1 border">
             <ProfileListItem
               icon={GraduationCap}
               label="School"
@@ -184,7 +184,7 @@ export default function ProfilePage() {
         {/* Settings */}
         <div>
           <h3 className="font-semibold text-lg mb-2">Settings</h3>
-          <div className="bg-[#1C1E2D] rounded-xl p-2 space-y-1">
+          <div className="bg-card rounded-xl p-2 space-y-1 border">
             <ProfileListItem
               icon={Bell}
               label="Notification Preferences"
@@ -193,7 +193,7 @@ export default function ProfilePage() {
             <ProfileListItem
               icon={Moon}
               label="Dark Mode"
-              value={<Switch defaultChecked disabled className="data-[state=checked]:bg-primary"/>}
+              value={<Switch />}
               isAction={false}
             />
              <ProfileListItem
@@ -211,7 +211,7 @@ export default function ProfilePage() {
       </div>
       
       <div className="p-6 mt-4">
-        <Button variant="destructive" className="w-full h-12 bg-red-600/20 text-red-400 hover:bg-red-600/30" onClick={handleLogout}>
+        <Button variant="destructive" className="w-full h-12" onClick={handleLogout}>
           <LogOut className="mr-2" />
           Log Out
         </Button>
