@@ -14,10 +14,16 @@ function getPageTitle(pathname: string) {
     if (pathname.startsWith('/subjects')) return 'Subjects';
     if (pathname.startsWith('/quizzes')) return 'Quizzes';
     if (pathname === '/repository') return 'Resources';
-    if (pathname === '/profile') return 'Profile';
     if (pathname === '/dashboard') return 'Dashboard';
-    if (pathname === '/settings') return 'Settings';
     if (pathname === '/teacher') return "Teacher's Corner";
+
+    // These pages have their own headers now
+    if (['/profile', '/settings', '/about', '/terms', '/privacy', '/contact', '/developers'].includes(pathname)) {
+        return null;
+    }
+    if (pathname.includes('/notes/view')) {
+        return null;
+    }
 
     const pageName = pathname.split('/').pop() || 'Home';
     return capitalize(pageName.replace('-', ' '));
@@ -27,8 +33,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     const pathname = usePathname();
     const pageTitle = getPageTitle(pathname);
 
-    // Don't show shell on certain full-page routes
-    if (pathname === '/profile' || pathname.includes('/notes/view') || pathname === '/settings') {
+    // Don't show shell for pages that now have their own layout/header
+    if (pageTitle === null) {
          return <main className="min-w-0 flex-1">{children}</main>;
     }
 
