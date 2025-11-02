@@ -7,7 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Slider } from "@/components/ui/slider";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { ChevronRight, FileText, Info, ShieldCheck, Trash2, Users, Download, Phone, Crown } from "lucide-react";
+import { ChevronRight, FileText, Info, ShieldCheck, Trash2, Users, Download, Phone, Crown, Timer } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 
 export default function SettingsPage() {
@@ -48,9 +48,8 @@ export default function SettingsPage() {
           <div className="flex items-center justify-between">
             <Label htmlFor="dark-mode" className="flex flex-col gap-1">
               <span>Dark Mode</span>
-              <span className="text-xs font-normal text-muted-foreground">Coming soon!</span>
             </Label>
-            <Switch id="dark-mode" disabled />
+            <Switch id="dark-mode" checked disabled />
           </div>
           <div className="flex items-center justify-between">
             <Label htmlFor="language">Language</Label>
@@ -63,6 +62,22 @@ export default function SettingsPage() {
                 <SelectItem value="ch">Simple English</SelectItem>
               </SelectContent>
             </Select>
+          </div>
+        </CardContent>
+      </Card>
+      
+      <Card>
+        <CardHeader>
+          <CardTitle>Study Preferences</CardTitle>
+           <CardDescription>Customize your study sessions.</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-6">
+           <div className="flex items-center justify-between">
+             <Label htmlFor="pomodoro-timer" className="flex flex-col gap-1">
+                <span>Pomodoro Reading Timer</span>
+                <span className="text-xs font-normal text-muted-foreground">Enable a timer during reading sessions.</span>
+             </Label>
+            <Switch id="pomodoro-timer" />
           </div>
         </CardContent>
       </Card>
