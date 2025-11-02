@@ -1,0 +1,7 @@
+{
+  "functions": {
+    "src/app/api/genkit/[[...slug]]/route.ts": {
+      "includeFiles": "node_modules/@genkit-ai/next/lib/static/**"
+    }
+  }
+}
