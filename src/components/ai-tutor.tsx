@@ -137,7 +137,7 @@ export function AITutor() {
   };
 
 
-  const handleFormSubmit = async (e: React.FormEvent) => {
+  const handleFormSubmit = (e: React.FormEvent) => {
       e.preventDefault();
       handleSendMessage(input);
   }
@@ -149,7 +149,7 @@ export function AITutor() {
   const handleTextareaKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === 'Enter' && !e.shiftKey) {
         e.preventDefault();
-        handleFormSubmit(e as any);
+        handleSendMessage(input);
     }
   }
 
@@ -286,3 +286,5 @@ export function AITutor() {
     </div>
   );
 }
+
+    
