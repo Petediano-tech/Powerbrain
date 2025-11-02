@@ -9,7 +9,7 @@ import { AppShell } from '@/components/app-shell';
 import TeacherPage from '../teacher/page';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Bell, Search, BarChart2, GraduationCap, FolderKanban, PencilRuler, BrainCircuit, BookCopy } from 'lucide-react';
+import { Search, BarChart2, GraduationCap, FolderKanban, PencilRuler, BrainCircuit, BookCopy } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
@@ -116,7 +116,6 @@ export default function HomePage() {
                         <p className="text-muted-foreground text-sm">Let's start learning</p>
                     </div>
                 </div>
-                <Bell className="h-6 w-6 text-muted-foreground" />
             </header>
 
             <div className="relative">

@@ -1,3 +1,4 @@
+
 'use client';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -41,15 +42,7 @@ export default function TeacherPage() {
     const displayName = user?.displayName || 'Atikonda';
 
   return (
-    <div className="space-y-6 text-foreground bg-background p-4 md:p-0">
-        <div className="flex items-center gap-4">
-            <Avatar className="h-12 w-12 border-2 border-primary">
-                {user?.photoURL && <AvatarImage src={user.photoURL} alt={displayName} />}
-                <AvatarFallback className="text-lg bg-muted">{displayName.charAt(0)}</AvatarFallback>
-            </Avatar>
-            <h1 className="text-3xl font-bold tracking-tight">Good Morning, {displayName}!</h1>
-        </div>
-
+    <div className="space-y-6 text-foreground bg-background">
         <div className="grid grid-cols-3 gap-4">
             {quickActions.map(action => (
                  <Card key={action.name} className="bg-card/80 hover:bg-card transition-colors text-center p-4 h-full flex flex-col items-center justify-center cursor-pointer">

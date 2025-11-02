@@ -1,3 +1,4 @@
+
 'use client';
 
 import { usePathname } from "next/navigation";
@@ -8,7 +9,7 @@ import Link from "next/link";
 import { Settings } from "lucide-react";
 
 function getPageTitle(pathname: string) {
-    if (pathname === '/home') return null; // Home page has its own header
+    if (pathname === '/home') return 'Home';
     if (pathname === '/tutor') return 'AI Chat';
     if (pathname.startsWith('/subjects')) return 'Subjects';
     if (pathname.startsWith('/quizzes')) return 'Quizzes';
