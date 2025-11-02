@@ -1,7 +1,8 @@
+
 'use client';
 
 import { useState, useRef, useEffect, useMemo } from 'react';
-import { Bot, Sparkles, PencilRuler, BookOpen, Crown, ArrowUp } from 'lucide-react';
+import { Bot, Sparkles, PencilRuler, BookOpen, Crown, ArrowUp, BrainCircuit } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { aiSmartTutor } from '@/ai/flows/ai-smart-tutor';
@@ -149,7 +150,7 @@ export function AITutor() {
   const handleTextareaKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === 'Enter' && !e.shiftKey) {
         e.preventDefault();
-        handleSendMessage(input);
+        handleSendMessage(e.currentTarget.form ? e.currentTarget.form.message.value : input);
     }
   }
 
@@ -196,7 +197,7 @@ export function AITutor() {
                         {message.role === 'assistant' ? (
                           <Avatar className="h-9 w-9 bg-primary/20 text-primary border border-primary/30">
                               <AvatarImage src="/ai-avatar.png" alt="Brainy" />
-                              <AvatarFallback><Bot size={20}/></AvatarFallback>
+                              <AvatarFallback><BrainCircuit size={20}/></AvatarFallback>
                           </Avatar>
                         ) : (
                           <Avatar className="h-9 w-9">
@@ -229,7 +230,7 @@ export function AITutor() {
                     <div className="flex items-start gap-4">
                         <Avatar className="h-9 w-9 bg-primary/20 text-primary border border-primary/30">
                            <AvatarImage src="/ai-avatar.png" alt="Brainy" />
-                           <AvatarFallback><Bot size={20}/></AvatarFallback>
+                           <AvatarFallback><BrainCircuit size={20}/></AvatarFallback>
                         </Avatar>
                         <div className="flex-1">
                           <p className="font-bold mb-1">Brainy</p>
@@ -286,5 +287,3 @@ export function AITutor() {
     </div>
   );
 }
-
-    

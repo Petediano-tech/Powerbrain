@@ -1,14 +1,15 @@
+
 'use client';
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Home, BookCopy, Bot, User } from 'lucide-react';
+import { Home, BookCopy, BrainCircuit, User } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const navItems = [
   { href: '/home', label: 'Home', icon: Home },
   { href: '/subjects', label: 'Subjects', icon: BookCopy },
-  { href: '/tutor', label: 'AI Chat', icon: Bot },
+  { href: '/tutor', label: 'AI Chat', icon: BrainCircuit },
   { href: '/profile', label: 'Profile', icon: User },
 ];
 

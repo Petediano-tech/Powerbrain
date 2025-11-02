@@ -1,3 +1,4 @@
+
 'use client';
 import { useUser, useDoc, useMemoFirebase } from '@/firebase';
 import { useRouter } from 'next/navigation';
@@ -8,7 +9,7 @@ import { AppShell } from '@/components/app-shell';
 import TeacherPage from '../teacher/page';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Bell, Search, BarChart2, GraduationCap, FolderKanban, PencilRuler, Bot, BookCopy } from 'lucide-react';
+import { Bell, Search, BarChart2, GraduationCap, FolderKanban, PencilRuler, BrainCircuit, BookCopy } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
@@ -20,7 +21,7 @@ const navGridItems = [
     { href: '/subjects', label: 'Modules', icon: GraduationCap, description: 'Access courses' },
     { href: '/repository', label: 'Resources', icon: FolderKanban, description: 'Find notes & videos' },
     { href: '/quizzes', label: 'Quizzes', icon: PencilRuler, description: 'Assess knowledge' },
-    { href: '/tutor', label: 'AI Chat', icon: Bot, description: 'Get instant help' },
+    { href: '/tutor', label: 'AI Chat', icon: BrainCircuit, description: 'Get instant help' },
     { href: '/subjects', label: 'My Subjects', icon: BookCopy, description: 'Enrolled subjects' },
 ];
 
