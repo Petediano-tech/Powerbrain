@@ -5,10 +5,8 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Languages, Timer, Sigma, Dna, FlaskConical, Globe, Leaf, Landmark, Laptop, HeartHandshake, Users, Book } from "lucide-react"
 import Link from "next/link";
-import { useCollection, useFirestore, useMemoFirebase } from "@/firebase";
-import { collection } from "firebase/firestore";
-import { Skeleton } from "@/components/ui/skeleton";
 import { ReactElement } from "react";
+import { quizzesData } from "@/lib/quizzes-data";
 
 const subjectIcons: { [key: string]: ReactElement } = {
   English: <Languages className="h-6 w-6 text-primary" />,
@@ -26,23 +24,7 @@ const subjectIcons: { [key: string]: ReactElement } = {
 };
 
 export default function QuizzesPage() {
-  const firestore = useFirestore();
-  const quizzesQuery = useMemoFirebase(() => collection(firestore, 'quizzes'), [firestore]);
-  const { data: quizzes, isLoading } = useCollection(quizzesQuery);
-
-  if (isLoading) {
-      return (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {[...Array(3)].map((_, i) => (
-                  <Card key={i}>
-                      <CardHeader><Skeleton className="h-6 w-2/3" /></CardHeader>
-                      <CardContent><Skeleton className="h-4 w-1/2" /></CardContent>
-                      <CardFooter><Skeleton className="h-10 w-full" /></CardFooter>
-                  </Card>
-              ))}
-          </div>
-      )
-  }
+  const quizzes = quizzesData;
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -62,7 +44,7 @@ export default function QuizzesPage() {
           <CardContent className="flex-1">
             <div className="flex justify-between text-sm text-muted-foreground">
               <div className="flex items-center gap-2">
-                <span>{quiz.questions} Questions</span>
+                <span>{quiz.questions.length} Questions</span>
               </div>
               <div className="flex items-center gap-1">
                 <Timer className="h-4 w-4" />

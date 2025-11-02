@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
@@ -11,12 +11,13 @@ import { CheckCircle, XCircle, ChevronLeft, Award } from "lucide-react";
 import Link from "next/link";
 import Confetti from 'react-confetti';
 import { cn } from "@/lib/utils";
-import { useFirestore, useDoc, useCollection, useMemoFirebase } from "@/firebase";
-import { doc, runTransaction, increment, collection } from "firebase/firestore";
+import { useFirestore, useUser } from "@/firebase";
+import { doc, runTransaction, increment } from "firebase/firestore";
 import { useToast } from "@/hooks/use-toast";
 import { useParams } from "next/navigation";
 import { useUserStore } from "@/hooks/use-user-store";
 import { Skeleton } from "@/components/ui/skeleton";
+import { quizzesData, Question } from "@/lib/quizzes-data";
 
 export default function QuizPage() {
   const params = useParams();
@@ -27,21 +28,27 @@ export default function QuizPage() {
   const [showResults, setShowResults] = useState(false);
   const [isChecking, setIsChecking] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [quiz, setQuiz] = useState<typeof quizzesData[0] | null>(null);
+  const [questions, setQuestions] = useState<Question[]>([]);
 
   const { profileId } = useUserStore();
   const firestore = useFirestore();
   const { toast } = useToast();
+  const { user } = useUser();
 
-  const quizRef = useMemoFirebase(() => doc(firestore, 'quizzes', quizId), [firestore, quizId]);
-  const { data: quiz, isLoading: isLoadingQuiz } = useDoc(quizRef);
+  useEffect(() => {
+    const foundQuiz = quizzesData.find(q => q.id === quizId);
+    if (foundQuiz) {
+      setQuiz(foundQuiz);
+      setQuestions(foundQuiz.questions);
+    }
+    setIsLoading(false);
+  }, [quizId]);
 
-  const questionsRef = useMemoFirebase(() => collection(firestore, 'quizzes', quizId, 'questions'), [firestore, quizId]);
-  const { data: questions, isLoading: isLoadingQuestions } = useCollection(questionsRef);
-
-  const isLoading = isLoadingQuiz || isLoadingQuestions;
 
   const handleFinishQuiz = async (calculatedScore: number) => {
-    if (!profileId || isSaving || !quiz || !questions) return;
+    if (!profileId || isSaving || !quiz || !questions || !user) return;
     setIsSaving(true);
     
     const userProfileRef = doc(firestore, 'userProfiles', profileId);
@@ -78,10 +85,12 @@ export default function QuizPage() {
 
     } catch (e) {
       console.error("Quiz save transaction failed: ", e);
+      // Since this is a critical data saving operation, we'll show the results even if DB fails.
+      setShowResults(true);
       toast({
         variant: "destructive",
         title: "Oh no!",
-        description: "There was an error saving your quiz results. Please try again.",
+        description: "There was an error saving your quiz results. Your score is still recorded for this session.",
       });
     } finally {
       setIsSaving(false);
@@ -138,7 +147,11 @@ export default function QuizPage() {
       setCurrentQuestionIndex(currentQuestionIndex + 1);
     } else {
       const finalScore = (score / questions.length) * 100;
-      handleFinishQuiz(finalScore);
+      if (user) { // Only save if user is logged in
+        handleFinishQuiz(finalScore);
+      } else {
+        setShowResults(true); // If no user, just show results without saving
+      }
     }
   };
 
@@ -178,7 +191,7 @@ export default function QuizPage() {
               <h3 className="font-bold text-lg">Review Your Answers:</h3>
               {questions.map((q, index) => (
                   <div key={index} className="p-4 rounded-lg border bg-muted/50">
-                      <p className="font-semibold">{q.question}</p>
+                      <p className="font-semibold">{index + 1}. {q.question}</p>
                       <p className={cn("flex items-center gap-2 text-sm mt-2", selectedAnswers[index] === q.answer ? 'text-foreground' : 'text-destructive')}>
                           {selectedAnswers[index] === q.answer ? <CheckCircle size={16} /> : <XCircle size={16} />}
                           Your answer: {selectedAnswers[index] || "Not answered"}
@@ -225,38 +238,34 @@ export default function QuizPage() {
             const isSelected = selectedAnswer === option;
             let labelClass = "";
             if(isChecking && isSelected) {
-                labelClass = isCorrect ? 'border-foreground' : 'border-destructive';
+                labelClass = isCorrect ? 'border-green-500' : 'border-destructive';
             } else if (isChecking && currentQuestion.answer === option) {
-                labelClass = "border-foreground";
+                labelClass = "border-green-500";
             }
 
             return (
-              <div key={option}>
-                <RadioGroupItem value={option} id={option} className="sr-only" />
-                <Label 
-                  htmlFor={option} 
-                  className={cn(`flex items-center space-x-3 border rounded-md p-3 transition-all cursor-pointer
-                    hover:border-primary
-                    ${isSelected ? 'border-primary' : ''}
-                  `, labelClass)}
-                >
-                  <div className="h-4 w-4 rounded-full border border-primary flex items-center justify-center">
-                    {isSelected && <div className="h-2.5 w-2.5 rounded-full bg-primary" />}
-                  </div>
-                  <span className="flex-1">{option}</span>
-                  {isChecking && isCorrect && isSelected && <CheckCircle />}
-                  {isChecking && !isCorrect && isSelected && <XCircle className="text-destructive" />}
-                  {isChecking && currentQuestion.answer === option && !isSelected && <CheckCircle />}
-                </Label>
-              </div>
+              <Label 
+                key={option}
+                htmlFor={option} 
+                className={cn(`flex items-center space-x-3 border-2 rounded-md p-3 transition-all cursor-pointer
+                  hover:border-primary
+                  ${isSelected ? 'border-primary' : 'border-border'}
+                `, labelClass)}
+              >
+                <RadioGroupItem value={option} id={option} className="h-5 w-5"/>
+                <span className="flex-1">{option}</span>
+                {isChecking && isCorrect && isSelected && <CheckCircle className="text-green-500" />}
+                {isChecking && !isCorrect && isSelected && <XCircle className="text-destructive" />}
+                {isChecking && currentQuestion.answer === option && !isSelected && <CheckCircle className="text-green-500" />}
+              </Label>
             )}
           )}
         </RadioGroup>
         
         {isChecking && (
-            <div className={cn('p-4 rounded-md text-sm', isCorrect ? 'bg-muted' : 'bg-destructive/10')}>
+            <div className={cn('p-4 rounded-md text-sm', isCorrect ? 'bg-green-500/10' : 'bg-destructive/10')}>
                 <h4 className="font-bold mb-1">{isCorrect ? "Correct!" : "Not quite..."}</h4>
-                <p>{currentQuestion.explanation}</p>
+                <p className={cn(isCorrect ? 'text-green-700' : 'text-destructive-foreground-alt', 'dark:text-white/80')}>{currentQuestion.explanation}</p>
             </div>
         )}
 
