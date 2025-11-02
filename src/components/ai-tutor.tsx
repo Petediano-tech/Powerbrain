@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect, useMemo } from 'react';
-import { CornerDownLeft, Bot, Sparkles, PencilRuler, BookOpen, Crown } from 'lucide-react';
+import { Bot, Sparkles, PencilRuler, BookOpen, Crown, ArrowUp } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { aiSmartTutor } from '@/ai/flows/ai-smart-tutor';
@@ -9,8 +9,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { ScrollArea } from './ui/scroll-area';
 import { cn } from '@/lib/utils';
 import { useUser, useDoc, useMemoFirebase, useFirestore } from '@/firebase';
-import { Logo } from './logo';
-import { doc, runTransaction, increment, updateDoc, getDoc, serverTimestamp } from 'firebase/firestore';
+import { doc, runTransaction } from 'firebase/firestore';
 import { useUserStore } from '@/hooks/use-user-store';
 import Link from 'next/link';
 import { useToast } from '@/hooks/use-toast';
@@ -41,9 +40,7 @@ const promptSuggestions = [
 const FREE_TIER_LIMIT = 15;
 
 export function AITutor() {
-  const [messages, setMessages] = useState<Message[]>([
-    { role: 'assistant', content: "Hello! I'm Brainy, here to help you learn. What topic are we exploring today?" }
-  ]);
+  const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
@@ -59,6 +56,14 @@ export function AITutor() {
     return doc(firestore, 'userProfiles', profileId);
   }, [firestore, profileId]);
   const { data: userProfile, isLoading: isProfileLoading } = useDoc(userProfileRef);
+
+  useEffect(() => {
+    if (messages.length === 0 && !isLoading) {
+      setMessages([
+        { role: 'assistant', content: "Hello! I'm Brainy, here to help you learn. What topic are we exploring today?" }
+      ]);
+    }
+  }, [messages.length, isLoading]);
 
   const getInitials = (name: string) => {
     if (!name) return 'U';
@@ -96,18 +101,16 @@ export function AITutor() {
     setIsLoading(true);
 
     try {
-        // Atomically update the chat count before calling the AI
         await runTransaction(firestore, async (transaction) => {
             const profileDoc = await transaction.get(userProfileRef);
             if (!profileDoc.exists()) {
                 throw "User profile does not exist!";
             }
 
-            const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+            const today = new Date().toISOString().split('T')[0];
             const lastChat = profileDoc.data().lastChatDate;
             let newCount;
 
-            // If the last chat was not today, reset the count. Otherwise, increment.
             if (lastChat !== today) {
                 newCount = 1;
             } else {
@@ -120,7 +123,6 @@ export function AITutor() {
             });
         });
 
-        // Now call the AI
         const response = await aiSmartTutor({ query: prompt, gradeLevel: userProfile?.gradeLevel || 'Form 3' });
         const assistantMessage: Message = { role: 'assistant', content: response.response };
         setMessages((prev) => [...prev, assistantMessage]);
@@ -153,7 +155,6 @@ export function AITutor() {
 
   const isLimitReached = useMemo(() => {
     if (!userProfile) return false;
-    // Power users have no limit
     if (userProfile.subscriptionTier && (userProfile.subscriptionTier === 'power')) return false; 
     
     const today = new Date().toISOString().split('T')[0];
@@ -168,63 +169,77 @@ export function AITutor() {
 
     return lastChat === today && count >= limit;
   }, [userProfile]);
+  
+  const renderMessageContent = (content: string) => {
+    // Basic markdown for bold text **text**
+    const parts = content.split(/(\*\*.*?\*\*)/g);
+    return parts.map((part, index) => {
+      if (part.startsWith('**') && part.endsWith('**')) {
+        return <strong key={index}>{part.slice(2, -2)}</strong>;
+      }
+      return part;
+    });
+  };
 
   return (
     <div className="h-full flex flex-col">
         <div className="flex-1 overflow-hidden">
             <ScrollArea className="h-full pr-4 pb-20" ref={scrollAreaRef}>
-                <div className="space-y-6">
+                <div className="space-y-6 max-w-3xl mx-auto py-6">
                 {messages.map((message, index) => (
                     <div
                         key={index}
                         className={cn(
-                        'flex items-start gap-4',
-                        message.role === 'user' ? 'justify-end' : 'justify-start'
+                        'flex items-start gap-4'
                         )}
                     >
-                        {message.role === 'assistant' && (
-                        <Avatar className="h-9 w-9 bg-primary/20 text-primary border border-primary/30">
-                            <AvatarImage src="/ai-avatar.png" alt="Brainy" />
-                            <AvatarFallback><Bot size={20}/></AvatarFallback>
-                        </Avatar>
+                        {message.role === 'assistant' ? (
+                          <Avatar className="h-9 w-9 bg-primary/20 text-primary border border-primary/30">
+                              <AvatarImage src="/ai-avatar.png" alt="Brainy" />
+                              <AvatarFallback><Bot size={20}/></AvatarFallback>
+                          </Avatar>
+                        ) : (
+                          <Avatar className="h-9 w-9">
+                              {user?.photoURL && <AvatarImage src={user.photoURL} alt={user.displayName || "User"} />}
+                              <AvatarFallback>{getInitials(user?.displayName || "U")}</AvatarFallback>
+                          </Avatar>
                         )}
-                        <div
-                        className={cn(
-                            'max-w-2xl rounded-xl px-4 py-3 text-sm shadow-sm',
-                            message.role === 'user'
-                            ? 'bg-primary text-primary-foreground'
-                            : 'bg-muted'
-                        )}
-                        >
-                        <p className="whitespace-pre-wrap leading-relaxed">{message.content}</p>
+                        <div className="flex-1">
+                          <p className="font-bold mb-1">{message.role === 'assistant' ? "Brainy" : "You"}</p>
+                          <div className="prose prose-sm dark:prose-invert max-w-none text-foreground">
+                            {renderMessageContent(message.content)}
+                          </div>
                         </div>
-                        {message.role === 'user' && (
-                        <Avatar className="h-9 w-9">
-                            {user?.photoURL && <AvatarImage src={user.photoURL} alt={user.displayName || "User"} />}
-                            <AvatarFallback>{getInitials(user?.displayName || "U")}</AvatarFallback>
-                        </Avatar>
-                        )}
                     </div>
                     ))
                 }
                 {messages.length === 1 && (
-                    <div className="flex gap-2 justify-start ml-12">
-                        <Button variant="outline" size="sm" onClick={() => handleSuggestionClick("Explain Photosynthesis")}>Explain Photosynthesis</Button>
-                        <Button variant="outline" size="sm" onClick={() => handleSuggestionClick("Quiz me on History")}>Quiz me on History</Button>
-                    </div>
+                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-8">
+                       {promptSuggestions.map((suggestion) => (
+                        <button key={suggestion.title} onClick={() => handleSuggestionClick(suggestion.prompt)} className="text-left p-4 border rounded-lg hover:bg-muted/50 transition-colors">
+                           <div className="flex items-center gap-3">
+                             {suggestion.icon}
+                             <p className="font-semibold">{suggestion.title}</p>
+                           </div>
+                         </button>
+                       ))}
+                     </div>
                 )}
                 {isLoading && (
-                    <div className="flex items-start gap-4 justify-start">
+                    <div className="flex items-start gap-4">
                         <Avatar className="h-9 w-9 bg-primary/20 text-primary border border-primary/30">
                            <AvatarImage src="/ai-avatar.png" alt="Brainy" />
                            <AvatarFallback><Bot size={20}/></AvatarFallback>
                         </Avatar>
-                        <div className="max-w-md rounded-xl px-4 py-3 text-sm bg-muted shadow-sm">
-                        <div className="flex items-center gap-2">
-                            <span className="h-2 w-2 animate-pulse rounded-full bg-primary" style={{ animationDelay: '0s' }}></span>
-                            <span className="h-2 w-2 animate-pulse rounded-full bg-primary" style={{ animationDelay: '0.2s' }}></span>
-                            <span className="h-2 w-2 animate-pulse rounded-full bg-primary" style={{ animationDelay: '0.4s' }}></span>
-                        </div>
+                        <div className="flex-1">
+                          <p className="font-bold mb-1">Brainy</p>
+                          <div className="max-w-md rounded-xl py-3 text-sm">
+                            <div className="flex items-center gap-2">
+                                <span className="h-2 w-2 animate-pulse rounded-full bg-primary" style={{ animationDelay: '0s' }}></span>
+                                <span className="h-2 w-2 animate-pulse rounded-full bg-primary" style={{ animationDelay: '0.2s' }}></span>
+                                <span className="h-2 w-2 animate-pulse rounded-full bg-primary" style={{ animationDelay: '0.4s' }}></span>
+                            </div>
+                          </div>
                         </div>
                     </div>
                 )}
@@ -242,24 +257,31 @@ export function AITutor() {
             </ScrollArea>
         </div>
         <div className="py-4 bg-background">
-            <form onSubmit={handleFormSubmit} className="relative">
-                <Textarea
-                    ref={inputRef}
-                    id="message"
-                    placeholder={isLimitReached ? "Upgrade to send more messages" : "Ask me anything..."}
-                    value={input}
-                    onChange={(e) => setInput(e.target.value)}
-                    onKeyDown={handleTextareaKeyDown}
-                    disabled={isLoading || isLimitReached || isProfileLoading}
-                    autoComplete="off"
-                    rows={1}
-                    className="pr-12 min-h-[48px] resize-none"
-                />
-                <Button type="submit" size="icon" disabled={isLoading || !input.trim() || isLimitReached || isProfileLoading} className="absolute right-2.5 top-1/2 -translate-y-1/2 flex-shrink-0">
-                    <CornerDownLeft className="h-4 w-4" />
-                    <span className="sr-only">Send Message</span>
-                </Button>
-            </form>
+            <div className="max-w-3xl mx-auto">
+              <form onSubmit={handleFormSubmit} className="relative">
+                  <div className="relative flex max-h-60 w-full grow flex-col overflow-hidden rounded-2xl border bg-background px-4 py-2">
+                    <Textarea
+                        ref={inputRef}
+                        id="message"
+                        placeholder={isLimitReached ? "Upgrade to send more messages" : "Ask me anything..."}
+                        value={input}
+                        onChange={(e) => setInput(e.target.value)}
+                        onKeyDown={handleTextareaKeyDown}
+                        disabled={isLoading || isLimitReached || isProfileLoading}
+                        autoComplete="off"
+                        rows={1}
+                        className="pr-12 resize-none border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 p-0 shadow-none"
+                    />
+                    <Button type="submit" size="icon" disabled={isLoading || !input.trim() || isLimitReached || isProfileLoading} className="absolute right-2.5 top-1/2 -translate-y-1/2 h-8 w-8 rounded-full">
+                        <ArrowUp className="h-4 w-4" />
+                        <span className="sr-only">Send Message</span>
+                    </Button>
+                  </div>
+              </form>
+              <p className="text-center text-xs text-muted-foreground mt-2">
+                  Brainy can make mistakes. Consider checking important information.
+              </p>
+            </div>
         </div>
     </div>
   );
