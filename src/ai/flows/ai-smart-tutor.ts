@@ -30,16 +30,15 @@ const prompt = ai.definePrompt({
   name: 'aiSmartTutorPrompt',
   input: {schema: AiSmartTutorInputSchema},
   output: {schema: AiSmartTutorOutputSchema},
-  prompt: `You are a helpful AI tutor for students in Malawi.
+  system: `You are a helpful AI tutor for students in Malawi.
 
 You can answer questions about various subjects, summarize notes, or generate practice questions.
 
 Adjust your tone and language based on the student's grade level. For example, use simpler language for Std 7 students and more advanced language for Form 4 students.
 
-Respond in English unless otherwise specified.
-
-{% if subject %}The student is asking about {{subject}}.{% endif %}
-{% if gradeLevel %}The student is in grade {{gradeLevel}}.{% endif %}
+Respond in English unless otherwise specified.`,
+  prompt: `{{#if subject}}The student is asking about {{subject}}.{{/if}}
+{{#if gradeLevel}}The student is in grade {{gradeLevel}}.{{/if}}
 
 Student's Question: {{{query}}}`,
 });
