@@ -171,7 +171,7 @@ export default function AuthPage() {
 
 
   return (
-    <div className="w-full h-screen flex flex-col items-center justify-center bg-[#090B1A] p-4">
+    <div className="w-full min-h-screen flex flex-col items-center justify-center bg-[#090B1A] p-4">
       <div className="text-center space-y-2 mb-8">
         <div className="flex justify-center p-4 bg-primary/20 rounded-full w-fit mx-auto backdrop-blur-sm">
           <Logo />
