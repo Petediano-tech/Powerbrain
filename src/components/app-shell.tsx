@@ -2,7 +2,7 @@
 
 import { usePathname } from "next/navigation";
 import { capitalize } from "@/lib/utils";
-import { BottomNav } from "./bottom-nav";
+import { SidebarTrigger } from "./ui/sidebar";
 
 function getPageTitle(pathname: string) {
     if (pathname === '/home') return null; // Home page has its own header
@@ -31,16 +31,17 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     return (
         <div className="flex flex-col min-h-screen">
             {pageTitle && (
-                <header className="sticky top-0 z-10 flex h-16 shrink-0 items-center justify-center border-b bg-background px-4">
+                <header className="sticky top-0 z-10 flex h-16 shrink-0 items-center justify-between border-b bg-background px-4">
+                     <SidebarTrigger className="md:hidden" />
                     <h1 className="text-lg font-bold">
                         {pageTitle}
                     </h1>
+                    <div className="w-7"></div>
                 </header>
             )}
             <main className="flex-1 overflow-y-auto p-4 md:p-6 lg:p-8">
                 {children}
             </main>
-            <BottomNav />
         </div>
     )
 }

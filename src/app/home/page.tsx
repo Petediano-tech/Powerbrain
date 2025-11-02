@@ -102,7 +102,7 @@ export default function HomePage() {
     
     // Student Home Page
     return (
-        <div className="flex flex-col gap-6 pb-24">
+        <div className="flex flex-col gap-6">
             <header className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                     <Avatar className="h-11 w-11 border-2 border-primary">
