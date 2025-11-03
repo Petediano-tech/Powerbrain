@@ -1,3 +1,4 @@
+
 'use client';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -102,7 +103,7 @@ export default function SubscribePage() {
             <Card className="mt-12 max-w-2xl mx-auto">
                 <CardHeader>
                     <CardTitle>Complete Your Payment</CardTitle>
-                    <CardDescription>Choose your preferred payment method to upgrade.</CardDescription>
+                    <CardDescription>Follow the steps below to upgrade your account.</CardDescription>
                 </CardHeader>
                 <CardContent>
                     <Tabs defaultValue="mobile" className="w-full">
@@ -112,32 +113,37 @@ export default function SubscribePage() {
                             <TabsTrigger value="paypal" disabled>PayPal</TabsTrigger>
                         </TabsList>
                         <TabsContent value="mobile" className="py-4">
-                             <div className="space-y-4">
-                                <ol className="list-decimal list-inside space-y-3 text-muted-foreground">
-                                    <li>
-                                        Choose your desired VIP plan (Student or Teacher).
-                                    </li>
-                                    <li>
-                                        Open your Airtel Money or TNM Mpamba menu.
-                                    </li>
-                                    <li>
-                                        Select "Send Money".
-                                    </li>
-                                    <li>
-                                       Enter the phone number: <strong className="text-primary font-mono">+265987066051</strong>.
-                                    </li>
-                                     <li>
-                                       Enter the exact amount for your chosen plan (e.g., 5000 for Student VIP).
-                                    </li>
-                                    <li>
-                                        Confirm the transaction with your PIN. You will receive an SMS confirmation.
-                                    </li>
-                                </ol>
+                             <div className="space-y-6">
+                                <div>
+                                    <h3 className="font-semibold mb-2">Step 1: Send Payment</h3>
+                                    <ol className="list-decimal list-inside space-y-3 text-muted-foreground">
+                                        <li>
+                                            Choose your desired VIP plan (Student or Teacher).
+                                        </li>
+                                        <li>
+                                            Open your Airtel Money or TNM Mpamba menu.
+                                        </li>
+                                        <li>
+                                            Select "Send Money" and enter the phone number: <strong className="text-primary font-mono">+265987066051</strong>.
+                                        </li>
+                                        <li>
+                                            Enter the exact amount for your chosen plan (e.g., 5000 for Student VIP).
+                                        </li>
+                                        <li>
+                                            Confirm the transaction with your PIN. You will receive an SMS confirmation.
+                                        </li>
+                                    </ol>
+                                </div>
                                 <Separator />
-                                 <p className="text-sm font-semibold">After sending the money, click the button below so our team can verify your payment.</p>
-                                  <Button className="w-full bg-green-600 hover:bg-green-700" onClick={handlePaymentConfirmation}>
-                                    I have sent the payment
-                                </Button>
+                                <div>
+                                     <h3 className="font-semibold mb-2">Step 2: Confirm Your Payment</h3>
+                                     <p className="text-sm text-muted-foreground mb-4">
+                                        After sending the money, send a screenshot of your payment confirmation via WhatsApp to <strong className="text-primary font-mono">+265987066051</strong>. Please include the email address you used to sign up for Power Brain.
+                                     </p>
+                                      <Button className="w-full bg-green-600 hover:bg-green-700" onClick={handlePaymentConfirmation}>
+                                        I have sent the payment and screenshot
+                                    </Button>
+                                </div>
                             </div>
                         </TabsContent>
                         <TabsContent value="card" className="py-4">
