@@ -22,7 +22,7 @@ import {
   signInWithPopup,
   updateProfile,
 } from 'firebase/auth';
-import { doc, writeBatch } from 'firebase/firestore';
+import { doc, getDoc, writeBatch } from 'firebase/firestore';
 import Link from 'next/link';
 import { useState } from 'react';
 import { useToast } from '@/hooks/use-toast';
@@ -55,11 +55,55 @@ export default function AuthPage() {
     setError(null);
     const provider = new GoogleAuthProvider();
     try {
-      await signInWithPopup(auth, provider);
-      toast({
-        title: 'Logged in successfully!',
-        description: 'Welcome to Power Brain.',
-      });
+      const result = await signInWithPopup(auth, provider);
+      const user = result.user;
+
+      // Check if user profile already exists
+      const userProfileRef = doc(firestore, "userProfiles", user.uid);
+      const userProfileSnap = await getDoc(userProfileRef);
+
+      if (!userProfileSnap.exists()) {
+        // This is a new user, create their profile and account docs
+        const batch = writeBatch(firestore);
+
+        batch.set(userProfileRef, {
+            id: user.uid,
+            firstName: user.displayName?.split(' ')[0] || '',
+            lastName: user.displayName?.split(' ').slice(1).join(' ') || '',
+            email: user.email,
+            role: 'student', // Default role for Google sign-in
+            registrationDate: new Date().toISOString(),
+            gradeLevel: "Form 1",
+            studyStreaks: 0,
+            totalTimeStudied: 0,
+            quizzesCompleted: 0,
+            topicsMastered: 0,
+            badges: [],
+            averageScore: 0,
+            subscriptionTier: "free",
+        });
+
+        const userAccountRef = doc(firestore, "userAccounts", user.uid);
+        batch.set(userAccountRef, {
+          id: user.uid,
+          email: user.email,
+          username: user.displayName,
+          registrationDate: new Date().toISOString(),
+          profileId: user.uid,
+        });
+        
+        await batch.commit();
+        toast({
+          title: 'Account created successfully!',
+          description: "Welcome to Power Brain.",
+        });
+      } else {
+         toast({
+          title: 'Logged in successfully!',
+          description: 'Welcome back to Power Brain.',
+        });
+      }
+
       router.push('/home');
     } catch (error) {
       console.error(error);
