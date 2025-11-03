@@ -1,3 +1,4 @@
+
 'use client';
 import { useUser, useDoc, useMemoFirebase } from '@/firebase';
 import { useRouter } from 'next/navigation';
@@ -8,7 +9,7 @@ import { AppShell } from '@/components/app-shell';
 import TeacherPage from '../teacher/page';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Search, BarChart2, GraduationCap, FolderKanban, PencilRuler, BrainCircuit, BookCopy } from 'lucide-react';
+import { Search, BarChart2, GraduationCap, FolderKanban, PencilRuler, BrainCircuit, BookCopy, ArrowRight } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
@@ -114,36 +115,22 @@ export default function HomePage() {
                 </div>
             </header>
 
-            <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-                <Input placeholder="Search for a topic..." className="pl-10 h-12 rounded-full bg-muted border-transparent focus-visible:border-primary" />
-            </div>
-
-            <div>
-                <h2 className="text-lg font-bold mb-3">Continue Learning</h2>
-                <Card className="bg-primary/10 border-primary/20">
+            <Link href="/subjects">
+                <Card className="bg-primary/10 border-primary/20 hover:bg-primary/20 transition-colors">
                     <CardContent className="pt-6">
                         <div className="flex items-center justify-between">
                             <div className="space-y-1">
-                                <p className="text-primary font-semibold">Biology</p>
-                                <h3 className="text-xl font-bold">Chapter 2: The Cell</h3>
-                                <div className="flex items-center gap-3 pt-2">
-                                    <Progress value={65} className="h-2 w-full max-w-40" />
-                                    <span className="text-sm font-semibold text-muted-foreground">65% complete</span>
-                                </div>
+                                <h3 className="text-xl font-bold">Continue Learning</h3>
+                                 <p className="text-muted-foreground">Jump back into your subjects.</p>
                             </div>
                             <div className="p-3 bg-background rounded-lg shadow-sm">
-                                {/* Placeholder for subject icon */}
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M12 2L2 7l10 5 10-5-10-5z" stroke="#00FFC6" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                                    <path d="M2 17l10 5 10-5" stroke="#00FFC6" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                                    <path d="M2 12l10 5 10-5" stroke="#00FFC6" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" strokeDasharray="2 2"/>
-                                </svg>
+                               <ArrowRight className="text-primary" />
                             </div>
                         </div>
                     </CardContent>
                 </Card>
-            </div>
+            </Link>
+            
 
             <div className="grid grid-cols-2 gap-4">
                 {navGridItems.map((item) => (

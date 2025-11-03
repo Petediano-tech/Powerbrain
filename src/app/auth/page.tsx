@@ -17,6 +17,7 @@ import {
   AuthError,
   GoogleAuthProvider,
   createUserWithEmailAndPassword,
+  sendPasswordResetEmail,
   signInWithEmailAndPassword,
   signInWithPopup,
   updateProfile,
@@ -168,6 +169,36 @@ export default function AuthPage() {
     }
   };
 
+  const handleForgotPassword = async () => {
+    const email = isSignUp ? signUpEmail : loginEmail;
+    if (!email) {
+      toast({
+        variant: 'destructive',
+        title: 'Email required',
+        description: 'Please enter your email address to reset your password.',
+      });
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      await sendPasswordResetEmail(auth, email);
+      toast({
+        title: 'Password reset email sent',
+        description: `Please check your inbox at ${email} to reset your password.`,
+      });
+    } catch (error) {
+      const authError = error as AuthError;
+      toast({
+        variant: 'destructive',
+        title: 'Error sending email',
+        description: authError.message,
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
 
   return (
     <div className="w-full min-h-screen flex flex-col items-center justify-center bg-background p-4">
@@ -282,9 +313,9 @@ export default function AuthPage() {
       </Tabs>
       
       <div className="w-full max-w-sm mt-6 text-center">
-            <Link href="#" className="text-sm text-primary hover:underline">
+            <button onClick={handleForgotPassword} className="text-sm text-primary hover:underline">
               Forgot Password?
-            </Link>
+            </button>
 
             <div className="relative my-6">
               <div className="absolute inset-0 flex items-center">
