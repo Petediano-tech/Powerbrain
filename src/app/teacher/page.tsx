@@ -1,19 +1,18 @@
-
 'use client';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useUser } from "@/firebase";
-import { BarChart, FileQuestion, FileUp, Megaphone, PlusCircle } from "lucide-react";
+import { BarChart, FileQuestion, FileUp, Megaphone, PlusCircle, PencilRuler } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { Bar, BarChart as RechartsBarChart, ResponsiveContainer, XAxis, YAxis } from "recharts"
 
 const quickActions = [
-    { name: "New Resource", icon: <PlusCircle />, href: "#" },
-    { name: "Assignment", icon: <FileUp />, href: "#" },
-    { name: "Announcement", icon: <Megaphone />, href: "#" },
+    { name: "New Resource", icon: <FileUp />, href: "#" },
+    { name: "New Assignment", icon: <PlusCircle />, href: "#" },
+    { name: "Quiz Generator", icon: <PencilRuler />, href: "/teacher/quiz-generator" },
 ]
 
 const classes = [
@@ -45,12 +44,14 @@ export default function TeacherPage() {
     <div className="space-y-6 text-foreground bg-background">
         <div className="grid grid-cols-3 gap-4">
             {quickActions.map(action => (
-                 <Card key={action.name} className="bg-card/80 hover:bg-card transition-colors text-center p-4 h-full flex flex-col items-center justify-center cursor-pointer">
-                    <div className="p-3 text-primary mb-2">
-                        {action.icon}
-                    </div>
-                    <p className="font-semibold text-sm">{action.name}</p>
-                </Card>
+                <Link href={action.href} key={action.name}>
+                    <Card className="bg-card/80 hover:bg-card transition-colors text-center p-4 h-full flex flex-col items-center justify-center cursor-pointer">
+                        <div className="p-3 text-primary mb-2">
+                            {action.icon}
+                        </div>
+                        <p className="font-semibold text-sm">{action.name}</p>
+                    </Card>
+                </Link>
             ))}
         </div>
 

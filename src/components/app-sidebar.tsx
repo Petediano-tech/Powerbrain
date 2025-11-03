@@ -1,7 +1,6 @@
 
 'use client';
 import { usePathname } from 'next/navigation';
-import { Home, BookCopy, BrainCircuit, User } from 'lucide-react';
 import {
   Sidebar,
   SidebarContent,
@@ -19,12 +18,8 @@ import { useMemo } from 'react';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
-
-const navItems = [
-  { href: '/home', label: 'Home', icon: Home },
-  { href: '/subjects', label: 'Subjects', icon: BookCopy },
-  { href: '/tutor', label: 'Brainy AI', icon: BrainCircuit },
-];
+import { navItems } from '@/app/sidebar-nav';
+import { Badge } from './ui/badge';
 
 export function AppSidebar() {
   const pathname = usePathname();
@@ -70,6 +65,7 @@ export function AppSidebar() {
                         <SidebarMenuButton isActive={isActive}>
                             <item.icon />
                             {item.label}
+                            {item.isPremium && <Badge variant="secondary" className="ml-auto bg-yellow-400/20 text-yellow-500 border-none">VIP</Badge>}
                         </SidebarMenuButton>
                     </Link>
                 </SidebarMenuItem>

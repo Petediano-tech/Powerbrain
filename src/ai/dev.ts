@@ -4,3 +4,6 @@ config();
 import '@/ai/flows/ai-study-insights.ts';
 import '@/ai/flows/ai-grade-quizzes.ts';
 import '@/ai/flows/ai-smart-tutor.ts';
+import '@/ai/flows/ai-career-guidance.ts';
+import '@/ai/flows/ai-study-planner.ts';
+import '@/ai/flows/ai-quiz-generator.ts';
