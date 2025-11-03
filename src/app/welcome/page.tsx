@@ -16,20 +16,20 @@ import { PlaceHolderImages } from '@/lib/placeholder-images';
 
 const onboardingSlides = [
   {
-    image: 'https://picsum.photos/seed/1/600/400',
-    imageHint: 'students learning',
+    image: PlaceHolderImages.find(p => p.id === 'welcome-logo-1')?.imageUrl || '',
+    imageHint: 'educational AI logo',
     title: 'Welcome to Power Brain',
     description: 'Your Digital Partner in Malawian Education.',
   },
   {
-    image: 'https://picsum.photos/seed/2/600/400',
-    imageHint: 'AI tutor',
+    image: PlaceHolderImages.find(p => p.id === 'welcome-logo-2')?.imageUrl || '',
+    imageHint: 'AI learning brain',
     title: 'Learn with Brainy',
     description: 'Your personal AI tutor, available 24/7 to help you succeed.',
   },
   {
-    image: 'https://picsum.photos/seed/3/600/400',
-    imageHint: 'quizzes tests',
+    image: PlaceHolderImages.find(p => p.id === 'welcome-logo-3')?.imageUrl || '',
+    imageHint: 'digital quiz interface',
     title: 'Test Your Knowledge',
     description:
       'Take quizzes and track your progress to master any subject.',
@@ -105,5 +105,3 @@ export default function WelcomePage() {
     </div>
   );
 }
-
-    

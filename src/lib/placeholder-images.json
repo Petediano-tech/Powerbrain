@@ -77,6 +77,24 @@
       "description": "History essay deadline image",
       "imageUrl": "https://images.unsplash.com/photo-1632038585992-fecf8a0cf59d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxoaXN0b3J5JTIwYm9va3N8ZW58MHx8fHwxNzYxOTIzOTM0fDA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "history books"
+    },
+    {
+      "id": "welcome-logo-1",
+      "description": "Abstract logo for Power Brain welcome screen",
+      "imageUrl": "https://storage.googleapis.com/aifirebase-7639f.appspot.com/images%2Fstudio-6001516789-8dae3%2F1722442468702.png",
+      "imageHint": "educational AI logo"
+    },
+    {
+      "id": "welcome-logo-2",
+      "description": "Abstract logo for Brainy AI tutor welcome screen",
+      "imageUrl": "https://storage.googleapis.com/aifirebase-7639f.appspot.com/images%2Fstudio-6001516789-8dae3%2F1722442474775.png",
+      "imageHint": "AI learning brain"
+    },
+    {
+      "id": "welcome-logo-3",
+      "description": "Abstract logo for Quizzes welcome screen",
+      "imageUrl": "https://storage.googleapis.com/aifirebase-7639f.appspot.com/images%2Fstudio-6001516789-8dae3%2F1722442480392.png",
+      "imageHint": "digital quiz interface"
     }
   ]
 }
