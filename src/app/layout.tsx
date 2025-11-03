@@ -7,7 +7,6 @@ import { Poppins } from 'next/font/google';
 import { Analytics } from '@vercel/analytics/react';
 import RootLayoutClient from './layout-client';
 import { SidebarProvider } from '@/components/ui/sidebar';
-import { PomodoroTimer } from '@/components/pomodoro-timer';
 
 const poppins = Poppins({
   subsets: ['latin'],
@@ -34,7 +33,6 @@ export default function RootLayout({
         <FirebaseClientProvider>
           <SidebarProvider>
             <RootLayoutClient>{children}</RootLayoutClient>
-            <PomodoroTimer />
           </SidebarProvider>
         </FirebaseClientProvider>
         <Toaster />
