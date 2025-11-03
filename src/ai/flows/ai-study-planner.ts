@@ -5,22 +5,12 @@
 
 import { ai } from '@/ai/genkit';
 import { z } from 'genkit';
+import { AiStudyPlannerOutputSchema, AiStudyPlannerOutput } from '@/ai/schemas';
 
 const PlannerInputSchema = z.object({
   weakestSubjects: z.array(z.string()).describe("The student's weakest subjects, which need more focus."),
   upcomingExams: z.array(z.object({ subject: z.string(), date: z.string() })).describe("A list of upcoming exams and their dates."),
 });
-
-const DailyPlanSchema = z.object({
-    day: z.string().describe("The day of the week (e.g., Monday, Tuesday)."),
-    plan: z.string().describe("The detailed study plan for that day, including subjects and specific topics to cover."),
-    tip: z.string().optional().describe("An optional short, actionable study tip for the day."),
-});
-
-export const AiStudyPlannerOutputSchema = z.object({
-  weeklySchedule: z.array(DailyPlanSchema).describe('A 7-day study schedule.'),
-});
-export type AiStudyPlannerOutput = z.infer<typeof AiStudyPlannerOutputSchema>;
 
 export async function aiStudyPlanner(input: z.infer<typeof PlannerInputSchema>): Promise<AiStudyPlannerOutput> {
   const prompt = ai.definePrompt({
