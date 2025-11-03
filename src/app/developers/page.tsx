@@ -40,12 +40,12 @@ const developer = {
 };
 
 const teamMembers = [
-    { name: "Fyson Nagolomwa", role: "Frontend Developer", avatar: "https://picsum.photos/seed/fyson/200" },
-    { name: "Christina Matipwiri", role: "UI/UX Designer", avatar: "https://picsum.photos/seed/christina/200" },
-    { name: "Aaron Ntuwa", role: "Backend Developer", avatar: "https://picsum.photos/seed/aaron/200" },
-    { name: "Alfred Mathewe", role: "Software Developer", avatar: "https://picsum.photos/seed/alfred/200" },
-    { name: "Bruno Musunge", role: "QA Engineer", avatar: "https://picsum.photos/seed/bruno/200" },
-    { name: "Francis Kilowe", role: "Project Coordinator", avatar: "https://picsum.photos/seed/francis/200" },
+    { name: "Fyson Nagolomwa", role: "Team Member", avatar: "https://picsum.photos/seed/fyson/200" },
+    { name: "Christina Matipwiri", role: "Team Member", avatar: "https://picsum.photos/seed/christina/200" },
+    { name: "Aaron Ntuwa", role: "Team Member", avatar: "https://picsum.photos/seed/aaron/200" },
+    { name: "Alfred Mathewe", role: "Team Member", avatar: "https://picsum.photos/seed/alfred/200" },
+    { name: "Bruno Musunge", role: "Team Member", avatar: "https://picsum.photos/seed/bruno/200" },
+    { name: "Francis Kilowe", role: "Team Member", avatar: "https://picsum.photos/seed/francis/200" },
 ];
 
 export default function DevelopersPage() {
