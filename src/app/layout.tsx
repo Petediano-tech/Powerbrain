@@ -8,23 +8,11 @@ import RootLayoutClient from './layout-client';
 import { SidebarProvider } from '@/components/ui/sidebar';
 import { ThemeProvider } from '@/components/theme-provider';
 import { FontProvider } from '@/components/font-provider';
-import { useSettingsStore } from '@/hooks/use-settings-store';
-import { useEffect } from 'react';
 
 export const metadata: Metadata = {
   title: 'Power Brain - Malawi Smart Learning & Teaching Hub',
   description: 'A digital learning movement for Malawi. Empowering every learner to dream, learn, and achieve without limits.',
 };
-
-function AppBody({ children }: { children: React.ReactNode }) {
-  const { fontSize } = useSettingsStore();
-
-  useEffect(() => {
-    document.documentElement.style.fontSize = `${fontSize}px`;
-  }, [fontSize]);
-
-  return <>{children}</>;
-}
 
 
 export default function RootLayout({
@@ -46,9 +34,7 @@ export default function RootLayout({
           <FontProvider>
             <FirebaseClientProvider>
               <SidebarProvider>
-                <AppBody>
-                  <RootLayoutClient>{children}</RootLayoutClient>
-                </AppBody>
+                <RootLayoutClient>{children}</RootLayoutClient>
               </SidebarProvider>
             </FirebaseClientProvider>
           </FontProvider>

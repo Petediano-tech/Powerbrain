@@ -7,42 +7,16 @@ import {
   CardTitle,
   CardDescription
 } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { BookCopy, FileText, PencilRuler, School, Bot, Book, BookA, FileDown, CalendarClock, User } from "lucide-react";
+import { BookCopy, FileText, PencilRuler, Bot, Book, BookA, FileDown, CalendarClock, User, TrendingUp, CheckCircle } from "lucide-react";
 import Link from 'next/link';
 import { useUser, useDoc, useMemoFirebase } from "@/firebase";
-import { useEffect, useState, useMemo } from "react";
-import { doc, getFirestore, collection, query, orderBy, limit } from "firebase/firestore";
+import { useMemo } from "react";
+import { doc, getFirestore } from "firebase/firestore";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
-import { MyCourses } from "@/components/my-courses";
-import Image from "next/image";
-
-const studyTools = [
-    { name: 'Glossary', href: '#', icon: BookA },
-    { name: 'Practice Quizzes', href: '/quizzes', icon: PencilRuler },
-    { name: 'Downloads', href: '#', icon: FileDown },
-    { name: 'Study Planner', href: '#', icon: CalendarClock }
-];
-
-const upcomingDeadlines = [
-    {
-        title: 'Biology Assignment',
-        due: 'Due in 2 days',
-        imageId: 'deadline-bio'
-    },
-    {
-        title: 'Algebra Quiz',
-        due: 'Due in 4 days',
-        imageId: 'deadline-alg'
-    },
-    {
-        title: 'History Essay',
-        due: 'Due in 7 days',
-        imageId: 'deadline-hist'
-    },
-];
+import { AIInsights } from "@/components/ai-insights";
+import { DashboardNotes } from "@/components/dashboard-notes";
 
 export default function DashboardPage() {
   const { user } = useUser();
@@ -85,12 +59,12 @@ export default function DashboardPage() {
     return PlaceHolderImages[0]?.imageUrl;
   }, [user]);
 
-  const coursesInProgress = userProfile?.topicsMastered || 0;
-  const completedLessons = userProfile?.quizzesCompleted || 0;
+  const topicsMastered = userProfile?.topicsMastered || 0;
+  const quizzesCompleted = userProfile?.quizzesCompleted || 0;
   const overallProgress = userProfile?.averageScore || 0;
 
   return (
-    <div className="flex flex-col gap-8">
+    <div className="flex flex-col gap-6">
       <div className="flex items-center gap-4">
         <Avatar className="h-12 w-12 border-2 border-primary">
             {userAvatarUrl && <AvatarImage src={userAvatarUrl} alt={displayName} />}
@@ -102,66 +76,42 @@ export default function DashboardPage() {
       </div>
 
       <div className="grid gap-4 md:grid-cols-3">
-        <Card className="md:col-span-3">
-          <CardContent className="pt-6">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 items-center">
-              <div className="md:col-span-1">
-                <p className="text-sm text-muted-foreground">Topics Mastered</p>
-                <p className="text-3xl font-bold">{coursesInProgress}</p>
-              </div>
-              <div className="md:col-span-1">
-                <p className="text-sm text-muted-foreground">Quizzes Completed</p>
-                <p className="text-3xl font-bold">{completedLessons}</p>
-              </div>
-              <div className="md:col-span-2">
-                 <p className="text-sm text-muted-foreground">Overall Progress</p>
-                <div className="flex items-center gap-3">
-                  <Progress value={overallProgress} className="h-2 w-full" />
-                  <span className="text-sm font-semibold">{overallProgress.toFixed(0)}%</span>
-                </div>
-              </div>
-            </div>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Overall Progress</CardTitle>
+            <TrendingUp className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{overallProgress.toFixed(0)}%</div>
+            <p className="text-xs text-muted-foreground">Average score on all quizzes</p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Quizzes Completed</CardTitle>
+            <CheckCircle className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{quizzesCompleted}</div>
+            <p className="text-xs text-muted-foreground">Total quizzes taken</p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Topics Mastered</CardTitle>
+            <BookCopy className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{topicsMastered}</div>
+            <p className="text-xs text-muted-foreground">Total topics completed</p>
           </CardContent>
         </Card>
       </div>
 
-      <div>
-        <h2 className="text-xl font-bold mb-4">Upcoming Deadlines</h2>
-        <div className="flex space-x-4 overflow-x-auto pb-4 -mx-4 px-4">
-          {upcomingDeadlines.map((item) => {
-            const image = PlaceHolderImages.find(img => img.id === item.imageId);
-            return (
-                <Card key={item.title} className="min-w-[220px] flex-shrink-0">
-                    <CardContent className="p-0">
-                       {image && <Image src={image.imageUrl} alt={item.title} width={220} height={100} className="rounded-t-lg object-cover w-full h-[100px]" data-ai-hint={image.imageHint} />}
-                    </CardContent>
-                  <CardHeader className="p-4">
-                    <CardTitle className="text-base">{item.title}</CardTitle>
-                    <CardDescription className="text-amber-500 font-semibold">{item.due}</CardDescription>
-                  </CardHeader>
-                </Card>
-            )
-          })}
-        </div>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <AIInsights />
+        <DashboardNotes />
       </div>
-
-      <div>
-        <h2 className="text-xl font-bold mb-4">Study Tools</h2>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {studyTools.map((tool) => (
-            <Link key={tool.name} href={tool.href}>
-                <Card className="text-center p-4 h-full flex flex-col items-center justify-center hover:bg-muted transition-colors">
-                    <div className="p-3 bg-primary/10 rounded-full mb-2">
-                        <tool.icon className="h-6 w-6 text-primary" />
-                    </div>
-                    <p className="font-semibold text-sm">{tool.name}</p>
-                </Card>
-            </Link>
-          ))}
-        </div>
-      </div>
-
-      <MyCourses />
 
     </div>
   );
