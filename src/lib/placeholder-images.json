@@ -80,21 +80,15 @@
     },
     {
       "id": "welcome-logo-1",
-      "description": "Abstract logo for Power Brain welcome screen",
-      "imageUrl": "https://storage.googleapis.com/aifirebase-7639f.appspot.com/images%2Fstudio-6001516789-8dae3%2F1722442468702.png",
-      "imageHint": "educational AI logo"
+      "description": "Custom user-provided welcome image 1",
+      "imageUrl": "https://i.ibb.co/FqhcVTT/file-0000000032246230a968a7bb552d229d.png",
+      "imageHint": "educational logo"
     },
     {
       "id": "welcome-logo-2",
-      "description": "Abstract logo for Brainy AI tutor welcome screen",
-      "imageUrl": "https://storage.googleapis.com/aifirebase-7639f.appspot.com/images%2Fstudio-6001516789-8dae3%2F1722442474775.png",
-      "imageHint": "AI learning brain"
-    },
-    {
-      "id": "welcome-logo-3",
-      "description": "Abstract logo for Quizzes welcome screen",
-      "imageUrl": "https://storage.googleapis.com/aifirebase-7639f.appspot.com/images%2Fstudio-6001516789-8dae3%2F1722442480392.png",
-      "imageHint": "digital quiz interface"
+      "description": "Custom user-provided welcome image 2",
+      "imageUrl": "https://i.ibb.co/wNLj4p92/2025110318372247-1.jpg",
+      "imageHint": "AI learning"
     }
   ]
 }

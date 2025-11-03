@@ -17,22 +17,15 @@ import { PlaceHolderImages } from '@/lib/placeholder-images';
 const onboardingSlides = [
   {
     image: PlaceHolderImages.find(p => p.id === 'welcome-logo-1')?.imageUrl || '',
-    imageHint: 'educational AI logo',
+    imageHint: 'educational logo',
     title: 'Welcome to Power Brain',
     description: 'Your Digital Partner in Malawian Education.',
   },
   {
     image: PlaceHolderImages.find(p => p.id === 'welcome-logo-2')?.imageUrl || '',
-    imageHint: 'AI learning brain',
+    imageHint: 'AI learning',
     title: 'Learn with Brainy',
     description: 'Your personal AI tutor, available 24/7 to help you succeed.',
-  },
-  {
-    image: PlaceHolderImages.find(p => p.id === 'welcome-logo-3')?.imageUrl || '',
-    imageHint: 'digital quiz interface',
-    title: 'Test Your Knowledge',
-    description:
-      'Take quizzes and track your progress to master any subject.',
   },
 ];
 
