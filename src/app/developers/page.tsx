@@ -3,7 +3,6 @@
 import React from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import Link from "next/link";
 import { ArrowLeft, Code, Mail, Phone, MapPin } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useRouter } from "next/navigation";
@@ -26,7 +25,6 @@ const YouTubeIcon = () => (
     </svg>
 );
 
-
 const developer = {
     name: "Peter Damiano",
     role: "Full Stack Developer",
@@ -41,8 +39,22 @@ const developer = {
     ]
 };
 
+const teamMembers = [
+    { name: "Fyson Nagolomwa", role: "Frontend Developer", avatar: "https://picsum.photos/seed/fyson/200" },
+    { name: "Christina Matipwiri", role: "UI/UX Designer", avatar: "https://picsum.photos/seed/christina/200" },
+    { name: "Aaron Ntuwa", role: "Backend Developer", avatar: "https://picsum.photos/seed/aaron/200" },
+    { name: "Alfred Mathewe", role: "Software Developer", avatar: "https://picsum.photos/seed/alfred/200" },
+    { name: "Bruno Musunge", role: "QA Engineer", avatar: "https://picsum.photos/seed/bruno/200" },
+    { name: "Francis Kilowe", role: "Project Coordinator", avatar: "https://picsum.photos/seed/francis/200" },
+];
+
 export default function DevelopersPage() {
     const router = useRouter();
+    
+    const getInitials = (name: string) => {
+        if (!name) return '';
+        return name.split(' ').map(n => n[0]).join('').toUpperCase();
+    }
 
     return (
         <div>
@@ -50,60 +62,57 @@ export default function DevelopersPage() {
                 <Button variant="ghost" size="icon" onClick={() => router.back()}>
                     <ArrowLeft />
                 </Button>
-                <h1 className="text-xl font-bold">Developer</h1>
+                <h1 className="text-xl font-bold">The Team</h1>
             </div>
-            <div className="p-4 flex justify-center">
-                <Card className="w-full max-w-md bg-card rounded-2xl shadow-2xl shadow-primary/10 border-primary/20 border">
-                    <CardHeader className="text-center items-center pt-8">
-                        <div className="relative mb-4">
-                            <Avatar className="h-32 w-32 border-4 border-primary shadow-lg">
-                                <AvatarImage src={developer.avatar} alt={developer.name} />
-                                <AvatarFallback>{developer.name.charAt(0)}</AvatarFallback>
-                            </Avatar>
-                            <div className="absolute inset-0 rounded-full border-2 border-primary/50 animate-pulse"></div>
-                        </div>
-                        <CardTitle className="text-3xl font-bold tracking-tight bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-                            {developer.name}
-                        </CardTitle>
-                        <CardDescription className="text-primary font-medium tracking-wide">
-                        {developer.role}
-                        </CardDescription>
-                    </CardHeader>
-                    <CardContent className="space-y-6 pt-6">
-                        <div className="space-y-4 text-sm">
-                            <div className="flex items-start gap-4">
-                                <Phone className="h-5 w-5 text-primary/80 mt-1 flex-shrink-0" />
-                                <div className="flex flex-col">
-                                    <span className="text-muted-foreground text-xs">Phone</span>
-                                    <a href={`tel:${developer.phone}`} className="hover:underline">{developer.phone}</a>
-                                </div>
+            <div className="p-4 space-y-12">
+                <div className="flex justify-center">
+                    <Card className="w-full max-w-md bg-card rounded-2xl shadow-2xl shadow-primary/10 border-primary/20 border">
+                        <CardHeader className="text-center items-center pt-8">
+                            <div className="relative mb-4">
+                                <Avatar className="h-32 w-32 border-4 border-primary shadow-lg">
+                                    <AvatarImage src={developer.avatar} alt={developer.name} />
+                                    <AvatarFallback>{getInitials(developer.name)}</AvatarFallback>
+                                </Avatar>
+                                <div className="absolute inset-0 rounded-full border-2 border-primary/50 animate-pulse"></div>
                             </div>
-                            <div className="flex items-start gap-4">
-                                <Mail className="h-5 w-5 text-primary/80 mt-1 flex-shrink-0" />
-                                <div className="flex flex-col">
-                                    <span className="text-muted-foreground text-xs">Email</span>
-                                    <a href={`mailto:${developer.email}`} className="hover:underline">{developer.email}</a>
-                                </div>
+                            <CardTitle className="text-3xl font-bold tracking-tight bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+                                {developer.name}
+                            </CardTitle>
+                            <CardDescription className="text-primary font-medium tracking-wide">
+                            {developer.role}
+                            </CardDescription>
+                        </CardHeader>
+                        <CardContent className="space-y-6 pt-6">
+                            <div className="flex justify-center gap-4">
+                                {developer.socials.map((social) => (
+                                <a href={social.url} key={social.name} target="_blank" rel="noopener noreferrer" className="p-3 bg-muted rounded-full text-muted-foreground hover:bg-primary/20 hover:text-primary transition-colors duration-300">
+                                    {React.createElement(social.icon)}
+                                </a>
+                                ))}
                             </div>
-                            <div className="flex items-start gap-4">
-                                <MapPin className="h-5 w-5 text-primary/80 mt-1 flex-shrink-0" />
-                                <div className="flex flex-col">
-                                    <span className="text-muted-foreground text-xs">Location</span>
-                                    <p>{developer.location}</p>
-                                </div>
-                            </div>
-                        </div>
-                    
-                        <div className="flex justify-center gap-4 pt-4">
-                            {developer.socials.map((social) => (
-                            <a href={social.url} key={social.name} target="_blank" rel="noopener noreferrer" className="p-3 bg-muted rounded-full text-muted-foreground hover:bg-primary/20 hover:text-primary transition-colors duration-300">
-                                {React.createElement(social.icon)}
-                            </a>
-                            ))}
-                        </div>
-
-                    </CardContent>
-                </Card>
+                        </CardContent>
+                    </Card>
+                </div>
+                
+                <div>
+                    <h2 className="text-2xl font-bold text-center mb-6">Meet the Team</h2>
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+                        {teamMembers.map(member => (
+                            <Card key={member.name} className="text-center">
+                                <CardContent className="p-6 flex flex-col items-center gap-3">
+                                    <Avatar className="h-20 w-20">
+                                        <AvatarImage src={member.avatar} alt={member.name} />
+                                        <AvatarFallback>{getInitials(member.name)}</AvatarFallback>
+                                    </Avatar>
+                                    <div>
+                                        <p className="font-semibold">{member.name}</p>
+                                        <p className="text-xs text-muted-foreground">{member.role}</p>
+                                    </div>
+                                </CardContent>
+                            </Card>
+                        ))}
+                    </div>
+                </div>
             </div>
         </div>
     )
