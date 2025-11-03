@@ -10,9 +10,12 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        body: ['var(--font-poppins)', 'sans-serif'],
-        headline: ['var(--font-poppins)', 'sans-serif'],
-        code: ['monospace'],
+        body: ['var(--font-dynamic)', 'sans-serif'],
+        poppins: ['var(--font-poppins)'],
+        inter: ['var(--font-inter)'],
+        roboto: ['var(--font-roboto)'],
+        lato: ['var(--font-lato)'],
+        opensans: ['var(--font-opensans)'],
       },
       colors: {
         border: 'hsl(var(--border))',
