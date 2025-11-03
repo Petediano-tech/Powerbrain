@@ -2,6 +2,7 @@
 import { useUser } from '@/firebase';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
+import { LoadingSpinner } from '@/components/loading-spinner';
 
 export default function AppRootPage() {
     const { user, isUserLoading } = useUser();
@@ -17,8 +18,6 @@ export default function AppRootPage() {
     }, [user, isUserLoading, router]);
 
     return (
-        <div className="flex h-screen w-screen items-center justify-center">
-            <div className="h-16 w-16 animate-spin rounded-full border-4 border-solid border-primary border-t-transparent"></div>
-        </div>
+        <LoadingSpinner />
     );
 }

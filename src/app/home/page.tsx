@@ -1,4 +1,3 @@
-
 'use client';
 import { useUser, useDoc, useMemoFirebase } from '@/firebase';
 import { useRouter } from 'next/navigation';
@@ -15,6 +14,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import Link from 'next/link';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
+import { LoadingSpinner } from '@/components/loading-spinner';
 
 const navGridItems = [
     { href: '/dashboard', label: 'Dashboard', icon: BarChart2, description: 'View your progress' },
@@ -85,11 +85,7 @@ export default function HomePage() {
     const isLoading = isUserLoading || !user || isProfileLoading;
 
     if (isLoading) {
-        return (
-            <div className="flex h-screen w-screen items-center justify-center">
-                <div className="h-16 w-16 animate-spin rounded-full border-4 border-solid border-primary border-t-transparent"></div>
-            </div>
-        );
+        return <LoadingSpinner />;
     }
 
     if (userProfile?.role === 'teacher') {
