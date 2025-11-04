@@ -1,4 +1,5 @@
-import { config } from 'dotenv';
+// Only needed for local development.
+import {config} from 'dotenv';
 config();
 
 import '@/ai/flows/ai-study-insights.ts';
