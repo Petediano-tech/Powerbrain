@@ -65,25 +65,6 @@ const gradeQuizPrompt = ai.definePrompt({
 });
 export const aiGradeQuizzesFlow = ai.defineFlow({ name: 'aiGradeQuizzesFlow', inputSchema: AiGradeQuizzesInputSchema, outputSchema: AiGradeQuizzesOutputSchema }, (input) => gradeQuizzesLogic(input, gradeQuizPrompt));
 
-
-// AI Smart Tutor
-import { AiSmartTutorInputSchema, smartTutorLogic } from '@/ai/flows/ai-smart-tutor';
-import { AiSmartTutorOutputSchema } from './flows/schemas';
-const smartTutorPrompt = ai.definePrompt({
-    name: 'aiSmartTutorPrompt',
-    input: {schema: AiSmartTutorInputSchema},
-    output: {schema: AiSmartTutorOutputSchema},
-    prompt: `You are Brainy, a friendly and expert AI tutor for students in Malawi. Your goal is to help students understand concepts, practice problems, and learn effectively. Use simple, clear language.
-
-    Grade Level: {{gradeLevel}}
-    Subject: {{subject}}
-
-    Student's question:
-    "{{query}}"`,
-});
-export const aiSmartTutorFlow = ai.defineFlow({ name: 'aiSmartTutorFlow', inputSchema: AiSmartTutorInputSchema, outputSchema: AiSmartTutorOutputSchema }, (input) => smartTutorLogic(input, smartTutorPrompt));
-
-
 // AI Career Guidance
 import { PerformanceDataSchema, careerGuidanceLogic } from '@/ai/flows/ai-career-guidance';
 import { AiCareerGuidanceOutputSchema } from './flows/schemas';

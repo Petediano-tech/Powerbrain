@@ -1,3 +1,4 @@
+'use server';
 /**
  * @fileOverview An AI tutor that can answer questions, summarize notes, or generate practice questions.
  */
@@ -6,8 +7,8 @@ import { z } from 'zod';
 import { getFirestore } from 'firebase-admin/firestore';
 import { getAuthenticatedUser } from '@/firebase/auth/get-authenticated-user';
 import { format } from 'date-fns';
-import type { GenkitPrompt } from 'genkit';
-import { AiSmartTutorOutput } from './schemas';
+import { ai } from '../genkit';
+import { AiSmartTutorOutput, AiSmartTutorOutputSchema } from './schemas';
 
 
 export const AiSmartTutorInputSchema = z.object({
@@ -20,7 +21,7 @@ export type AiSmartTutorInput = z.infer<typeof AiSmartTutorInputSchema>;
 
 const FREE_TIER_DAILY_LIMIT = 5;
 
-export async function smartTutorLogic(input: AiSmartTutorInput, prompt: GenkitPrompt<typeof AiSmartTutorInputSchema, typeof AiSmartTutorOutput>): Promise<AiSmartTutorOutput> {
+export async function smartTutorLogic(input: AiSmartTutorInput): Promise<AiSmartTutorOutput> {
   const user = await getAuthenticatedUser();
   if (!user) {
     return { response: "I'm sorry, but you must be logged in to chat with me. Please log in and try again." };
@@ -38,8 +39,17 @@ export async function smartTutorLogic(input: AiSmartTutorInput, prompt: GenkitPr
 
   // If the user is on a paid plan, they have unlimited access.
   if (userProfile?.subscriptionTier && userProfile.subscriptionTier !== 'free') {
-    const { output } = await prompt(input);
-    return output!;
+    const llmResponse = await ai.generate({
+        prompt: `You are Brainy, a friendly and expert AI tutor for students in Malawi. Your goal is to help students understand concepts, practice problems, and learn effectively. Use simple, clear language.
+
+        Grade Level: ${input.gradeLevel}
+        Subject: ${input.subject}
+
+        Student's question:
+        "${input.query}"`,
+        output: { schema: AiSmartTutorOutputSchema },
+    });
+    return llmResponse.output!;
   }
   
   // Logic for free-tier users
@@ -57,12 +67,21 @@ export async function smartTutorLogic(input: AiSmartTutorInput, prompt: GenkitPr
   }
 
   // Process the request and then update the count.
-  const { output } = await prompt(input);
+  const llmResponse = await ai.generate({
+    prompt: `You are Brainy, a friendly and expert AI tutor for students in Malawi. Your goal is to help students understand concepts, practice problems, and learn effectively. Use simple, clear language.
+
+    Grade Level: ${input.gradeLevel}
+    Subject: ${input.subject}
+
+    Student's question:
+    "${input.query}"`,
+    output: { schema: AiSmartTutorOutputSchema },
+  });
 
   await profileRef.update({
     dailyChatCount: dailyChatCount + 1,
     lastChatDate: today,
   });
 
-  return output!;
+  return llmResponse.output!;
 }
