@@ -6,7 +6,6 @@ import { getFirestore } from 'firebase-admin/firestore';
 import { getAuthenticatedUser } from '@/firebase/auth/get-authenticated-user';
 import type { GenkitPrompt } from 'genkit';
 import { AiCareerGuidanceOutputSchema } from './schemas';
-import { ai } from '../genkit';
 
 export const PerformanceDataSchema = z.object({
   strongestSubjects: z.array(z.string()).describe("The student's strongest subjects in school."),
@@ -16,7 +15,7 @@ export const PerformanceDataSchema = z.object({
 export type PerformanceData = z.infer<typeof PerformanceDataSchema>;
 
 
-export async function careerGuidanceLogic(input: PerformanceData, prompt: GenkitPrompt<typeof PerformanceDataSchema, typeof AiCareerGuidanceOutputSchema>) {
+export async function careerGuidanceLogic(input: PerformanceData, prompt: GenkitPrompt) {
   const user = await getAuthenticatedUser();
   if (!user) {
     throw new Error('Authentication required.');

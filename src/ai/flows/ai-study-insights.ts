@@ -23,7 +23,7 @@ export const StudyInsightsInputSchema = z.object({
 });
 export type StudyInsightsInput = z.infer<typeof StudyInsightsInputSchema>;
 
-export async function studyInsightsLogic(input: StudyInsightsInput, prompt: GenkitPrompt<typeof StudyInsightsInputSchema, typeof AiStudyInsightsOutputSchema>): Promise<StudyInsightsOutput> {
+export async function studyInsightsLogic(input: StudyInsightsInput, prompt: GenkitPrompt): Promise<StudyInsightsOutput> {
   const { output } = await prompt(input);
   return output!;
 }

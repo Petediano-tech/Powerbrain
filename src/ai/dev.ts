@@ -3,7 +3,6 @@ import {config} from 'dotenv';
 config();
 
 import { ai } from '@/ai/genkit';
-import { z } from 'zod';
 
 // AI Study Insights
 import { StudyInsightsInputSchema, studyInsightsLogic } from '@/ai/flows/ai-study-insights';
@@ -116,4 +115,16 @@ export const aiQuizGeneratorFlow = ai.defineFlow({ name: 'aiQuizGeneratorFlow', 
 // AI Smart Tutor
 import { AiSmartTutorInputSchema, smartTutorLogic } from '@/ai/flows/ai-smart-tutor';
 import { AiSmartTutorOutputSchema } from './flows/schemas';
-export const smartTutorFlow = ai.defineFlow({ name: 'smartTutorFlow', inputSchema: AiSmartTutorInputSchema, outputSchema: AiSmartTutorOutputSchema }, smartTutorLogic);
+const smartTutorPrompt = ai.definePrompt({
+    name: 'smartTutorPrompt',
+    input: {schema: AiSmartTutorInputSchema},
+    output: {schema: AiSmartTutorOutputSchema},
+    prompt: `You are Brainy, a friendly and expert AI tutor for students in Malawi. Your goal is to help students understand concepts, practice problems, and learn effectively. Use simple, clear language.
+
+    Grade Level: {{{gradeLevel}}}
+    Subject: {{{subject}}}
+
+    Student's question:
+    "{{{query}}}"`,
+});
+export const smartTutorFlow = ai.defineFlow({ name: 'smartTutorFlow', inputSchema: AiSmartTutorInputSchema, outputSchema: AiSmartTutorOutputSchema }, (input) => smartTutorLogic(input, smartTutorPrompt));

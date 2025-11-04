@@ -1,12 +1,12 @@
 'use server';
 
-import {
-  aiCareerGuidanceFlow,
-  aiGradeQuizzesFlow,
-  aiQuizGeneratorFlow,
-  aiStudyPlannerFlow,
-  studyInsightsFlow,
-  smartTutorFlow
+import { 
+    aiCareerGuidanceFlow,
+    aiGradeQuizzesFlow,
+    aiQuizGeneratorFlow,
+    studyInsightsFlow,
+    aiStudyPlannerFlow,
+    smartTutorFlow,
 } from '@/ai/dev';
 import type { 
     PerformanceData,

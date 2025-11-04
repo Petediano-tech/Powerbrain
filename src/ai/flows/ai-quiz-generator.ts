@@ -15,7 +15,7 @@ export const QuizGeneratorInputSchema = z.object({
 });
 export type QuizGeneratorInput = z.infer<typeof QuizGeneratorInputSchema>;
 
-export async function quizGeneratorLogic(input: QuizGeneratorInput, prompt: GenkitPrompt<typeof QuizGeneratorInputSchema, typeof AiQuizGeneratorOutputSchema>) {
+export async function quizGeneratorLogic(input: QuizGeneratorInput, prompt: GenkitPrompt) {
   const user = await getAuthenticatedUser();
   if (!user) {
     throw new Error('Authentication required. You must be a teacher to use this feature.');

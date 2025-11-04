@@ -1,7 +1,6 @@
 /**
  * @fileOverview AI-powered quiz grading flow logic.
  */
-'use server';
 import { z } from 'zod';
 import type { GenkitPrompt } from 'genkit';
 import { AiGradeQuizzesOutputSchema } from './schemas';
@@ -13,7 +12,7 @@ export const AiGradeQuizzesInputSchema = z.object({
 });
 export type AiGradeQuizzesInput = z.infer<typeof AiGradeQuizzesInputSchema>;
 
-export async function gradeQuizzesLogic(input: AiGradeQuizzesInput, prompt: GenkitPrompt<typeof AiGradeQuizzesInputSchema, typeof AiGradeQuizzesOutputSchema>) {
+export async function gradeQuizzesLogic(input: AiGradeQuizzesInput, prompt: GenkitPrompt) {
   const { output } = await prompt(input);
   return output!;
 }

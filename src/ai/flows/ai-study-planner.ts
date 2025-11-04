@@ -13,7 +13,7 @@ export const PlannerInputSchema = z.object({
 });
 export type PlannerInput = z.infer<typeof PlannerInputSchema>;
 
-export async function studyPlannerLogic(input: PlannerInput, prompt: GenkitPrompt<typeof PlannerInputSchema, typeof AiStudyPlannerOutputSchema>) {
+export async function studyPlannerLogic(input: PlannerInput, prompt: GenkitPrompt) {
   const user = await getAuthenticatedUser();
   if (!user) {
     throw new Error('Authentication required.');
