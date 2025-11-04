@@ -1,7 +1,7 @@
-'use client';
+
+'use server';
 import {genkit, type GenkitErrorCode, type GenkitError} from 'genkit';
 import {googleAI, type GoogleAIBadRequestError} from '@genkit-ai/google-genai';
-import {NextRequest} from 'next/server';
 
 function isGoogleAIBadRequestError(
   err: GenkitError | GoogleAIBadRequestError
@@ -20,41 +20,11 @@ export const ai = genkit({
   plugins: [
     googleAI({
       apiVersion: 'v1beta',
-      // Pass the API key from the Authorization header.
-      apiKey: async (request?: Request) => {
-        const req = request as NextRequest;
-        if (req) {
-          const authHeader = req.headers.get('Authorization');
-          if (authHeader) {
-            const [type, token] = authHeader.split(' ');
-            if (type === 'Bearer') {
-              return token;
-            }
-          }
-        }
-        return process.env.GEMINI_API_KEY;
-      },
     }),
   ],
-  model: 'googleai/gemini-2.5-flash',
-  telemetry: {
-    instrumentation: {
-      reports: [
-        {
-          reporter: 'log',
-          config: {
-            // Log all errors.
-            filter: {
-              minLevel: 'ERROR',
-            },
-          },
-        },
-      ],
-    },
-  },
+  logLevel: 'debug',
+  enableTracingAndMetrics: true,
   flow: {
-    // When an error occurs, it will be returned to the user in a JSON-RPC 2.0
-    // error format.
     errorHandler: <T, S, O>(
       err: GenkitError,
       flowName: string,
