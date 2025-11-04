@@ -15,10 +15,12 @@ export default function RootLayoutClient({ children }: { children: React.ReactNo
         document.documentElement.style.fontSize = `${fontSize}px`;
     }, [fontSize]);
 
-    const noShellRoutes = ['/welcome', '/auth', '/notes/view'];
+    const noSidebarRoutes = ['/welcome', '/auth', '/notes/view'];
     const showTimerRoutes = ['/home', '/dashboard', '/subjects', '/tutor', '/repository'];
 
-    if (noShellRoutes.includes(pathname) || pathname.startsWith('/notes/view')) {
+    const renderShell = !noSidebarRoutes.includes(pathname) && !pathname.startsWith('/notes/view');
+
+    if (!renderShell) {
         return <>{children}</>;
     }
     

@@ -2,9 +2,7 @@
 'use client';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Mail, Phone, MapPin } from "lucide-react";
-import { useRouter } from "next/navigation";
-import Link from "next/link";
+import { Mail, Phone, MapPin } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 
 const WhatsAppIcon = () => (
@@ -14,76 +12,67 @@ const WhatsAppIcon = () => (
 );
 
 export default function ContactPage() {
-    const router = useRouter();
     const phoneNumber = "+265987066051";
     const whatsappLink = `https://wa.me/265987066051`;
     const email = "peterdamianotech@gmail.com";
     const location = "Dzenje Secondary School, Mulanje, Malawi";
 
     return (
-        <div>
-            <div className="p-4 flex items-center gap-4 sticky top-0 bg-background/80 backdrop-blur-sm z-10 border-b">
-                <Button variant="ghost" size="icon" onClick={() => router.back()}>
-                    <ArrowLeft />
-                </Button>
-                <h1 className="text-xl font-bold">Contact Us</h1>
-            </div>
-            <div className="p-4 max-w-2xl mx-auto">
-                <Card>
-                    <CardHeader className="text-center">
-                        <CardTitle className="text-3xl">Get in Touch</CardTitle>
-                        <CardDescription>
-                            We'd love to hear from you. Whether you have a question, feedback, or need support, here's how you can reach us.
-                        </CardDescription>
-                    </CardHeader>
-                    <CardContent className="space-y-6">
-                        <div className="space-y-4">
-                            <h3 className="font-semibold text-lg text-center">Direct Contact</h3>
-                            <p className="text-sm text-muted-foreground text-center">For immediate assistance, please use one of the methods below.</p>
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                <Button asChild variant="outline" className="h-14 border-primary/20 hover:bg-primary/10">
-                                    <a href={whatsappLink} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-2">
-                                        <WhatsAppIcon />
-                                        Chat on WhatsApp
-                                    </a>
-                                </Button>
-                                <Button asChild variant="outline" className="h-14 border-primary/20 hover:bg-primary/10">
-                                    <a href={`tel:${phoneNumber}`} className="flex items-center justify-center gap-2">
-                                        <Phone />
-                                        Call Us
-                                    </a>
-                                </Button>
+        <div className="max-w-2xl mx-auto">
+            <Card>
+                <CardHeader className="text-center">
+                    <CardTitle className="text-3xl">Get in Touch</CardTitle>
+                    <CardDescription>
+                        We'd love to hear from you. Whether you have a question, feedback, or need support, here's how you can reach us.
+                    </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                    <div className="space-y-4">
+                        <h3 className="font-semibold text-lg text-center">Direct Contact</h3>
+                        <p className="text-sm text-muted-foreground text-center">For immediate assistance, please use one of the methods below.</p>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <Button asChild variant="outline" className="h-14 border-primary/20 hover:bg-primary/10">
+                                <a href={whatsappLink} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-2">
+                                    <WhatsAppIcon />
+                                    Chat on WhatsApp
+                                </a>
+                            </Button>
+                            <Button asChild variant="outline" className="h-14 border-primary/20 hover:bg-primary/10">
+                                <a href={`tel:${phoneNumber}`} className="flex items-center justify-center gap-2">
+                                    <Phone />
+                                    Call Us
+                                </a>
+                            </Button>
+                        </div>
+                    </div>
+
+                   <Separator />
+
+                   <div className="space-y-6 pt-4">
+                        <h3 className="font-semibold text-lg text-center">Official Information</h3>
+                        <div className="flex items-start gap-4 p-4 rounded-lg bg-muted/50">
+                           <div className="p-3 bg-background rounded-full border">
+                               <Mail className="h-5 w-5 text-primary" />
+                            </div>
+                            <div>
+                                <h4 className="font-semibold">Email Address</h4>
+                                <a href={`mailto:${email}`} className="text-primary hover:underline">{email}</a>
+                                <p className="text-sm text-muted-foreground">For general inquiries, support requests, and business-related questions.</p>
                             </div>
                         </div>
-
-                       <Separator />
-
-                       <div className="space-y-6 pt-4">
-                            <h3 className="font-semibold text-lg text-center">Official Information</h3>
-                            <div className="flex items-start gap-4 p-4 rounded-lg bg-muted/50">
-                               <div className="p-3 bg-background rounded-full border">
-                                   <Mail className="h-5 w-5 text-primary" />
-                                </div>
-                                <div>
-                                    <h4 className="font-semibold">Email Address</h4>
-                                    <a href={`mailto:${email}`} className="text-primary hover:underline">{email}</a>
-                                    <p className="text-sm text-muted-foreground">For general inquiries, support requests, and business-related questions.</p>
-                                </div>
+                        <div className="flex items-start gap-4 p-4 rounded-lg bg-muted/50">
+                            <div className="p-3 bg-background rounded-full border">
+                               <MapPin className="h-5 w-5 text-primary" />
                             </div>
-                            <div className="flex items-start gap-4 p-4 rounded-lg bg-muted/50">
-                                <div className="p-3 bg-background rounded-full border">
-                                   <MapPin className="h-5 w-5 text-primary" />
-                                </div>
-                                <div>
-                                    <h4 className="font-semibold">Our Office</h4>
-                                    <p className="text-muted-foreground">{location}</p>
-                                    <p className="text-sm text-muted-foreground">While we are primarily a digital platform, you can reach us at this physical location.</p>
-                                </div>
-                           </div>
+                            <div>
+                                <h4 className="font-semibold">Our Office</h4>
+                                <p className="text-muted-foreground">{location}</p>
+                                <p className="text-sm text-muted-foreground">While we are primarily a digital platform, you can reach us at this physical location.</p>
+                            </div>
                        </div>
-                    </CardContent>
-                </Card>
-            </div>
+                   </div>
+                </CardContent>
+            </Card>
         </div>
     )
 }

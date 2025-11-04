@@ -12,7 +12,6 @@ import { capitalize } from '@/lib/utils';
 import { signOut } from 'firebase/auth';
 import { doc, getFirestore } from 'firebase/firestore';
 import {
-  ArrowLeft,
   Book,
   GraduationCap,
   Mail,
@@ -73,10 +72,6 @@ export default function ProfilePage() {
   if (isLoading) {
     return (
       <div className="bg-background text-foreground min-h-screen p-4">
-        <div className="flex items-center gap-4 mb-8">
-          <Skeleton className="h-10 w-10 rounded-full" />
-          <Skeleton className="h-6 w-24" />
-        </div>
         <div className="flex flex-col items-center gap-4">
           <Skeleton className="h-28 w-28 rounded-full relative" />
           <Skeleton className="h-7 w-40" />
@@ -106,13 +101,6 @@ export default function ProfilePage() {
   return (
     <>
       <div className="bg-background text-foreground min-h-screen">
-        <div className="p-4 flex items-center gap-4 sticky top-0 bg-background/80 backdrop-blur-sm z-10">
-          <Button variant="ghost" size="icon" onClick={() => router.back()}>
-            <ArrowLeft />
-          </Button>
-          <h1 className="text-xl font-bold">Profile</h1>
-        </div>
-
         <div className="flex flex-col items-center p-4 gap-2 text-center">
           <div className="relative">
             <Avatar className="h-28 w-28 border-4 border-primary">
@@ -183,20 +171,6 @@ export default function ProfilePage() {
               />
             </div>
           </div>
-          
-          {/* App Settings */}
-          <div>
-            <h3 className="font-semibold text-lg mb-2">Application</h3>
-            <div className="bg-card rounded-xl p-2 space-y-1 border">
-              <Link href="/settings">
-                  <ProfileListItem
-                      icon={Settings}
-                      label="Settings"
-                      value="App preferences, privacy and more"
-                  />
-              </Link>
-            </div>
-          </div>
         </div>
         
         <div className="p-6 mt-4">
@@ -216,5 +190,3 @@ export default function ProfilePage() {
     </>
   );
 }
-
-    

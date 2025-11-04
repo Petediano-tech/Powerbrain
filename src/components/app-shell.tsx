@@ -6,53 +6,79 @@ import { capitalize } from "@/lib/utils";
 import { SidebarTrigger } from "./ui/sidebar";
 import { Button } from "./ui/button";
 import Link from "next/link";
-import { Settings } from "lucide-react";
+import { Settings, ArrowLeft } from "lucide-react";
+import { useRouter } from "next/navigation";
+
+const pageTitles: { [key: string]: string } = {
+    '/home': 'Home',
+    '/tutor': 'Brainy AI',
+    '/subjects': 'Subjects',
+    '/quizzes': 'Quizzes',
+    '/repository': 'Resources',
+    '/dashboard': 'Dashboard',
+    '/teacher': "Teacher's Corner",
+    '/planner': 'AI Study Planner',
+    '/career': 'AI Career Advisor',
+    '/profile': 'Profile',
+    '/settings': 'Settings',
+    '/settings/about': 'About & Legal',
+    '/settings/accessibility': 'Accessibility',
+    '/settings/reading-style': 'Reading Style',
+    '/subscribe': 'VIP Subscription',
+    '/about': 'About Power Brain',
+    '/terms': 'Terms of Service',
+    '/privacy': 'Privacy Policy',
+    '/contact': 'Contact Us',
+    '/developers': 'The Team',
+    '/teacher/quiz-generator': 'AI Quiz Generator',
+};
 
 function getPageTitle(pathname: string) {
-    if (pathname === '/home') return 'Home';
-    if (pathname === '/tutor') return 'Brainy AI';
-    if (pathname.startsWith('/subjects')) return 'Subjects';
-    if (pathname.startsWith('/quizzes')) return 'Quizzes';
-    if (pathname === '/repository') return 'Resources';
-    if (pathname === '/dashboard') return 'Dashboard';
-    if (pathname === '/teacher') return "Teacher's Corner";
-
-    // These pages have their own headers now
-    if (['/profile', '/settings', '/about', '/terms', '/privacy', '/contact', '/developers'].includes(pathname)) {
-        return null;
+    if (pageTitles[pathname]) {
+        return pageTitles[pathname];
     }
-    if (pathname.includes('/notes/view')) {
-        return null;
-    }
-
-    const pageName = pathname.split('/').pop() || 'Home';
-    return capitalize(pageName.replace('-', ' '));
+    if (pathname.startsWith('/subjects/')) return 'Subjects';
+    if (pathname.startsWith('/quizzes/')) return 'Quizzes';
+    
+    return null;
 }
 
 export function AppShell({ children }: { children: React.ReactNode }) {
     const pathname = usePathname();
+    const router = useRouter();
     const pageTitle = getPageTitle(pathname);
 
-    // Don't show shell for pages that now have their own layout/header
-    if (pageTitle === null) {
+    const noHeaderRoutes = ['/notes/view'];
+
+    if (noHeaderRoutes.includes(pathname) || pathname.startsWith('/notes/view')) {
          return <main className="min-w-0 flex-1">{children}</main>;
     }
 
+    const showBackArrow = pathname.startsWith('/settings/') || 
+                          ['/about', '/terms', '/privacy', '/contact', '/developers', '/teacher/quiz-generator', '/profile'].includes(pathname);
+
     return (
         <div className="flex flex-col min-h-screen">
-            {pageTitle && (
-                <header className="sticky top-0 z-10 flex h-16 shrink-0 items-center justify-between border-b bg-background px-4">
-                     <SidebarTrigger className="md:hidden" />
+            <header className="sticky top-0 z-10 flex h-16 shrink-0 items-center justify-between border-b bg-background/80 backdrop-blur-sm px-4">
+                <div className="flex items-center gap-2">
+                    {showBackArrow ? (
+                        <Button variant="ghost" size="icon" onClick={() => router.back()}>
+                            <ArrowLeft />
+                        </Button>
+                    ) : (
+                        <SidebarTrigger className="md:hidden" />
+                    )}
                     <h1 className="text-lg font-bold">
                         {pageTitle}
                     </h1>
-                     <Button asChild variant="ghost" size="icon">
-                        <Link href="/settings">
-                            <Settings className="h-5 w-5" />
-                        </Link>
-                    </Button>
-                </header>
-            )}
+                </div>
+                
+                 <Button asChild variant="ghost" size="icon">
+                    <Link href="/settings">
+                        <Settings className="h-5 w-5" />
+                    </Link>
+                </Button>
+            </header>
             <main className="flex-1 overflow-y-auto p-4 md:p-6 lg:p-8">
                 {children}
             </main>

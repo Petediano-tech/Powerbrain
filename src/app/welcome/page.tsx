@@ -90,15 +90,18 @@ export default function WelcomePage() {
           <Button size="lg" className="w-full" asChild>
             <Link href="/auth">Get Started</Link>
           </Button>
-          <Button variant="ghost" className="w-full" asChild>
-            <Link href="/auth">Already have an account? Log In</Link>
-          </Button>
+          <p className="text-center text-sm text-muted-foreground">
+            Already have an account?{' '}
+            <Link href="/auth" className="font-semibold text-primary hover:underline">
+                Log In
+            </Link>
+          </p>
         </div>
         <div className="flex justify-center gap-4 mt-6 text-sm">
-            <Link href="/about" className="text-blue-600 hover:underline transition-colors">About</Link>
-            <Link href="/contact" className="text-blue-600 hover:underline transition-colors">Contact</Link>
-            <Link href="/terms" className="text-blue-600 hover:underline transition-colors">Terms</Link>
-            <Link href="/privacy" className="text-blue-600 hover:underline transition-colors">Privacy</Link>
+            <Link href="/about" className="text-primary hover:underline transition-colors">About</Link>
+            <Link href="/contact" className="text-primary hover:underline transition-colors">Contact</Link>
+            <Link href="/terms" className="text-primary hover:underline transition-colors">Terms</Link>
+            <Link href="/privacy" className="text-primary hover:underline transition-colors">Privacy</Link>
         </div>
       </footer>
     </div>

@@ -2,8 +2,6 @@
 'use client';
 import React from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { ArrowLeft, Code, Mail, Phone, MapPin } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useRouter } from "next/navigation";
 
@@ -57,61 +55,53 @@ export default function DevelopersPage() {
     }
 
     return (
-        <div>
-            <div className="p-4 flex items-center gap-4 sticky top-0 bg-background/80 backdrop-blur-sm z-10 border-b">
-                <Button variant="ghost" size="icon" onClick={() => router.back()}>
-                    <ArrowLeft />
-                </Button>
-                <h1 className="text-xl font-bold">The Team</h1>
+        <div className="space-y-12">
+            <div className="flex justify-center">
+                <Card className="w-full max-w-md bg-card rounded-2xl shadow-2xl shadow-primary/10 border-primary/20 border">
+                    <CardHeader className="text-center items-center pt-8">
+                        <div className="relative mb-4">
+                            <Avatar className="h-32 w-32 border-4 border-primary shadow-lg">
+                                <AvatarImage src={developer.avatar} alt={developer.name} />
+                                <AvatarFallback>{getInitials(developer.name)}</AvatarFallback>
+                            </Avatar>
+                            <div className="absolute inset-0 rounded-full border-2 border-primary/50 animate-pulse"></div>
+                        </div>
+                        <CardTitle className="text-3xl font-bold tracking-tight bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+                            {developer.name}
+                        </CardTitle>
+                        <CardDescription className="text-primary font-medium tracking-wide">
+                        {developer.role}
+                        </CardDescription>
+                    </CardHeader>
+                    <CardContent className="space-y-6 pt-6">
+                        <div className="flex justify-center gap-4">
+                            {developer.socials.map((social) => (
+                            <a href={social.url} key={social.name} target="_blank" rel="noopener noreferrer" className="p-3 bg-muted rounded-full text-muted-foreground hover:bg-primary/20 hover:text-primary transition-colors duration-300">
+                                {React.createElement(social.icon)}
+                            </a>
+                            ))}
+                        </div>
+                    </CardContent>
+                </Card>
             </div>
-            <div className="p-4 space-y-12">
-                <div className="flex justify-center">
-                    <Card className="w-full max-w-md bg-card rounded-2xl shadow-2xl shadow-primary/10 border-primary/20 border">
-                        <CardHeader className="text-center items-center pt-8">
-                            <div className="relative mb-4">
-                                <Avatar className="h-32 w-32 border-4 border-primary shadow-lg">
-                                    <AvatarImage src={developer.avatar} alt={developer.name} />
-                                    <AvatarFallback>{getInitials(developer.name)}</AvatarFallback>
+            
+            <div>
+                <h2 className="text-2xl font-bold text-center mb-6">Meet the Team</h2>
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+                    {teamMembers.map(member => (
+                        <Card key={member.name} className="text-center">
+                            <CardContent className="p-6 flex flex-col items-center gap-3">
+                                <Avatar className="h-20 w-20">
+                                    <AvatarImage src={member.avatar} alt={member.name} />
+                                    <AvatarFallback>{getInitials(member.name)}</AvatarFallback>
                                 </Avatar>
-                                <div className="absolute inset-0 rounded-full border-2 border-primary/50 animate-pulse"></div>
-                            </div>
-                            <CardTitle className="text-3xl font-bold tracking-tight bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-                                {developer.name}
-                            </CardTitle>
-                            <CardDescription className="text-primary font-medium tracking-wide">
-                            {developer.role}
-                            </CardDescription>
-                        </CardHeader>
-                        <CardContent className="space-y-6 pt-6">
-                            <div className="flex justify-center gap-4">
-                                {developer.socials.map((social) => (
-                                <a href={social.url} key={social.name} target="_blank" rel="noopener noreferrer" className="p-3 bg-muted rounded-full text-muted-foreground hover:bg-primary/20 hover:text-primary transition-colors duration-300">
-                                    {React.createElement(social.icon)}
-                                </a>
-                                ))}
-                            </div>
-                        </CardContent>
-                    </Card>
-                </div>
-                
-                <div>
-                    <h2 className="text-2xl font-bold text-center mb-6">Meet the Team</h2>
-                    <div className="grid grid-cols-2 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
-                        {teamMembers.map(member => (
-                            <Card key={member.name} className="text-center">
-                                <CardContent className="p-6 flex flex-col items-center gap-3">
-                                    <Avatar className="h-20 w-20">
-                                        <AvatarImage src={member.avatar} alt={member.name} />
-                                        <AvatarFallback>{getInitials(member.name)}</AvatarFallback>
-                                    </Avatar>
-                                    <div>
-                                        <p className="font-semibold">{member.name}</p>
-                                        <p className="text-xs text-muted-foreground">{member.role}</p>
-                                    </div>
-                                </CardContent>
-                            </Card>
-                        ))}
-                    </div>
+                                <div>
+                                    <p className="font-semibold">{member.name}</p>
+                                    <p className="text-xs text-muted-foreground">{member.role}</p>
+                                </div>
+                            </CardContent>
+                        </Card>
+                    ))}
                 </div>
             </div>
         </div>
