@@ -5,6 +5,8 @@
 
 import { ai } from '@/ai/genkit';
 import { z } from 'genkit';
+import { getFirestore } from 'firebase-admin/firestore';
+import { getAuthenticatedUser } from '@/firebase/auth/get-authenticated-user';
 
 const QuizGeneratorInputSchema = z.object({
   subject: z.string().describe('The subject for the quiz.'),
@@ -26,6 +28,25 @@ export const AiQuizGeneratorOutputSchema = z.object({
 export type AiQuizGeneratorOutput = z.infer<typeof AiQuizGeneratorOutputSchema>;
 
 export async function aiQuizGenerator(input: z.infer<typeof QuizGeneratorInputSchema>): Promise<AiQuizGeneratorOutput> {
+  const user = await getAuthenticatedUser();
+  if (!user) {
+    throw new Error('Authentication required. You must be a teacher to use this feature.');
+  }
+
+  const firestore = getFirestore();
+  const profileRef = firestore.collection('userProfiles').doc(user.uid);
+  const profileSnap = await profileRef.get();
+
+  if (!profileSnap.exists) {
+      throw new Error("User profile not found.");
+  }
+  
+  const userProfile = profileSnap.data();
+
+  if (userProfile?.role !== 'teacher') {
+    throw new Error('Access denied. This feature is for teachers only.');
+  }
+  
   const prompt = ai.definePrompt({
     name: 'aiQuizGeneratorPrompt',
     input: { schema: QuizGeneratorInputSchema },

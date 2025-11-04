@@ -28,6 +28,7 @@ import { useState } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { Logo } from '@/components/logo';
 import { useRouter } from 'next/navigation';
+import { handleLoginAttempt } from '@/lib/login-limiter';
 
 export default function AuthPage() {
   const [isSignUp, setIsSignUp] = useState(true);
@@ -192,8 +193,23 @@ export default function AuthPage() {
     e.preventDefault();
     setIsLoading(true);
     setError(null);
+
+    const canLogin = handleLoginAttempt(loginEmail);
+    if (!canLogin) {
+      const errorMessage = "Too many failed login attempts. Please try again in 15 minutes.";
+      setError(errorMessage);
+      toast({
+        variant: "destructive",
+        title: 'Login Failed',
+        description: errorMessage,
+      });
+      setIsLoading(false);
+      return;
+    }
+
     try {
       await signInWithEmailAndPassword(auth, loginEmail, loginPassword);
+      handleLoginAttempt(loginEmail, true); // Reset attempts on success
       toast({
         title: 'Logged in successfully!',
         description: "Welcome back to Power Brain.",
@@ -201,6 +217,7 @@ export default function AuthPage() {
       router.push('/home');
     } catch (error) {
        console.error(error);
+      handleLoginAttempt(loginEmail, false); // Record failed attempt
       const authError = error as AuthError;
       setError(authError.message);
       toast({

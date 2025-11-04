@@ -6,6 +6,8 @@
 import { ai } from '@/ai/genkit';
 import { z } from 'genkit';
 import { AiCareerGuidanceOutputSchema, AiCareerGuidanceOutput } from '@/ai/schemas';
+import { getFirestore } from 'firebase-admin/firestore';
+import { getAuthenticatedUser } from '@/firebase/auth/get-authenticated-user';
 
 const PerformanceDataSchema = z.object({
   strongestSubjects: z.array(z.string()).describe("The student's strongest subjects in school."),
@@ -15,6 +17,25 @@ const PerformanceDataSchema = z.object({
 
 
 export async function aiCareerGuidance(input: z.infer<typeof PerformanceDataSchema>): Promise<AiCareerGuidanceOutput> {
+  const user = await getAuthenticatedUser();
+  if (!user) {
+    throw new Error('Authentication required.');
+  }
+
+  const firestore = getFirestore();
+  const profileRef = firestore.collection('userProfiles').doc(user.uid);
+  const profileSnap = await profileRef.get();
+
+  if (!profileSnap.exists) {
+      throw new Error("User profile not found.");
+  }
+  
+  const userProfile = profileSnap.data();
+
+  if (!userProfile || userProfile.subscriptionTier === 'free') {
+    throw new Error('This is a premium feature. Please upgrade to a VIP plan.');
+  }
+
   const prompt = ai.definePrompt({
     name: 'aiCareerGuidancePrompt',
     input: { schema: PerformanceDataSchema },
