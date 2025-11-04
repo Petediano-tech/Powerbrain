@@ -3,7 +3,7 @@
  * @fileOverview AI-powered career guidance flow.
  */
 
-import { ai } from 'genkit';
+import { ai } from '@/ai/genkit';
 import { z } from 'zod';
 import { AiCareerGuidanceOutputSchema, AiCareerGuidanceOutput } from '@/ai/schemas';
 import { getFirestore } from 'firebase-admin/firestore';
