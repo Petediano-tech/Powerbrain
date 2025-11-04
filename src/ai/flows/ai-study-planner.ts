@@ -1,9 +1,9 @@
 /**
  * @fileOverview AI-powered study plan generator logic.
  */
-
+'use server';
 import { z } from 'zod';
-import { AiStudyPlannerOutput } from './schemas';
+import { AiStudyPlannerOutputSchema } from './schemas';
 import { getFirestore } from 'firebase-admin/firestore';
 import { getAuthenticatedUser } from '@/firebase/auth/get-authenticated-user';
 import type { GenkitPrompt } from 'genkit';
@@ -14,7 +14,7 @@ export const PlannerInputSchema = z.object({
 });
 export type PlannerInput = z.infer<typeof PlannerInputSchema>;
 
-export async function studyPlannerLogic(input: PlannerInput, prompt: GenkitPrompt<typeof PlannerInputSchema, typeof AiStudyPlannerOutput>): Promise<AiStudyPlannerOutput> {
+export async function studyPlannerLogic(input: PlannerInput, prompt: GenkitPrompt<typeof PlannerInputSchema, typeof AiStudyPlannerOutputSchema>) {
   const user = await getAuthenticatedUser();
   if (!user) {
     throw new Error('Authentication required.');

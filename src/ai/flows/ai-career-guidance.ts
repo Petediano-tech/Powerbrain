@@ -1,11 +1,12 @@
 /**
  * @fileOverview AI-powered career guidance flow logic.
  */
+'use server';
 import { z } from 'zod';
 import { getFirestore } from 'firebase-admin/firestore';
 import { getAuthenticatedUser } from '@/firebase/auth/get-authenticated-user';
 import type { GenkitPrompt } from 'genkit';
-import { AiCareerGuidanceOutput } from './schemas';
+import { AiCareerGuidanceOutputSchema } from './schemas';
 
 export const PerformanceDataSchema = z.object({
   strongestSubjects: z.array(z.string()).describe("The student's strongest subjects in school."),
@@ -15,7 +16,7 @@ export const PerformanceDataSchema = z.object({
 export type PerformanceData = z.infer<typeof PerformanceDataSchema>;
 
 
-export async function careerGuidanceLogic(input: PerformanceData, prompt: GenkitPrompt<typeof PerformanceDataSchema, typeof AiCareerGuidanceOutput>): Promise<AiCareerGuidanceOutput> {
+export async function careerGuidanceLogic(input: PerformanceData, prompt: GenkitPrompt<typeof PerformanceDataSchema, typeof AiCareerGuidanceOutputSchema>) {
   const user = await getAuthenticatedUser();
   if (!user) {
     throw new Error('Authentication required.');
