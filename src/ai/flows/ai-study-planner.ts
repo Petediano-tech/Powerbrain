@@ -3,8 +3,8 @@
  * @fileOverview AI-powered study plan generator.
  */
 
-import { ai } from 'genkit/ai';
-import { z } from 'genkit/zod';
+import { ai } from 'genkit';
+import { z } from 'zod';
 import { AiStudyPlannerOutputSchema, AiStudyPlannerOutput } from '@/ai/schemas';
 import { getFirestore } from 'firebase-admin/firestore';
 import { getAuthenticatedUser } from '@/firebase/auth/get-authenticated-user';

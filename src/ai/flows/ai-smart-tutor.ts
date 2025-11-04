@@ -7,8 +7,8 @@
  * - AiSmartTutorOutput - The return type for the aiSmartTutor function.
  */
 
-import { ai } from 'genkit/ai';
-import { z } from 'genkit/zod';
+import { ai } from 'genkit';
+import { z } from 'zod';
 import { getFirestore } from 'firebase-admin/firestore';
 import { getAuthenticatedUser } from '@/firebase/auth/get-authenticated-user';
 import { format } from 'date-fns';

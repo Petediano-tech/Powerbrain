@@ -1,4 +1,4 @@
-import { z } from 'genkit';
+import { z } from 'zod';
 
 const DailyPlanSchema = z.object({
     day: z.string().describe("The day of the week (e.g., Monday, Tuesday)."),

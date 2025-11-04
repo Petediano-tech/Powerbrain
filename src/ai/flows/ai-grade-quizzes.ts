@@ -7,8 +7,8 @@
  * - AiGradeQuizzesOutput - The return type for the aiGradeQuizzes function.
  */
 
-import { ai } from 'genkit/ai';
-import { z } from 'genkit/zod';
+import { ai } from 'genkit';
+import { z } from 'zod';
 
 const AiGradeQuizzesInputSchema = z.object({
   quizContent: z.string().describe('The content of the quiz, including questions and possible answers.'),

@@ -8,8 +8,8 @@
  * - StudyInsightsOutput - The return type for the getStudyInsights function.
  */
 
-import { ai } from 'genkit/ai';
-import { z } from 'genkit/zod';
+import { ai } from 'genkit';
+import { z } from 'zod';
 
 const StudyInsightsInputSchema = z.object({
   studyStreaks: z.number().describe('Number of consecutive days the student has studied.'),
