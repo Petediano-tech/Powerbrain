@@ -3,7 +3,6 @@
  * @fileOverview AI-powered study plan generator.
  */
 
-import { ai } from '@/ai/genkit';
 import { z } from 'zod';
 import { AiStudyPlannerOutputSchema, AiStudyPlannerOutput } from '@/ai/schemas';
 import { getFirestore } from 'firebase-admin/firestore';
@@ -25,7 +24,7 @@ export async function aiStudyPlanner(input: z.infer<typeof PlannerInputSchema>):
   const profileRef = firestore.collection('userProfiles').doc(user.uid);
   const profileSnap = await profileRef.get();
 
-  if (!profileSnap.exists) {
+  if (!profileSnap.exists()) {
       throw new Error("User profile not found.");
   }
   
@@ -34,5 +33,5 @@ export async function aiStudyPlanner(input: z.infer<typeof PlannerInputSchema>):
     throw new Error('This is a premium feature. Please upgrade to a VIP plan.');
   }
   
-  return await runFlow(ai.flow('aiStudyPlannerFlow'), input);
+  return await runFlow('aiStudyPlannerFlow', input);
 }

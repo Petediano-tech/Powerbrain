@@ -3,12 +3,11 @@
  * @fileOverview AI-powered career guidance flow.
  */
 
-import { ai } from '@/ai/genkit';
+import { runFlow } from 'genkit/flow';
 import { z } from 'zod';
 import { AiCareerGuidanceOutput, AiCareerGuidanceOutputSchema } from '@/ai/schemas';
 import { getFirestore } from 'firebase-admin/firestore';
 import { getAuthenticatedUser } from '@/firebase/auth/get-authenticated-user';
-import { runFlow } from 'genkit/flow';
 
 export const PerformanceDataSchema = z.object({
   strongestSubjects: z.array(z.string()).describe("The student's strongest subjects in school."),
@@ -27,7 +26,7 @@ export async function aiCareerGuidance(input: z.infer<typeof PerformanceDataSche
   const profileRef = firestore.collection('userProfiles').doc(user.uid);
   const profileSnap = await profileRef.get();
 
-  if (!profileSnap.exists) {
+  if (!profileSnap.exists()) {
       throw new Error("User profile not found.");
   }
   
@@ -37,5 +36,5 @@ export async function aiCareerGuidance(input: z.infer<typeof PerformanceDataSche
     throw new Error('This is a premium feature. Please upgrade to a VIP plan.');
   }
 
-  return await runFlow(ai.flow('aiCareerGuidanceFlow'), input);
+  return await runFlow('aiCareerGuidanceFlow', input);
 }

@@ -7,7 +7,6 @@
  * - AiSmartTutorOutput - The return type for the aiSmartTutor function.
  */
 
-import { ai } from '@/ai/genkit';
 import { z } from 'zod';
 import { getFirestore } from 'firebase-admin/firestore';
 import { getAuthenticatedUser } from '@/firebase/auth/get-authenticated-user';
@@ -28,10 +27,6 @@ export type AiSmartTutorOutput = z.infer<typeof AiSmartTutorOutputSchema>;
 
 const FREE_TIER_DAILY_LIMIT = 5;
 
-async function aiSmartTutorFlow(input: AiSmartTutorInput): Promise<AiSmartTutorOutput> {
-  return await runFlow(ai.flow('aiSmartTutorFlow'), input);
-}
-
 export async function aiSmartTutor(input: AiSmartTutorInput): Promise<AiSmartTutorOutput> {
   const user = await getAuthenticatedUser();
   if (!user) {
@@ -42,7 +37,7 @@ export async function aiSmartTutor(input: AiSmartTutorInput): Promise<AiSmartTut
   const profileRef = firestore.collection('userProfiles').doc(user.uid);
   const profileSnap = await profileRef.get();
 
-  if (!profileSnap.exists) {
+  if (!profileSnap.exists()) {
       return { response: "It seems I can't find your user profile. Please make sure your account is set up correctly." };
   }
   
@@ -50,7 +45,7 @@ export async function aiSmartTutor(input: AiSmartTutorInput): Promise<AiSmartTut
 
   // If the user is on a paid plan, they have unlimited access.
   if (userProfile?.subscriptionTier && userProfile.subscriptionTier !== 'free') {
-    return aiSmartTutorFlow(input);
+    return await runFlow('aiSmartTutorFlow', input);
   }
   
   // Logic for free-tier users
@@ -68,7 +63,7 @@ export async function aiSmartTutor(input: AiSmartTutorInput): Promise<AiSmartTut
   }
 
   // Process the request and then update the count.
-  const response = await aiSmartTutorFlow(input);
+  const response = await runFlow('aiSmartTutorFlow', input);
 
   await profileRef.update({
     dailyChatCount: dailyChatCount + 1,

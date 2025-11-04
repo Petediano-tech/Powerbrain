@@ -3,7 +3,6 @@
  * @fileOverview AI-powered quiz and assignment generator for teachers.
  */
 
-import { ai } from '@/ai/genkit';
 import { z } from 'zod';
 import { getFirestore } from 'firebase-admin/firestore';
 import { getAuthenticatedUser } from '@/firebase/auth/get-authenticated-user';
@@ -38,7 +37,7 @@ export async function aiQuizGenerator(input: z.infer<typeof QuizGeneratorInputSc
   const profileRef = firestore.collection('userProfiles').doc(user.uid);
   const profileSnap = await profileRef.get();
 
-  if (!profileSnap.exists) {
+  if (!profileSnap.exists()) {
       throw new Error("User profile not found.");
   }
   
@@ -48,5 +47,5 @@ export async function aiQuizGenerator(input: z.infer<typeof QuizGeneratorInputSc
     throw new Error('Access denied. This feature is for teachers only.');
   }
   
-  return await runFlow(ai.flow('aiQuizGeneratorFlow'), input);
+  return await runFlow('aiQuizGeneratorFlow', input);
 }

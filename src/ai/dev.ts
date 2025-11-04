@@ -14,14 +14,71 @@ import { AiStudyPlannerOutputSchema, AiCareerGuidanceOutputSchema } from '@/ai/s
 
 // AI Study Insights
 import { StudyInsightsInputSchema, StudyInsightsOutputSchema, getStudyInsights as getStudyInsightsLogic } from '@/ai/flows/ai-study-insights';
-ai.defineFlow({ name: 'studyInsightsFlow', inputSchema: StudyInsightsInputSchema, outputSchema: StudyInsightsOutputSchema }, getStudyInsightsLogic);
+ai.defineFlow({ name: 'studyInsightsFlow', inputSchema: StudyInsightsInputSchema, outputSchema: StudyInsightsOutputSchema }, async (input) => {
+    const studyInsightsPrompt = ai.definePrompt({
+        name: 'studyInsightsPrompt',
+        input: {schema: StudyInsightsInputSchema},
+        output: {schema: StudyInsightsOutputSchema},
+        prompt: `You are an AI study assistant that analyzes student data and provides personalized insights.
+
+        Analyze the following data to provide the student with an overview of their performance, their strengths and weaknesses, and personalized recommendations for improvement.
+
+        Study Streaks: {{{studyStreaks}}} days
+        Total Time Studied: {{{totalTimeStudied}}} minutes
+        Quizzes Completed: {{{quizzesCompleted}}}
+        Topics Mastered: {{{topicsMastered}}}
+        Performance in Math: {{{performanceInMath}}}%
+        Performance in English: {{{performanceInEnglish}}}%
+        Performance in Science: {{{performanceInScience}}}%
+        Performance in History: {{{performanceInHistory}}}%
+        Performance in Chichewa: {{{performanceInChichewa}}}%
+        Recent Math Scores: {{{recentMathScores}}}
+        Recent English Scores: {{{recentEnglishScores}}}
+        Favourite Subject: {{{favouriteSubject}}}
+
+        Provide the analysis in the following format:
+
+        Overall Performance: [Overall assessment of the student\u0027s performance]
+        Strengths: [Specific strengths of the student]
+        Weaknesses: [Specific weaknesses of the student]
+        Recommendations: [Personalized recommendations for the student]`,
+    });
+    const {output} = await studyInsightsPrompt(input);
+    return output!;
+});
+
 
 // AI Grade Quizzes
 import { AiGradeQuizzesInputSchema, AiGradeQuizzesOutputSchema, aiGradeQuizzes as aiGradeQuizzesLogic } from '@/ai/flows/ai-grade-quizzes';
-ai.defineFlow({ name: 'aiGradeQuizzesFlow', inputSchema: AiGradeQuizzesInputSchema, outputSchema: AiGradeQuizzesOutputSchema }, aiGradeQuizzesLogic);
+ai.defineFlow({ name: 'aiGradeQuizzesFlow', inputSchema: AiGradeQuizzesInputSchema, outputSchema: AiGradeQuizzesOutputSchema }, async (input) => {
+  const prompt = ai.definePrompt({
+      name: 'aiGradeQuizzesPrompt',
+      input: {schema: AiGradeQuizzesInputSchema},
+      output: {schema: AiGradeQuizzesOutputSchema},
+      prompt: `You are an AI grading assistant that automatically grades quizzes based on the provided content and student answers.
+
+      Quiz Content:
+      {{quizContent}}
+
+      Student Answers:
+      {{studentAnswers}}
+
+      Teacher Instructions (if any):
+      {{teacherInstructions}}
+
+      Provide an overall grade and detailed feedback on the student's answers. The feedback should include specific corrections and explanations.
+
+      Ensure that the grade and feedback are aligned with the quiz content and any teacher instructions provided.  Give the grade in the format A,B,C,D,E or F.
+      Grade:
+      Feedback: `,
+  });
+
+  const {output} = await prompt(input);
+  return output!;
+});
 
 // AI Smart Tutor
-import { AiSmartTutorInputSchema, AiSmartTutorOutputSchema, aiSmartTutor as aiSmartTutorLogic } from '@/ai/flows/ai-smart-tutor';
+import { AiSmartTutorInputSchema, AiSmartTutorOutputSchema } from '@/ai/flows/ai-smart-tutor';
 ai.defineFlow({ name: 'aiSmartTutorFlow', inputSchema: AiSmartTutorInputSchema, outputSchema: AiSmartTutorOutputSchema }, async (input) => {
     const prompt = ai.definePrompt({
         name: 'aiSmartTutorPrompt',
@@ -119,3 +176,11 @@ ai.defineFlow({ name: 'aiQuizGeneratorFlow', inputSchema: QuizGeneratorInputSche
     const { output } = await prompt(input);
     return output!;
 });
+
+export {
+    aiStudyPlannerLogic,
+    aiCareerGuidanceLogic,
+    aiGradeQuizzesLogic,
+    aiQuizGeneratorLogic,
+    getStudyInsightsLogic
+};

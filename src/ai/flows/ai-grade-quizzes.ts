@@ -7,7 +7,6 @@
  * - AiGradeQuizzesOutput - The return type for the aiGradeQuizzes function.
  */
 
-import { ai } from '@/ai/genkit';
 import { z } from 'zod';
 import { runFlow } from 'genkit/flow';
 
@@ -25,28 +24,5 @@ export const AiGradeQuizzesOutputSchema = z.object({
 export type AiGradeQuizzesOutput = z.infer<typeof AiGradeQuizzesOutputSchema>;
 
 export async function aiGradeQuizzes(input: AiGradeQuizzesInput): Promise<AiGradeQuizzesOutput> {
-  const prompt = ai.definePrompt({
-      name: 'aiGradeQuizzesPrompt',
-      input: {schema: AiGradeQuizzesInputSchema},
-      output: {schema: AiGradeQuizzesOutputSchema},
-      prompt: `You are an AI grading assistant that automatically grades quizzes based on the provided content and student answers.
-
-      Quiz Content:
-      {{quizContent}}
-
-      Student Answers:
-      {{studentAnswers}}
-
-      Teacher Instructions (if any):
-      {{teacherInstructions}}
-
-      Provide an overall grade and detailed feedback on the student's answers. The feedback should include specific corrections and explanations.
-
-      Ensure that the grade and feedback are aligned with the quiz content and any teacher instructions provided.  Give the grade in the format A,B,C,D,E or F.
-      Grade:
-      Feedback: `,
-  });
-
-  const {output} = await prompt(input);
-  return output!;
+  return await runFlow('aiGradeQuizzesFlow', input);
 }
