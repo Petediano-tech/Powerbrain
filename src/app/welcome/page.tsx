@@ -94,11 +94,11 @@ export default function WelcomePage() {
             <Link href="/auth">Already have an account? Log In</Link>
           </Button>
         </div>
-        <div className="flex justify-center gap-4 mt-6 text-sm text-muted-foreground">
-            <Link href="/about" className="hover:text-primary transition-colors">About</Link>
-            <Link href="/contact" className="hover:text-primary transition-colors">Contact</Link>
-            <Link href="/terms" className="hover:text-primary transition-colors">Terms</Link>
-            <Link href="/privacy" className="hover:text-primary transition-colors">Privacy</Link>
+        <div className="flex justify-center gap-4 mt-6 text-sm">
+            <Link href="/about" className="text-blue-600 hover:underline transition-colors">About</Link>
+            <Link href="/contact" className="text-blue-600 hover:underline transition-colors">Contact</Link>
+            <Link href="/terms" className="text-blue-600 hover:underline transition-colors">Terms</Link>
+            <Link href="/privacy" className="text-blue-600 hover:underline transition-colors">Privacy</Link>
         </div>
       </footer>
     </div>
