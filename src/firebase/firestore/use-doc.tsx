@@ -46,21 +46,21 @@ export function useDoc<T = any>(
 
   const { isUserLoading } = useUser();
   const [data, setData] = useState<StateDataType>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(true); // Start as true
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<FirestoreError | Error | null>(null);
 
   useEffect(() => {
-    // Wait until authentication is resolved and we have a document reference.
+    // We are in a loading state if auth is resolving OR if there is no doc ref.
+    setIsLoading(isUserLoading || !memoizedDocRef);
+
     if (isUserLoading || !memoizedDocRef) {
-      setIsLoading(true);
+      // If we are waiting, ensure data and error are cleared.
       setData(null);
       setError(null);
       return;
     }
 
-    setIsLoading(true);
-    setError(null);
-
+    // Auth is ready and we have a doc ref, so attach the listener.
     const unsubscribe = onSnapshot(
       memoizedDocRef,
       (snapshot: DocumentSnapshot<DocumentData>) => {
@@ -70,7 +70,7 @@ export function useDoc<T = any>(
           setData(null);
         }
         setError(null); 
-        setIsLoading(false);
+        setIsLoading(false); // Data loaded successfully
       },
       (error: FirestoreError) => {
         const contextualError = new FirestorePermissionError({
@@ -80,7 +80,7 @@ export function useDoc<T = any>(
 
         setError(contextualError)
         setData(null)
-        setIsLoading(false)
+        setIsLoading(false) // Error occurred
 
         // trigger global error propagation
         errorEmitter.emit('permission-error', contextualError);

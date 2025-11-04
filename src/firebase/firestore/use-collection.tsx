@@ -60,21 +60,22 @@ export function useCollection<T = any>(
   
   const { isUserLoading: isAuthLoading } = useUser();
   const [data, setData] = useState<StateDataType>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(true); // Start as true
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<FirestoreError | Error | null>(null);
 
   useEffect(() => {
-    // Wait until authentication is resolved and we have a query.
+    // Determine the initial loading state based on auth and query presence.
+    // We are loading if auth is not ready OR if we don't have a query ref yet.
+    setIsLoading(isAuthLoading || !memoizedTargetRefOrQuery);
+
     if (isAuthLoading || !memoizedTargetRefOrQuery) {
-      setIsLoading(true);
+      // If we are in a loading state, ensure data and error are reset.
       setData(null);
       setError(null);
       return;
     }
 
-    setIsLoading(true);
-    setError(null);
-
+    // At this point, auth is ready and we have a query. Start the snapshot listener.
     const unsubscribe = onSnapshot(
       memoizedTargetRefOrQuery,
       (snapshot: QuerySnapshot<DocumentData>) => {
@@ -84,7 +85,7 @@ export function useCollection<T = any>(
         }
         setData(results);
         setError(null);
-        setIsLoading(false);
+        setIsLoading(false); // Data loaded successfully
       },
       (error: FirestoreError) => {
         const path: string =
@@ -99,7 +100,7 @@ export function useCollection<T = any>(
 
         setError(contextualError)
         setData(null)
-        setIsLoading(false)
+        setIsLoading(false) // Error occurred
 
         errorEmitter.emit('permission-error', contextualError);
       }
