@@ -2,7 +2,6 @@
  * @fileOverview AI-powered study plan generator logic.
  */
 import { z } from 'zod';
-import { AiStudyPlannerOutputSchema } from './schemas';
 import { getFirestore } from 'firebase-admin/firestore';
 import { getAuthenticatedUser } from '@/firebase/auth/get-authenticated-user';
 import type { GenkitPrompt } from 'genkit';

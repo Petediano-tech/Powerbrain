@@ -5,7 +5,7 @@ import { z } from 'zod';
 import { getFirestore } from 'firebase-admin/firestore';
 import { getAuthenticatedUser } from '@/firebase/auth/get-authenticated-user';
 import { format } from 'date-fns';
-import { AiSmartTutorOutput, AiSmartTutorOutputSchema } from './schemas';
+import type { AiSmartTutorOutput } from './schemas';
 import type { GenkitPrompt } from 'genkit';
 
 

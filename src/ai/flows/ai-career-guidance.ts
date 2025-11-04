@@ -5,7 +5,6 @@ import { z } from 'zod';
 import { getFirestore } from 'firebase-admin/firestore';
 import { getAuthenticatedUser } from '@/firebase/auth/get-authenticated-user';
 import type { GenkitPrompt } from 'genkit';
-import { AiCareerGuidanceOutputSchema } from './schemas';
 
 export const PerformanceDataSchema = z.object({
   strongestSubjects: z.array(z.string()).describe("The student's strongest subjects in school."),

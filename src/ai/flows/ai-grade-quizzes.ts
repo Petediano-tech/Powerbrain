@@ -3,7 +3,6 @@
  */
 import { z } from 'zod';
 import type { GenkitPrompt } from 'genkit';
-import { AiGradeQuizzesOutputSchema } from './schemas';
 
 export const AiGradeQuizzesInputSchema = z.object({
   quizContent: z.string().describe('The content of the quiz, including questions and possible answers.'),

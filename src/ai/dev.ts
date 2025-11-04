@@ -2,11 +2,23 @@
 import {config} from 'dotenv';
 config();
 
-import { ai } from '@/ai/genkit';
-
-// AI Study Insights
+import { getGenkitAi } from '@/ai/genkit';
 import { StudyInsightsInputSchema, studyInsightsLogic } from '@/ai/flows/ai-study-insights';
 import { AiStudyInsightsOutputSchema } from './flows/schemas';
+import { AiGradeQuizzesInputSchema, gradeQuizzesLogic } from '@/ai/flows/ai-grade-quizzes';
+import { AiGradeQuizzesOutputSchema } from './flows/schemas';
+import { PerformanceDataSchema, careerGuidanceLogic } from '@/ai/flows/ai-career-guidance';
+import { AiCareerGuidanceOutputSchema } from './flows/schemas';
+import { PlannerInputSchema, studyPlannerLogic } from '@/ai/flows/ai-study-planner';
+import { AiStudyPlannerOutputSchema } from './flows/schemas';
+import { QuizGeneratorInputSchema, quizGeneratorLogic } from '@/ai/flows/ai-quiz-generator';
+import { AiQuizGeneratorOutputSchema } from './flows/schemas';
+import { AiSmartTutorInputSchema, smartTutorLogic } from '@/ai/flows/ai-smart-tutor';
+import { AiSmartTutorOutputSchema } from './flows/schemas';
+
+const ai = getGenkitAi();
+
+// AI Study Insights
 const studyInsightsPrompt = ai.definePrompt({
     name: 'studyInsightsPrompt',
     input: {schema: StudyInsightsInputSchema},
@@ -39,8 +51,6 @@ export const studyInsightsFlow = ai.defineFlow({ name: 'studyInsightsFlow', inpu
 
 
 // AI Grade Quizzes
-import { AiGradeQuizzesInputSchema, gradeQuizzesLogic } from '@/ai/flows/ai-grade-quizzes';
-import { AiGradeQuizzesOutputSchema } from './flows/schemas';
 const gradeQuizPrompt = ai.definePrompt({
     name: 'aiGradeQuizzesPrompt',
     input: {schema: AiGradeQuizzesInputSchema},
@@ -65,8 +75,6 @@ const gradeQuizPrompt = ai.definePrompt({
 export const aiGradeQuizzesFlow = ai.defineFlow({ name: 'aiGradeQuizzesFlow', inputSchema: AiGradeQuizzesInputSchema, outputSchema: AiGradeQuizzesOutputSchema }, (input) => gradeQuizzesLogic(input, gradeQuizPrompt));
 
 // AI Career Guidance
-import { PerformanceDataSchema, careerGuidanceLogic } from '@/ai/flows/ai-career-guidance';
-import { AiCareerGuidanceOutputSchema } from './flows/schemas';
 const careerGuidancePrompt = ai.definePrompt({
     name: 'aiCareerGuidancePrompt',
     input: {schema: PerformanceDataSchema},
@@ -81,8 +89,6 @@ export const aiCareerGuidanceFlow = ai.defineFlow({ name: 'aiCareerGuidanceFlow'
 
 
 // AI Study Planner
-import { PlannerInputSchema, studyPlannerLogic } from '@/ai/flows/ai-study-planner';
-import { AiStudyPlannerOutputSchema } from './flows/schemas';
 const studyPlannerPrompt = ai.definePrompt({
     name: 'aiStudyPlannerPrompt',
     input: {schema: PlannerInputSchema},
@@ -96,8 +102,6 @@ export const aiStudyPlannerFlow = ai.defineFlow({ name: 'aiStudyPlannerFlow', in
 
 
 // AI Quiz Generator
-import { QuizGeneratorInputSchema, quizGeneratorLogic } from '@/ai/flows/ai-quiz-generator';
-import { AiQuizGeneratorOutputSchema } from './flows/schemas';
 const quizGeneratorPrompt = ai.definePrompt({
     name: 'aiQuizGeneratorPrompt',
     input: {schema: QuizGeneratorInputSchema},
@@ -113,8 +117,6 @@ export const aiQuizGeneratorFlow = ai.defineFlow({ name: 'aiQuizGeneratorFlow', 
 
 
 // AI Smart Tutor
-import { AiSmartTutorInputSchema, smartTutorLogic } from '@/ai/flows/ai-smart-tutor';
-import { AiSmartTutorOutputSchema } from './flows/schemas';
 const smartTutorPrompt = ai.definePrompt({
     name: 'smartTutorPrompt',
     input: {schema: AiSmartTutorInputSchema},

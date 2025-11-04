@@ -4,7 +4,7 @@
 
 import { z } from 'zod';
 import type { GenkitPrompt } from 'genkit';
-import { AiStudyInsightsOutputSchema, StudyInsightsOutput } from './schemas';
+import type { StudyInsightsOutput } from './schemas';
 
 
 export const StudyInsightsInputSchema = z.object({
