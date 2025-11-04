@@ -1,10 +1,11 @@
+
 'use server';
 /**
  * @fileOverview AI-powered study plan generator.
  */
 
 import { z } from 'zod';
-import { AiStudyPlannerOutputSchema, AiStudyPlannerOutput } from '@/ai/schemas';
+import { AiStudyPlannerOutput } from '@/ai/schemas';
 import { getFirestore } from 'firebase-admin/firestore';
 import { getAuthenticatedUser } from '@/firebase/auth/get-authenticated-user';
 import { runFlow } from 'genkit/flow';
@@ -33,5 +34,6 @@ export async function aiStudyPlanner(input: z.infer<typeof PlannerInputSchema>):
     throw new Error('This is a premium feature. Please upgrade to a VIP plan.');
   }
   
+  // The 'aiStudyPlannerFlow' is defined in src/ai/dev.ts
   return await runFlow('aiStudyPlannerFlow', input);
 }

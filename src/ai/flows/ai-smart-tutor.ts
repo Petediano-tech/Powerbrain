@@ -1,3 +1,4 @@
+
 'use server';
 /**
  * @fileOverview An AI tutor that can answer questions, summarize notes, or generate practice questions.
@@ -45,6 +46,7 @@ export async function aiSmartTutor(input: AiSmartTutorInput): Promise<AiSmartTut
 
   // If the user is on a paid plan, they have unlimited access.
   if (userProfile?.subscriptionTier && userProfile.subscriptionTier !== 'free') {
+    // The 'aiSmartTutorFlow' is defined in src/ai/dev.ts
     return await runFlow('aiSmartTutorFlow', input);
   }
   
@@ -63,6 +65,7 @@ export async function aiSmartTutor(input: AiSmartTutorInput): Promise<AiSmartTut
   }
 
   // Process the request and then update the count.
+  // The 'aiSmartTutorFlow' is defined in src/ai/dev.ts
   const response = await runFlow('aiSmartTutorFlow', input);
 
   await profileRef.update({

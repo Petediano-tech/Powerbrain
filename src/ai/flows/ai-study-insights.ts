@@ -1,3 +1,4 @@
+
 'use server';
 
 /**
@@ -9,7 +10,7 @@
  */
 
 import { z } from 'zod';
-import { runFlow } from 'genkit/flow';
+import { ai } from '@/ai/genkit';
 
 export const StudyInsightsInputSchema = z.object({
   studyStreaks: z.number().describe('Number of consecutive days the student has studied.'),
@@ -38,5 +39,34 @@ export const StudyInsightsOutputSchema = z.object({
 export type StudyInsightsOutput = z.infer<typeof StudyInsightsOutputSchema>;
 
 export async function getStudyInsights(input: StudyInsightsInput): Promise<StudyInsightsOutput> {
-    return await runFlow('studyInsightsFlow', input);
+    const studyInsightsPrompt = ai.definePrompt({
+        name: 'studyInsightsPrompt',
+        input: {schema: StudyInsightsInputSchema},
+        output: {schema: StudyInsightsOutputSchema},
+        prompt: `You are an AI study assistant that analyzes student data and provides personalized insights.
+
+        Analyze the following data to provide the student with an overview of their performance, their strengths and weaknesses, and personalized recommendations for improvement.
+
+        Study Streaks: {{{studyStreaks}}} days
+        Total Time Studied: {{{totalTimeStudied}}} minutes
+        Quizzes Completed: {{{quizzesCompleted}}}
+        Topics Mastered: {{{topicsMastered}}}
+        Performance in Math: {{{performanceInMath}}}%
+        Performance in English: {{{performanceInEnglish}}}%
+        Performance in Science: {{{performanceInScience}}}%
+        Performance in History: {{{performanceInHistory}}}%
+        Performance in Chichewa: {{{performanceInChichewa}}}%
+        Recent Math Scores: {{{recentMathScores}}}
+        Recent English Scores: {{{recentEnglishScores}}}
+        Favourite Subject: {{{favouriteSubject}}}
+
+        Provide the analysis in the following format:
+
+        Overall Performance: [Overall assessment of the student\u0027s performance]
+        Strengths: [Specific strengths of the student]
+        Weaknesses: [Specific weaknesses of the student]
+        Recommendations: [Personalized recommendations for the student]`,
+    });
+    const {output} = await studyInsightsPrompt(input);
+    return output!;
 }

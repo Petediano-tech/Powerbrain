@@ -1,3 +1,4 @@
+
 'use server';
 /**
  * @fileOverview AI-powered career guidance flow.
@@ -5,7 +6,7 @@
 
 import { runFlow } from 'genkit/flow';
 import { z } from 'zod';
-import { AiCareerGuidanceOutput, AiCareerGuidanceOutputSchema } from '@/ai/schemas';
+import { AiCareerGuidanceOutput } from '@/ai/schemas';
 import { getFirestore } from 'firebase-admin/firestore';
 import { getAuthenticatedUser } from '@/firebase/auth/get-authenticated-user';
 
@@ -36,5 +37,6 @@ export async function aiCareerGuidance(input: z.infer<typeof PerformanceDataSche
     throw new Error('This is a premium feature. Please upgrade to a VIP plan.');
   }
 
+  // The 'aiCareerGuidanceFlow' is defined in src/ai/dev.ts
   return await runFlow('aiCareerGuidanceFlow', input);
 }

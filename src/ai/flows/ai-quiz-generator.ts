@@ -1,3 +1,4 @@
+
 'use server';
 /**
  * @fileOverview AI-powered quiz and assignment generator for teachers.
@@ -47,5 +48,6 @@ export async function aiQuizGenerator(input: z.infer<typeof QuizGeneratorInputSc
     throw new Error('Access denied. This feature is for teachers only.');
   }
   
+  // The 'aiQuizGeneratorFlow' is defined in src/ai/dev.ts
   return await runFlow('aiQuizGeneratorFlow', input);
 }

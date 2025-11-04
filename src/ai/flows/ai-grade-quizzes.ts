@@ -1,3 +1,4 @@
+
 'use server';
 /**
  * @fileOverview AI-powered quiz grading flow.
@@ -7,8 +8,9 @@
  * - AiGradeQuizzesOutput - The return type for the aiGradeQuizzes function.
  */
 
-import { z } from 'zod';
 import { runFlow } from 'genkit/flow';
+import { z } from 'zod';
+import { ai } from '@/ai/genkit';
 
 export const AiGradeQuizzesInputSchema = z.object({
   quizContent: z.string().describe('The content of the quiz, including questions and possible answers.'),
@@ -24,5 +26,6 @@ export const AiGradeQuizzesOutputSchema = z.object({
 export type AiGradeQuizzesOutput = z.infer<typeof AiGradeQuizzesOutputSchema>;
 
 export async function aiGradeQuizzes(input: AiGradeQuizzesInput): Promise<AiGradeQuizzesOutput> {
+  // The 'aiGradeQuizzesFlow' is defined in src/ai/dev.ts
   return await runFlow('aiGradeQuizzesFlow', input);
 }
