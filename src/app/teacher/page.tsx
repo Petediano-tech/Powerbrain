@@ -3,6 +3,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { useToast } from "@/hooks/use-toast";
 import { useUser } from "@/firebase";
 import { BarChart, FileQuestion, FileUp, Megaphone, PlusCircle, PencilRuler } from "lucide-react";
 import Image from "next/image";
@@ -38,13 +39,29 @@ const progressData = [
 
 export default function TeacherPage() {
     const { user } = useUser();
+    const { toast } = useToast();
     const displayName = user?.displayName || 'Atikonda';
+
+    const handleFeatureClick = (featureName: string) => {
+        if (featureName === 'Quiz Generator') {
+            return;
+        }
+        toast({
+            title: "Coming Soon!",
+            description: `The "${featureName}" feature is under development.`,
+        });
+    }
 
   return (
     <div className="space-y-6 text-foreground bg-background">
         <div className="grid grid-cols-3 gap-4">
             {quickActions.map(action => (
-                <Link href={action.href} key={action.name}>
+                <Link href={action.href} key={action.name} onClick={(e) => {
+                    if (action.href === '#') {
+                        e.preventDefault();
+                        handleFeatureClick(action.name);
+                    }
+                }}>
                     <Card className="bg-card/80 hover:bg-card transition-colors text-center p-4 h-full flex flex-col items-center justify-center cursor-pointer">
                         <div className="p-3 text-primary mb-2">
                             {action.icon}
@@ -59,15 +76,17 @@ export default function TeacherPage() {
             <h2 className="text-xl font-bold mb-4">My Classes</h2>
             <div className="flex space-x-4 overflow-x-auto pb-4 -mx-4 px-4">
                  {classes.map((cls) => (
-                    <Card key={cls.name} className={`min-w-[220px] flex-shrink-0 text-white bg-gradient-to-br ${cls.gradient} relative overflow-hidden`}>
-                        <CardHeader>
-                            {cls.notifications > 0 && 
-                                <Badge className="absolute top-3 right-3 bg-red-500 text-white border-0 w-6 h-6 justify-center p-0">{cls.notifications}</Badge>
-                            }
-                            <CardTitle>{cls.name}</CardTitle>
-                            <CardDescription className="text-white/80">{cls.students} Students</CardDescription>
-                        </CardHeader>
-                    </Card>
+                    <button key={cls.name} onClick={() => handleFeatureClick("Class Details")} className="text-left">
+                        <Card className={`min-w-[220px] w-[220px] flex-shrink-0 text-white bg-gradient-to-br ${cls.gradient} relative overflow-hidden hover:scale-105 transition-transform`}>
+                            <CardHeader>
+                                {cls.notifications > 0 && 
+                                    <Badge className="absolute top-3 right-3 bg-red-500 text-white border-0 w-6 h-6 justify-center p-0">{cls.notifications}</Badge>
+                                }
+                                <CardTitle>{cls.name}</CardTitle>
+                                <CardDescription className="text-white/80">{cls.students} Students</CardDescription>
+                            </CardHeader>
+                        </Card>
+                    </button>
                  ))}
             </div>
         </div>
@@ -89,7 +108,7 @@ export default function TeacherPage() {
                 </div>
                  <div className="flex items-center justify-between mt-4">
                      <p className="text-sm text-muted-foreground">Last updated: 1 hour ago</p>
-                    <Button asChild variant="secondary">
+                    <Button asChild variant="secondary" onClick={() => handleFeatureClick("Student Progress Details")}>
                         <Link href="#">View Details</Link>
                     </Button>
                  </div>
@@ -117,3 +136,5 @@ export default function TeacherPage() {
     </div>
   );
 }
+
+    

@@ -41,7 +41,9 @@
         "role": { "type": "string", "enum": ["student", "teacher"], "description": "The role of the user within the application." },
         "phoneNumber": { "type": "string", "description": "User's phone number." },
         "location": { "type": "string", "description": "User's city and country." },
-        "subjectsOfInterest": { "type": "array", "items": { "type": "string" }, "description": "List of subjects the user is interested in." }
+        "subjectsOfInterest": { "type": "array", "items": { "type": "string" }, "description": "List of subjects the user is interested in." },
+        "dailyChatCount": { "type": "number", "description": "Number of AI tutor questions asked today." },
+        "lastChatDate": { "type": "string", "format": "date", "description": "The date of the last chat interaction, in YYYY-MM-DD format." }
       },
       "required": ["id", "firstName", "lastName", "gradeLevel", "role"]
     },
@@ -133,3 +135,5 @@
     }
   }
 }
+
+    

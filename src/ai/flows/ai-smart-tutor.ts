@@ -9,6 +9,9 @@
 
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
+import { getFirestore } from 'firebase-admin/firestore';
+import { getAuthenticatedUser } from '@/firebase/auth/get-authenticated-user';
+import { format } from 'date-fns';
 
 const AiSmartTutorInputSchema = z.object({
   query: z.string().describe('The question or request from the student.'),
@@ -22,8 +25,52 @@ const AiSmartTutorOutputSchema = z.object({
 });
 export type AiSmartTutorOutput = z.infer<typeof AiSmartTutorOutputSchema>;
 
+const FREE_TIER_DAILY_LIMIT = 5;
+
 export async function aiSmartTutor(input: AiSmartTutorInput): Promise<AiSmartTutorOutput> {
-  return aiSmartTutorFlow(input);
+  const user = await getAuthenticatedUser();
+  if (!user) {
+    return { response: "I'm sorry, but you must be logged in to chat with me. Please log in and try again." };
+  }
+
+  const firestore = getFirestore();
+  const profileRef = firestore.collection('userProfiles').doc(user.uid);
+  const profileSnap = await profileRef.get();
+
+  if (!profileSnap.exists) {
+      return { response: "It seems I can't find your user profile. Please make sure your account is set up correctly." };
+  }
+  
+  const userProfile = profileSnap.data();
+
+  // If the user is on a paid plan, they have unlimited access.
+  if (userProfile?.subscriptionTier && userProfile.subscriptionTier !== 'free') {
+    return aiSmartTutorFlow(input);
+  }
+  
+  // Logic for free-tier users
+  const today = format(new Date(), 'yyyy-MM-dd');
+  const lastChatDate = userProfile?.lastChatDate;
+  let dailyChatCount = userProfile?.dailyChatCount || 0;
+
+  if (lastChatDate !== today) {
+    // If it's a new day, reset their chat count.
+    dailyChatCount = 0;
+  }
+
+  if (dailyChatCount >= FREE_TIER_DAILY_LIMIT) {
+    return { response: "You have reached your daily limit of free questions. Please upgrade to a VIP plan for unlimited access to Brainy AI Tutor." };
+  }
+
+  // Process the request and then update the count.
+  const response = await aiSmartTutorFlow(input);
+
+  await profileRef.update({
+    dailyChatCount: dailyChatCount + 1,
+    lastChatDate: today,
+  });
+
+  return response;
 }
 
 const prompt = ai.definePrompt({
@@ -53,3 +100,5 @@ const aiSmartTutorFlow = ai.defineFlow(
     return output!;
   }
 );
+
+    

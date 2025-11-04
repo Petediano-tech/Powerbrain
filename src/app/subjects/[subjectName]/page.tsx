@@ -89,7 +89,7 @@ export default function SubjectChaptersPage({ params: { subjectName: subjectId }
                 </CardContent>
                 <CardFooter>
                   <Button className="w-full" asChild disabled={chapter.isLocked}>
-                    <Link href="#">
+                    <Link href={`/subjects/${subjectId}/${chapter.id}`}>
                       <BookMarked className="mr-2 h-4 w-4" />
                       {progress > 0 ? 'Continue Lesson' : 'Start Lesson'}
                     </Link>
@@ -139,3 +139,5 @@ export default function SubjectChaptersPage({ params: { subjectName: subjectId }
     </div>
   );
 }
+
+    
