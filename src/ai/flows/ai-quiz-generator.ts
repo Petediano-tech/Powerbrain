@@ -3,8 +3,8 @@
  * @fileOverview AI-powered quiz and assignment generator for teachers.
  */
 
-import { ai } from '@/ai/genkit';
-import { z } from 'genkit';
+import { ai } from 'genkit/ai';
+import { z } from 'genkit/zod';
 import { getFirestore } from 'firebase-admin/firestore';
 import { getAuthenticatedUser } from '@/firebase/auth/get-authenticated-user';
 

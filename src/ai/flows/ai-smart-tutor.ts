@@ -7,8 +7,8 @@
  * - AiSmartTutorOutput - The return type for the aiSmartTutor function.
  */
 
-import {ai} from '@/ai/genkit';
-import {z} from 'genkit';
+import { ai } from 'genkit/ai';
+import { z } from 'genkit/zod';
 import { getFirestore } from 'firebase-admin/firestore';
 import { getAuthenticatedUser } from '@/firebase/auth/get-authenticated-user';
 import { format } from 'date-fns';
@@ -26,6 +26,35 @@ const AiSmartTutorOutputSchema = z.object({
 export type AiSmartTutorOutput = z.infer<typeof AiSmartTutorOutputSchema>;
 
 const FREE_TIER_DAILY_LIMIT = 5;
+
+const aiSmartTutorFlow = ai.defineFlow(
+  {
+    name: 'aiSmartTutorFlow',
+    inputSchema: AiSmartTutorInputSchema,
+    outputSchema: AiSmartTutorOutputSchema,
+  },
+  async input => {
+    const prompt = ai.definePrompt({
+        name: 'aiSmartTutorPrompt',
+        input: {schema: AiSmartTutorInputSchema},
+        output: {schema: AiSmartTutorOutputSchema},
+        system: `You are a professional AI tutor named Brainy, built by a Malawian developer, Peter Damiano.
+
+Your sole purpose is to help secondary school students and teachers in Malawi with education-related questions.
+
+All of your answers MUST strictly align with the Malawian school curriculum.
+
+Your tone must be professional, direct, and highly accurate, as if you are preparing a student for a Malawian examination they must pass. Do not provide any extra, useless text or conversational fluff. Focus on delivering correct, curriculum-based information.`,
+        prompt: `A student in grade {{gradeLevel}} is asking about {{subject}}.
+
+Student's question: {{{query}}}`,
+    });
+
+    const {output} = await prompt(input);
+    return output!;
+  }
+);
+
 
 export async function aiSmartTutor(input: AiSmartTutorInput): Promise<AiSmartTutorOutput> {
   const user = await getAuthenticatedUser();
@@ -72,33 +101,3 @@ export async function aiSmartTutor(input: AiSmartTutorInput): Promise<AiSmartTut
 
   return response;
 }
-
-const prompt = ai.definePrompt({
-  name: 'aiSmartTutorPrompt',
-  input: {schema: AiSmartTutorInputSchema},
-  output: {schema: AiSmartTutorOutputSchema},
-  system: `You are a professional AI tutor named Brainy, built by a Malawian developer, Peter Damiano.
-
-Your sole purpose is to help secondary school students and teachers in Malawi with education-related questions.
-
-All of your answers MUST strictly align with the Malawian school curriculum.
-
-Your tone must be professional, direct, and highly accurate, as if you are preparing a student for a Malawian examination they must pass. Do not provide any extra, useless text or conversational fluff. Focus on delivering correct, curriculum-based information.`,
-  prompt: `A student in grade {{gradeLevel}} is asking about {{subject}}.
-
-Student's question: {{{query}}}`,
-});
-
-const aiSmartTutorFlow = ai.defineFlow(
-  {
-    name: 'aiSmartTutorFlow',
-    inputSchema: AiSmartTutorInputSchema,
-    outputSchema: AiSmartTutorOutputSchema,
-  },
-  async input => {
-    const {output} = await prompt(input);
-    return output!;
-  }
-);
-
-    
