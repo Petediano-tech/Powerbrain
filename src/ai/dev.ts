@@ -13,8 +13,6 @@ import { PlannerInputSchema, studyPlannerLogic } from '@/ai/flows/ai-study-plann
 import { AiStudyPlannerOutputSchema } from './flows/schemas';
 import { QuizGeneratorInputSchema, quizGeneratorLogic } from '@/ai/flows/ai-quiz-generator';
 import { AiQuizGeneratorOutputSchema } from './flows/schemas';
-import { AiSmartTutorInputSchema, smartTutorLogic } from '@/ai/flows/ai-smart-tutor';
-import { AiSmartTutorOutputSchema } from './flows/schemas';
 
 const ai = getGenkitAi();
 
@@ -114,19 +112,3 @@ const quizGeneratorPrompt = ai.definePrompt({
     Grade Level: {{{gradeLevel}}}`,
 });
 export const aiQuizGeneratorFlow = ai.defineFlow({ name: 'aiQuizGeneratorFlow', inputSchema: QuizGeneratorInputSchema, outputSchema: AiQuizGeneratorOutputSchema }, (input) => quizGeneratorLogic(input, quizGeneratorPrompt));
-
-
-// AI Smart Tutor
-const smartTutorPrompt = ai.definePrompt({
-    name: 'smartTutorPrompt',
-    input: {schema: AiSmartTutorInputSchema},
-    output: {schema: AiSmartTutorOutputSchema},
-    prompt: `You are Brainy, a friendly and expert AI tutor for students in Malawi. Your goal is to help students understand concepts, practice problems, and learn effectively. Use simple, clear language.
-
-    Grade Level: {{{gradeLevel}}}
-    Subject: {{{subject}}}
-
-    Student's question:
-    "{{{query}}}"`,
-});
-export const smartTutorFlow = ai.defineFlow({ name: 'smartTutorFlow', inputSchema: AiSmartTutorInputSchema, outputSchema: AiSmartTutorOutputSchema }, (input) => smartTutorLogic(input, smartTutorPrompt));

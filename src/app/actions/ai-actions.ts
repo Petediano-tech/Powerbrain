@@ -7,8 +7,8 @@ import {
     aiQuizGeneratorFlow,
     studyInsightsFlow,
     aiStudyPlannerFlow,
-    smartTutorFlow,
 } from '@/ai/dev';
+import { smartTutorLogic } from '@/ai/flows';
 import type { 
     PerformanceData,
     AiGradeQuizzesInput,
@@ -33,7 +33,7 @@ export async function generateQuiz(input: QuizGeneratorInput): Promise<AiQuizGen
 }
 
 export async function getTutorResponse(input: AiSmartTutorInput): Promise<AiSmartTutorOutput> {
-    return await smartTutorFlow(input);
+    return await smartTutorLogic(input);
 }
 
 export async function getStudyPlan(input: PlannerInput): Promise<AiStudyPlannerOutput> {
