@@ -1,3 +1,4 @@
+
 // Only needed for local development.
 import {config} from 'dotenv';
 config();
@@ -17,7 +18,7 @@ import { AiQuizGeneratorOutputSchema } from './flows/schemas';
 const ai = getGenkitAi();
 
 // AI Study Insights
-const studyInsightsPrompt = ai.definePrompt({
+export const studyInsightsPrompt = ai.definePrompt({
     name: 'studyInsightsPrompt',
     input: {schema: StudyInsightsInputSchema},
     output: {schema: AiStudyInsightsOutputSchema},
@@ -49,7 +50,7 @@ export const studyInsightsFlow = ai.defineFlow({ name: 'studyInsightsFlow', inpu
 
 
 // AI Grade Quizzes
-const gradeQuizPrompt = ai.definePrompt({
+export const aiGradeQuizzesPrompt = ai.definePrompt({
     name: 'aiGradeQuizzesPrompt',
     input: {schema: AiGradeQuizzesInputSchema},
     output: {schema: AiGradeQuizzesOutputSchema},
@@ -70,10 +71,10 @@ const gradeQuizPrompt = ai.definePrompt({
     Grade:
     Feedback: `,
 });
-export const aiGradeQuizzesFlow = ai.defineFlow({ name: 'aiGradeQuizzesFlow', inputSchema: AiGradeQuizzesInputSchema, outputSchema: AiGradeQuizzesOutputSchema }, (input) => gradeQuizzesLogic(input, gradeQuizPrompt));
+export const aiGradeQuizzesFlow = ai.defineFlow({ name: 'aiGradeQuizzesFlow', inputSchema: AiGradeQuizzesInputSchema, outputSchema: AiGradeQuizzesOutputSchema }, (input) => gradeQuizzesLogic(input, aiGradeQuizzesPrompt));
 
 // AI Career Guidance
-const careerGuidancePrompt = ai.definePrompt({
+export const aiCareerGuidancePrompt = ai.definePrompt({
     name: 'aiCareerGuidancePrompt',
     input: {schema: PerformanceDataSchema},
     output: {schema: AiCareerGuidanceOutputSchema},
@@ -83,11 +84,11 @@ const careerGuidancePrompt = ai.definePrompt({
     Student's Average Score: {{{averageScore}}}%
     Student's Interests: {{{interests}}}`,
 });
-export const aiCareerGuidanceFlow = ai.defineFlow({ name: 'aiCareerGuidanceFlow', inputSchema: PerformanceDataSchema, outputSchema: AiCareerGuidanceOutputSchema }, (input) => careerGuidanceLogic(input, careerGuidancePrompt));
+export const aiCareerGuidanceFlow = ai.defineFlow({ name: 'aiCareerGuidanceFlow', inputSchema: PerformanceDataSchema, outputSchema: AiCareerGuidanceOutputSchema }, (input) => careerGuidanceLogic(input, aiCareerGuidancePrompt));
 
 
 // AI Study Planner
-const studyPlannerPrompt = ai.definePrompt({
+export const aiStudyPlannerPrompt = ai.definePrompt({
     name: 'aiStudyPlannerPrompt',
     input: {schema: PlannerInputSchema},
     output: {schema: AiStudyPlannerOutputSchema},
@@ -96,11 +97,11 @@ const studyPlannerPrompt = ai.definePrompt({
     Weakest Subjects: {{{weakestSubjects}}}
     Upcoming Exams: {{#each upcomingExams}}{{subject}} on {{date}}{{/each}}`,
 });
-export const aiStudyPlannerFlow = ai.defineFlow({ name: 'aiStudyPlannerFlow', inputSchema: PlannerInputSchema, outputSchema: AiStudyPlannerOutputSchema }, (input) => studyPlannerLogic(input, studyPlannerPrompt));
+export const aiStudyPlannerFlow = ai.defineFlow({ name: 'aiStudyPlannerFlow', inputSchema: PlannerInputSchema, outputSchema: AiStudyPlannerOutputSchema }, (input) => studyPlannerLogic(input, aiStudyPlannerPrompt));
 
 
 // AI Quiz Generator
-const quizGeneratorPrompt = ai.definePrompt({
+export const aiQuizGeneratorPrompt = ai.definePrompt({
     name: 'aiQuizGeneratorPrompt',
     input: {schema: QuizGeneratorInputSchema},
     output: {schema: AiQuizGeneratorOutputSchema},
@@ -111,4 +112,4 @@ const quizGeneratorPrompt = ai.definePrompt({
     Number of Questions: {{{numberOfQuestions}}}
     Grade Level: {{{gradeLevel}}}`,
 });
-export const aiQuizGeneratorFlow = ai.defineFlow({ name: 'aiQuizGeneratorFlow', inputSchema: QuizGeneratorInputSchema, outputSchema: AiQuizGeneratorOutputSchema }, (input) => quizGeneratorLogic(input, quizGeneratorPrompt));
+export const aiQuizGeneratorFlow = ai.defineFlow({ name: 'aiQuizGeneratorFlow', inputSchema: QuizGeneratorInputSchema, outputSchema: AiQuizGeneratorOutputSchema }, (input) => quizGeneratorLogic(input, aiQuizGeneratorPrompt));

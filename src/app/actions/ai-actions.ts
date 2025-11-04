@@ -2,12 +2,13 @@
 'use server';
 
 import { 
-    aiCareerGuidanceFlow,
-    aiGradeQuizzesFlow,
-    aiQuizGeneratorFlow,
-    studyInsightsFlow,
-    aiStudyPlannerFlow,
+    studyInsightsPrompt,
+    aiGradeQuizzesPrompt,
+    aiQuizGeneratorPrompt,
+    aiStudyPlannerPrompt,
+    aiCareerGuidancePrompt,
 } from '@/ai/dev';
+import { getGenkitAi } from '@/ai/genkit';
 import { smartTutorLogic } from '@/ai/flows';
 import type { 
     PerformanceData,
@@ -21,25 +22,31 @@ import type { AiCareerGuidanceOutput, AiGradeQuizzesOutput, AiQuizGeneratorOutpu
 
 
 export async function getCareerGuidance(input: PerformanceData): Promise<AiCareerGuidanceOutput> {
-    return await aiCareerGuidanceFlow(input);
+    const { output } = await aiCareerGuidancePrompt(input);
+    return output!;
 }
 
 export async function gradeQuiz(input: AiGradeQuizzesInput): Promise<AiGradeQuizzesOutput> {
-    return await aiGradeQuizzesFlow(input);
+    const { output } = await aiGradeQuizzesPrompt(input);
+    return output!;
 }
 
 export async function generateQuiz(input: QuizGeneratorInput): Promise<AiQuizGeneratorOutput> {
-    return await aiQuizGeneratorFlow(input);
+    const { output } = await aiQuizGeneratorPrompt(input);
+    return output!;
 }
 
 export async function getTutorResponse(input: AiSmartTutorInput): Promise<AiSmartTutorOutput> {
+    // smartTutorLogic contains custom auth checks that need to run before the AI call.
     return await smartTutorLogic(input);
 }
 
 export async function getStudyPlan(input: PlannerInput): Promise<AiStudyPlannerOutput> {
-    return await aiStudyPlannerFlow(input);
+    const { output } = await aiStudyPlannerPrompt(input);
+    return output!;
 }
 
 export async function generateStudyInsights(input: StudyInsightsInput): Promise<StudyInsightsOutput> {
-    return await studyInsightsFlow(input);
+    const { output } = await studyInsightsPrompt(input);
+    return output!;
 }
