@@ -1,7 +1,6 @@
 /**
  * @fileOverview AI-powered study plan generator logic.
  */
-'use server';
 import { z } from 'zod';
 import { AiStudyPlannerOutputSchema } from './schemas';
 import { getFirestore } from 'firebase-admin/firestore';

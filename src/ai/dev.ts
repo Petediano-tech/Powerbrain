@@ -111,3 +111,9 @@ const quizGeneratorPrompt = ai.definePrompt({
     Grade Level: {{{gradeLevel}}}`,
 });
 export const aiQuizGeneratorFlow = ai.defineFlow({ name: 'aiQuizGeneratorFlow', inputSchema: QuizGeneratorInputSchema, outputSchema: AiQuizGeneratorOutputSchema }, (input) => quizGeneratorLogic(input, quizGeneratorPrompt));
+
+
+// AI Smart Tutor
+import { AiSmartTutorInputSchema, smartTutorLogic } from '@/ai/flows/ai-smart-tutor';
+import { AiSmartTutorOutputSchema } from './flows/schemas';
+export const smartTutorFlow = ai.defineFlow({ name: 'smartTutorFlow', inputSchema: AiSmartTutorInputSchema, outputSchema: AiSmartTutorOutputSchema }, smartTutorLogic);

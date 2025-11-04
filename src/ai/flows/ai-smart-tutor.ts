@@ -1,7 +1,6 @@
 /**
  * @fileOverview An AI tutor that can answer questions, summarize notes, or generate practice questions.
  */
-'use server';
 import { z } from 'zod';
 import { getFirestore } from 'firebase-admin/firestore';
 import { getAuthenticatedUser } from '@/firebase/auth/get-authenticated-user';
