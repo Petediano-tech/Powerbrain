@@ -15,28 +15,3 @@ function getGoogleAIBadRequestError(err: GenkitError): string {
   }
   return err.message;
 }
-
-export function configureGenkit() {
-    genkit({
-        plugins: [
-            googleAI({
-                apiVersion: 'v1beta',
-            }),
-        ],
-        logLevel: 'debug',
-        enableTracingAndMetrics: true,
-        flow: {
-            errorHandler: <T, S, O>(
-            err: GenkitError,
-            flowName: string,
-            stream?: any
-            ) => {
-            const code: GenkitErrorCode = err.status as GenkitErrorCode;
-            return {
-                code,
-                message: getGoogleAIBadRequestError(err),
-            };
-            },
-        },
-    });
-}
