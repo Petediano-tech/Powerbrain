@@ -37,7 +37,7 @@ import {
 } from './ui/select';
 import { useToast } from '@/hooks/use-toast';
 import { subjectsData } from '@/lib/subjects-data';
-import { aiQuizGenerator } from '@/ai/flows/ai-quiz-generator';
+import { generateQuiz } from '@/app/actions/ai-actions';
 
 export function AIQuizGenerator() {
   const [quiz, setQuiz] = useState<AiQuizGeneratorOutput | null>(null);
@@ -68,7 +68,7 @@ export function AIQuizGenerator() {
     setQuiz(null);
 
     try {
-      const result = await aiQuizGenerator({
+      const result = await generateQuiz({
         subject,
         topic,
         numberOfQuestions: numQuestions,

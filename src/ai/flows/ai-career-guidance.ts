@@ -1,13 +1,11 @@
-'use server';
 /**
- * @fileOverview AI-powered career guidance flow.
+ * @fileOverview AI-powered career guidance flow logic.
  */
 import { z } from 'zod';
-import { runFlow } from 'genkit/flow';
-import { AiCareerGuidanceOutput, AiCareerGuidanceOutputSchema } from './schemas';
 import { getFirestore } from 'firebase-admin/firestore';
 import { getAuthenticatedUser } from '@/firebase/auth/get-authenticated-user';
-
+import type { GenkitPrompt } from 'genkit';
+import { AiCareerGuidanceOutput } from './schemas';
 
 export const PerformanceDataSchema = z.object({
   strongestSubjects: z.array(z.string()).describe("The student's strongest subjects in school."),
@@ -17,7 +15,7 @@ export const PerformanceDataSchema = z.object({
 export type PerformanceData = z.infer<typeof PerformanceDataSchema>;
 
 
-export async function aiCareerGuidance(input: PerformanceData): Promise<AiCareerGuidanceOutput> {
+export async function careerGuidanceLogic(input: PerformanceData, prompt: GenkitPrompt<typeof PerformanceDataSchema, typeof AiCareerGuidanceOutput>): Promise<AiCareerGuidanceOutput> {
   const user = await getAuthenticatedUser();
   if (!user) {
     throw new Error('Authentication required.');
@@ -37,6 +35,6 @@ export async function aiCareerGuidance(input: PerformanceData): Promise<AiCareer
     throw new Error('This is a premium feature. Please upgrade to a VIP plan.');
   }
 
-  const flowOutput = await runFlow('aiCareerGuidanceFlow', input);
-  return flowOutput;
+  const { output } = await prompt(input);
+  return output!;
 }

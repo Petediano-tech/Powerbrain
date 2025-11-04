@@ -1,15 +1,10 @@
-'use server';
 /**
  * @fileOverview An AI agent that provides study insights based on student data.
- *
- * - getStudyInsights - A function that analyzes study data and returns AI-generated insights.
- * - StudyInsightsInput - The input type for the getStudyInsights function.
- * - StudyInsightsOutput - The return type for the getStudyInsights function.
  */
 
 import { z } from 'zod';
-import { runFlow } from 'genkit/flow';
-import { StudyInsightsOutput } from './schemas';
+import type { GenkitPrompt } from 'genkit';
+import { AiStudyInsightsOutputSchema, StudyInsightsOutput } from './schemas';
 
 
 export const StudyInsightsInputSchema = z.object({
@@ -28,7 +23,7 @@ export const StudyInsightsInputSchema = z.object({
 });
 export type StudyInsightsInput = z.infer<typeof StudyInsightsInputSchema>;
 
-export async function getStudyInsights(input: StudyInsightsInput): Promise<StudyInsightsOutput> {
-  const flowOutput = await runFlow('studyInsightsFlow', input);
-  return flowOutput;
+export async function studyInsightsLogic(input: StudyInsightsInput, prompt: GenkitPrompt<typeof StudyInsightsInputSchema, typeof AiStudyInsightsOutputSchema>): Promise<StudyInsightsOutput> {
+  const { output } = await prompt(input);
+  return output!;
 }

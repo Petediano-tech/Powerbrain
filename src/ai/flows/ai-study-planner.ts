@@ -1,13 +1,12 @@
-'use server';
 /**
- * @fileOverview AI-powered study plan generator.
+ * @fileOverview AI-powered study plan generator logic.
  */
 
 import { z } from 'zod';
 import { AiStudyPlannerOutput } from './schemas';
 import { getFirestore } from 'firebase-admin/firestore';
 import { getAuthenticatedUser } from '@/firebase/auth/get-authenticated-user';
-import { runFlow } from 'genkit/flow';
+import type { GenkitPrompt } from 'genkit';
 
 export const PlannerInputSchema = z.object({
   weakestSubjects: z.array(z.string()).describe("The student's weakest subjects, which need more focus."),
@@ -15,7 +14,7 @@ export const PlannerInputSchema = z.object({
 });
 export type PlannerInput = z.infer<typeof PlannerInputSchema>;
 
-export async function aiStudyPlanner(input: PlannerInput): Promise<AiStudyPlannerOutput> {
+export async function studyPlannerLogic(input: PlannerInput, prompt: GenkitPrompt<typeof PlannerInputSchema, typeof AiStudyPlannerOutput>): Promise<AiStudyPlannerOutput> {
   const user = await getAuthenticatedUser();
   if (!user) {
     throw new Error('Authentication required.');
@@ -34,6 +33,6 @@ export async function aiStudyPlanner(input: PlannerInput): Promise<AiStudyPlanne
     throw new Error('This is a premium feature. Please upgrade to a VIP plan.');
   }
   
-  const flowOutput = await runFlow('aiStudyPlannerFlow', input);
-  return flowOutput;
+  const { output } = await prompt(input);
+  return output!;
 }

@@ -15,7 +15,7 @@ import { Skeleton } from "./ui/skeleton";
 import { useDoc, useMemoFirebase } from "@/firebase";
 import { doc, getFirestore } from "firebase/firestore";
 import { useUserStore } from "@/hooks/use-user-store";
-import { getStudyInsights } from "@/ai/flows/ai-study-insights";
+import { generateStudyInsights } from "@/app/actions/ai-actions";
 
 export function AIInsights() {
   const [insights, setInsights] = useState<StudyInsightsOutput | null>(null);
@@ -52,7 +52,7 @@ export function AIInsights() {
     };
 
     try {
-      const result = await getStudyInsights(insightData);
+      const result = await generateStudyInsights(insightData);
       setInsights(result);
     } catch (error) {
       console.error("Failed to get AI insights:", error);

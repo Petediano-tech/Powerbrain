@@ -1,17 +1,12 @@
-'use server';
 /**
  * @fileOverview An AI tutor that can answer questions, summarize notes, or generate practice questions.
- *
- * - aiSmartTutor - A function that handles the AI tutor process.
- * - AiSmartTutorInput - The input type for the aiSmartTutor function.
- * - AiSmartTutorOutput - The return type for the aiSmartTutor function.
  */
 
 import { z } from 'zod';
 import { getFirestore } from 'firebase-admin/firestore';
 import { getAuthenticatedUser } from '@/firebase/auth/get-authenticated-user';
 import { format } from 'date-fns';
-import { runFlow } from 'genkit/flow';
+import type { GenkitPrompt } from 'genkit';
 import { AiSmartTutorOutput } from './schemas';
 
 
@@ -25,7 +20,7 @@ export type AiSmartTutorInput = z.infer<typeof AiSmartTutorInputSchema>;
 
 const FREE_TIER_DAILY_LIMIT = 5;
 
-export async function aiSmartTutor(input: AiSmartTutorInput): Promise<AiSmartTutorOutput> {
+export async function smartTutorLogic(input: AiSmartTutorInput, prompt: GenkitPrompt<typeof AiSmartTutorInputSchema, typeof AiSmartTutorOutput>): Promise<AiSmartTutorOutput> {
   const user = await getAuthenticatedUser();
   if (!user) {
     return { response: "I'm sorry, but you must be logged in to chat with me. Please log in and try again." };
@@ -43,8 +38,8 @@ export async function aiSmartTutor(input: AiSmartTutorInput): Promise<AiSmartTut
 
   // If the user is on a paid plan, they have unlimited access.
   if (userProfile?.subscriptionTier && userProfile.subscriptionTier !== 'free') {
-    const flowOutput = await runFlow('aiSmartTutorFlow', input);
-    return flowOutput;
+    const { output } = await prompt(input);
+    return output!;
   }
   
   // Logic for free-tier users
@@ -62,12 +57,12 @@ export async function aiSmartTutor(input: AiSmartTutorInput): Promise<AiSmartTut
   }
 
   // Process the request and then update the count.
-  const response = await runFlow('aiSmartTutorFlow', input);
+  const { output } = await prompt(input);
 
   await profileRef.update({
     dailyChatCount: dailyChatCount + 1,
     lastChatDate: today,
   });
 
-  return response;
+  return output!;
 }

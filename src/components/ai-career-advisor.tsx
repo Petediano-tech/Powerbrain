@@ -18,7 +18,7 @@ import { useDoc, useMemoFirebase } from '@/firebase';
 import { doc, getFirestore } from 'firebase/firestore';
 import { useUserStore } from '@/hooks/use-user-store';
 import Link from 'next/link';
-import { aiCareerGuidance } from '@/ai/flows/ai-career-guidance';
+import { getCareerGuidance } from '@/app/actions/ai-actions';
 
 export function AICareerAdvisor() {
   const [report, setReport] = useState<AiCareerGuidanceOutput | null>(null);
@@ -49,7 +49,7 @@ export function AICareerAdvisor() {
     };
 
     try {
-      const result = await aiCareerGuidance(performanceData);
+      const result = await getCareerGuidance(performanceData);
       setReport(result);
     } catch (error) {
       console.error('Failed to get AI career report:', error);

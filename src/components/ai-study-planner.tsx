@@ -19,7 +19,7 @@ import { doc, getFirestore } from 'firebase/firestore';
 import { useUserStore } from '@/hooks/use-user-store';
 import Link from 'next/link';
 import { Badge } from './ui/badge';
-import { aiStudyPlanner } from '@/ai/flows/ai-study-planner';
+import { getStudyPlan } from '@/app/actions/ai-actions';
 
 export function AIStudyPlanner() {
   const [plan, setPlan] = useState<AiStudyPlannerOutput | null>(null);
@@ -49,7 +49,7 @@ export function AIStudyPlanner() {
     };
 
     try {
-      const result = await aiStudyPlanner(plannerInput);
+      const result = await getStudyPlan(plannerInput);
       setPlan(result);
     } catch (error) {
       console.error('Failed to get AI study plan:', error);

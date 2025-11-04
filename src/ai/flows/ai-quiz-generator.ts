@@ -1,14 +1,12 @@
-'use server';
 /**
- * @fileOverview AI-powered quiz and assignment generator for teachers.
+ * @fileOverview AI-powered quiz and assignment generator logic for teachers.
  */
 
 import { z } from 'zod';
 import { getFirestore } from 'firebase-admin/firestore';
 import { getAuthenticatedUser } from '@/firebase/auth/get-authenticated-user';
-import { runFlow } from 'genkit/flow';
+import type { GenkitPrompt } from 'genkit';
 import { AiQuizGeneratorOutput } from './schemas';
-
 
 export const QuizGeneratorInputSchema = z.object({
   subject: z.string().describe('The subject for the quiz.'),
@@ -18,8 +16,7 @@ export const QuizGeneratorInputSchema = z.object({
 });
 export type QuizGeneratorInput = z.infer<typeof QuizGeneratorInputSchema>;
 
-
-export async function aiQuizGenerator(input: QuizGeneratorInput): Promise<AiQuizGeneratorOutput> {
+export async function quizGeneratorLogic(input: QuizGeneratorInput, prompt: GenkitPrompt<typeof QuizGeneratorInputSchema, typeof AiQuizGeneratorOutput>): Promise<AiQuizGeneratorOutput> {
   const user = await getAuthenticatedUser();
   if (!user) {
     throw new Error('Authentication required. You must be a teacher to use this feature.');
@@ -39,6 +36,6 @@ export async function aiQuizGenerator(input: QuizGeneratorInput): Promise<AiQuiz
     throw new Error('Access denied. This feature is for teachers only.');
   }
   
-  const flowOutput = await runFlow('aiQuizGeneratorFlow', input);
-  return flowOutput;
+  const { output } = await prompt(input);
+  return output!;
 }
