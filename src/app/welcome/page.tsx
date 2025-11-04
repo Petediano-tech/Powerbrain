@@ -94,6 +94,12 @@ export default function WelcomePage() {
             <Link href="/auth">Already have an account? Log In</Link>
           </Button>
         </div>
+        <div className="flex justify-center gap-4 mt-6 text-sm text-muted-foreground">
+            <Link href="/about" className="hover:text-primary">About</Link>
+            <Link href="/contact" className="hover:text-primary">Contact</Link>
+            <Link href="/terms" className="hover:text-primary">Terms</Link>
+            <Link href="/privacy" className="hover:text-primary">Privacy</Link>
+        </div>
       </footer>
     </div>
   );

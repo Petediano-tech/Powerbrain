@@ -1,17 +1,20 @@
+
 'use client';
 
 import { useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Search, Plus } from 'lucide-react';
-import { resources, Resource } from '@/lib/resources-data';
+import { resources } from '@/lib/resources-data';
 import { ResourceCard } from '@/components/resource-card';
+import { useToast } from '@/hooks/use-toast';
 
 const filterTabs = ['All', 'Textbooks', 'Videos', 'Past Papers'];
 
 export default function RepositoryPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [activeFilter, setActiveFilter] = useState('All');
+  const { toast } = useToast();
 
   const filteredResources = resources.filter((resource) => {
     const matchesFilter =
@@ -21,6 +24,11 @@ export default function RepositoryPage() {
       .includes(searchTerm.toLowerCase());
     return matchesFilter && matchesSearch;
   });
+
+  const handleSuggestResource = () => {
+    const mailtoLink = `mailto:peterdamianotech@gmail.com?subject=Power%20Brain%20Resource%20Suggestion&body=I'd%20like%20to%20suggest%20the%20following%20resource%3A%0A%0A...`;
+    window.location.href = mailtoLink;
+  }
 
   return (
     <div className="relative min-h-full">
@@ -56,7 +64,11 @@ export default function RepositoryPage() {
       </div>
 
       <div className="fixed bottom-24 right-6 md:bottom-8 z-20">
-        <Button className="rounded-full h-14 w-auto px-6 shadow-lg" size="lg">
+        <Button 
+          className="rounded-full h-14 w-auto px-6 shadow-lg" 
+          size="lg"
+          onClick={handleSuggestResource}
+        >
           <Plus className="mr-2 h-5 w-5" />
           Suggest Resource
         </Button>
