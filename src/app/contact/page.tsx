@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowLeft, Mail, Phone, MapPin } from "lucide-react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { Separator } from "@/components/ui/separator";
 
 const WhatsAppIcon = () => (
     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" className="h-5 w-5">
@@ -32,20 +33,21 @@ export default function ContactPage() {
                     <CardHeader className="text-center">
                         <CardTitle className="text-3xl">Get in Touch</CardTitle>
                         <CardDescription>
-                            We'd love to hear from you. Choose a method below to connect with us.
+                            We'd love to hear from you. Whether you have a question, feedback, or need support, here's how you can reach us.
                         </CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-6">
                         <div className="space-y-4">
                             <h3 className="font-semibold text-lg text-center">Direct Contact</h3>
+                            <p className="text-sm text-muted-foreground text-center">For immediate assistance, please use one of the methods below.</p>
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                <Button asChild variant="outline" className="h-14">
+                                <Button asChild variant="outline" className="h-14 border-primary/20 hover:bg-primary/10">
                                     <a href={whatsappLink} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-2">
                                         <WhatsAppIcon />
                                         Chat on WhatsApp
                                     </a>
                                 </Button>
-                                <Button asChild variant="outline" className="h-14">
+                                <Button asChild variant="outline" className="h-14 border-primary/20 hover:bg-primary/10">
                                     <a href={`tel:${phoneNumber}`} className="flex items-center justify-center gap-2">
                                         <Phone />
                                         Call Us
@@ -54,25 +56,28 @@ export default function ContactPage() {
                             </div>
                         </div>
 
-                       <div className="space-y-4 pt-4 border-t">
-                            <h3 className="font-semibold text-lg text-center">Other Information</h3>
-                            <div className="flex items-start gap-4">
-                               <div className="p-3 bg-muted rounded-full">
+                       <Separator />
+
+                       <div className="space-y-6 pt-4">
+                            <h3 className="font-semibold text-lg text-center">Official Information</h3>
+                            <div className="flex items-start gap-4 p-4 rounded-lg bg-muted/50">
+                               <div className="p-3 bg-background rounded-full border">
                                    <Mail className="h-5 w-5 text-primary" />
                                 </div>
                                 <div>
-                                    <h4 className="font-semibold">Email</h4>
+                                    <h4 className="font-semibold">Email Address</h4>
                                     <a href={`mailto:${email}`} className="text-primary hover:underline">{email}</a>
-                                    <p className="text-sm text-muted-foreground">For general inquiries and support.</p>
+                                    <p className="text-sm text-muted-foreground">For general inquiries, support requests, and business-related questions.</p>
                                 </div>
                             </div>
-                            <div className="flex items-start gap-4">
-                                <div className="p-3 bg-muted rounded-full">
+                            <div className="flex items-start gap-4 p-4 rounded-lg bg-muted/50">
+                                <div className="p-3 bg-background rounded-full border">
                                    <MapPin className="h-5 w-5 text-primary" />
                                 </div>
                                 <div>
-                                    <h4 className="font-semibold">Our Location</h4>
+                                    <h4 className="font-semibold">Our Office</h4>
                                     <p className="text-muted-foreground">{location}</p>
+                                    <p className="text-sm text-muted-foreground">While we are primarily a digital platform, you can reach us at this physical location.</p>
                                 </div>
                            </div>
                        </div>
