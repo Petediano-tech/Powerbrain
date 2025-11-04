@@ -11,8 +11,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Calendar, Lightbulb, Sparkles, Target, Crown, Check } from 'lucide-react';
 import {
-  aiStudyPlanner,
-  AiStudyPlannerOutput,
+  type AiStudyPlannerOutput,
 } from '@/ai/flows/ai-study-planner';
 import { Skeleton } from './ui/skeleton';
 import { useDoc, useMemoFirebase } from '@/firebase';
@@ -20,6 +19,7 @@ import { doc, getFirestore } from 'firebase/firestore';
 import { useUserStore } from '@/hooks/use-user-store';
 import Link from 'next/link';
 import { Badge } from './ui/badge';
+import { aiStudyPlanner } from '@/ai/flows/ai-study-planner';
 
 export function AIStudyPlanner() {
   const [plan, setPlan] = useState<AiStudyPlannerOutput | null>(null);

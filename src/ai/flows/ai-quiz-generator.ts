@@ -1,4 +1,3 @@
-
 'use server';
 /**
  * @fileOverview AI-powered quiz and assignment generator for teachers.
@@ -8,6 +7,8 @@ import { z } from 'zod';
 import { getFirestore } from 'firebase-admin/firestore';
 import { getAuthenticatedUser } from '@/firebase/auth/get-authenticated-user';
 import { runFlow } from 'genkit/flow';
+import { AiQuizGeneratorOutput } from './schemas';
+
 
 export const QuizGeneratorInputSchema = z.object({
   subject: z.string().describe('The subject for the quiz.'),
@@ -15,20 +16,10 @@ export const QuizGeneratorInputSchema = z.object({
   numberOfQuestions: z.number().int().min(1).max(20).describe('The number of multiple-choice questions to generate.'),
   gradeLevel: z.string().describe('The grade level of the students (e.g., Form 2, Standard 8).'),
 });
+export type QuizGeneratorInput = z.infer<typeof QuizGeneratorInputSchema>;
 
-const QuestionSchema = z.object({
-    question: z.string().describe("The text of the question."),
-    options: z.array(z.string()).length(4).describe("An array of 4 possible answers."),
-    answer: z.string().describe("The correct answer from the options."),
-    explanation: z.string().describe("A brief explanation of why the answer is correct."),
-});
 
-export const AiQuizGeneratorOutputSchema = z.object({
-  questions: z.array(QuestionSchema),
-});
-export type AiQuizGeneratorOutput = z.infer<typeof AiQuizGeneratorOutputSchema>;
-
-export async function aiQuizGenerator(input: z.infer<typeof QuizGeneratorInputSchema>): Promise<AiQuizGeneratorOutput> {
+export async function aiQuizGenerator(input: QuizGeneratorInput): Promise<AiQuizGeneratorOutput> {
   const user = await getAuthenticatedUser();
   if (!user) {
     throw new Error('Authentication required. You must be a teacher to use this feature.');
@@ -48,6 +39,6 @@ export async function aiQuizGenerator(input: z.infer<typeof QuizGeneratorInputSc
     throw new Error('Access denied. This feature is for teachers only.');
   }
   
-  // The 'aiQuizGeneratorFlow' is defined in src/ai/dev.ts
-  return await runFlow('aiQuizGeneratorFlow', input);
+  const flowOutput = await runFlow('aiQuizGeneratorFlow', input);
+  return flowOutput;
 }

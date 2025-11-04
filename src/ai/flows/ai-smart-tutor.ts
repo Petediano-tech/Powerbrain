@@ -1,4 +1,3 @@
-
 'use server';
 /**
  * @fileOverview An AI tutor that can answer questions, summarize notes, or generate practice questions.
@@ -13,6 +12,8 @@ import { getFirestore } from 'firebase-admin/firestore';
 import { getAuthenticatedUser } from '@/firebase/auth/get-authenticated-user';
 import { format } from 'date-fns';
 import { runFlow } from 'genkit/flow';
+import { AiSmartTutorOutput } from './schemas';
+
 
 export const AiSmartTutorInputSchema = z.object({
   query: z.string().describe('The question or request from the student.'),
@@ -21,10 +22,6 @@ export const AiSmartTutorInputSchema = z.object({
 });
 export type AiSmartTutorInput = z.infer<typeof AiSmartTutorInputSchema>;
 
-export const AiSmartTutorOutputSchema = z.object({
-  response: z.string().describe("The AI tutor's response to the student."),
-});
-export type AiSmartTutorOutput = z.infer<typeof AiSmartTutorOutputSchema>;
 
 const FREE_TIER_DAILY_LIMIT = 5;
 
@@ -46,8 +43,8 @@ export async function aiSmartTutor(input: AiSmartTutorInput): Promise<AiSmartTut
 
   // If the user is on a paid plan, they have unlimited access.
   if (userProfile?.subscriptionTier && userProfile.subscriptionTier !== 'free') {
-    // The 'aiSmartTutorFlow' is defined in src/ai/dev.ts
-    return await runFlow('aiSmartTutorFlow', input);
+    const flowOutput = await runFlow('aiSmartTutorFlow', input);
+    return flowOutput;
   }
   
   // Logic for free-tier users
@@ -65,7 +62,6 @@ export async function aiSmartTutor(input: AiSmartTutorInput): Promise<AiSmartTut
   }
 
   // Process the request and then update the count.
-  // The 'aiSmartTutorFlow' is defined in src/ai/dev.ts
   const response = await runFlow('aiSmartTutorFlow', input);
 
   await profileRef.update({

@@ -1,6 +1,4 @@
-
 'use server';
-
 /**
  * @fileOverview An AI agent that provides study insights based on student data.
  *
@@ -10,7 +8,9 @@
  */
 
 import { z } from 'zod';
-import { ai } from '@/ai/genkit';
+import { runFlow } from 'genkit/flow';
+import { StudyInsightsOutput } from './schemas';
+
 
 export const StudyInsightsInputSchema = z.object({
   studyStreaks: z.number().describe('Number of consecutive days the student has studied.'),
@@ -24,49 +24,11 @@ export const StudyInsightsInputSchema = z.object({
   performanceInChichewa: z.number().describe('Student performance in Chichewa (0-100).'),
   recentMathScores: z.array(z.number()).describe('Array of recent Math quiz scores (0-100).'),
   recentEnglishScores: z.array(z.number()).describe('Array of recent English quiz scores (0-100).'),
-  favouriteSubject: z.string().describe('Student\u0027s favorite subject'),
+  favouriteSubject: z.string().describe('Student\'s favorite subject'),
 });
-
 export type StudyInsightsInput = z.infer<typeof StudyInsightsInputSchema>;
 
-export const StudyInsightsOutputSchema = z.object({
-  overallPerformance: z.string().describe('An overall assessment of the student\u0027s performance.'),
-  strengths: z.string().describe('Specific strengths of the student based on the data.'),
-  weaknesses: z.string().describe('Specific weaknesses of the student based on the data.'),
-  recommendations: z.string().describe('Personalized recommendations for the student to improve.'),
-});
-
-export type StudyInsightsOutput = z.infer<typeof StudyInsightsOutputSchema>;
-
 export async function getStudyInsights(input: StudyInsightsInput): Promise<StudyInsightsOutput> {
-    const studyInsightsPrompt = ai.definePrompt({
-        name: 'studyInsightsPrompt',
-        input: {schema: StudyInsightsInputSchema},
-        output: {schema: StudyInsightsOutputSchema},
-        prompt: `You are an AI study assistant that analyzes student data and provides personalized insights.
-
-        Analyze the following data to provide the student with an overview of their performance, their strengths and weaknesses, and personalized recommendations for improvement.
-
-        Study Streaks: {{{studyStreaks}}} days
-        Total Time Studied: {{{totalTimeStudied}}} minutes
-        Quizzes Completed: {{{quizzesCompleted}}}
-        Topics Mastered: {{{topicsMastered}}}
-        Performance in Math: {{{performanceInMath}}}%
-        Performance in English: {{{performanceInEnglish}}}%
-        Performance in Science: {{{performanceInScience}}}%
-        Performance in History: {{{performanceInHistory}}}%
-        Performance in Chichewa: {{{performanceInChichewa}}}%
-        Recent Math Scores: {{{recentMathScores}}}
-        Recent English Scores: {{{recentEnglishScores}}}
-        Favourite Subject: {{{favouriteSubject}}}
-
-        Provide the analysis in the following format:
-
-        Overall Performance: [Overall assessment of the student\u0027s performance]
-        Strengths: [Specific strengths of the student]
-        Weaknesses: [Specific weaknesses of the student]
-        Recommendations: [Personalized recommendations for the student]`,
-    });
-    const {output} = await studyInsightsPrompt(input);
-    return output!;
+  const flowOutput = await runFlow('studyInsightsFlow', input);
+  return flowOutput;
 }

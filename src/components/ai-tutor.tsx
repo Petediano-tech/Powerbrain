@@ -4,7 +4,6 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Sparkles, PencilRuler, BookOpen, ArrowUp, BrainCircuit } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { aiSmartTutor } from '@/ai/flows/ai-smart-tutor';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { ScrollArea } from './ui/scroll-area';
 import { cn } from '@/lib/utils';
@@ -12,6 +11,7 @@ import { useUser, useDoc, useMemoFirebase, useFirestore } from '@/firebase';
 import { doc } from 'firebase/firestore';
 import { useUserStore } from '@/hooks/use-user-store';
 import { useToast } from '@/hooks/use-toast';
+import { aiSmartTutor } from '@/ai/flows/ai-smart-tutor';
 
 interface Message {
   role: 'user' | 'assistant';

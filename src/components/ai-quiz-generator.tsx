@@ -19,8 +19,7 @@ import {
   ClipboardCheck,
 } from 'lucide-react';
 import {
-  aiQuizGenerator,
-  AiQuizGeneratorOutput,
+  type AiQuizGeneratorOutput,
 } from '@/ai/flows/ai-quiz-generator';
 import { Skeleton } from './ui/skeleton';
 import { useDoc, useMemoFirebase } from '@/firebase';
@@ -38,6 +37,7 @@ import {
 } from './ui/select';
 import { useToast } from '@/hooks/use-toast';
 import { subjectsData } from '@/lib/subjects-data';
+import { aiQuizGenerator } from '@/ai/flows/ai-quiz-generator';
 
 export function AIQuizGenerator() {
   const [quiz, setQuiz] = useState<AiQuizGeneratorOutput | null>(null);

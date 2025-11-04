@@ -5,19 +5,47 @@ config();
 
 import { ai } from '@/ai/genkit';
 import { z } from 'zod';
-import { getFirestore } from 'firebase-admin/firestore';
-import { getAuthenticatedUser } from '@/firebase/auth/get-authenticated-user';
-import { format } from 'date-fns';
-
-// Schemas
-import { AiStudyPlannerOutputSchema, AiCareerGuidanceOutputSchema } from '@/ai/schemas';
 
 // AI Study Insights
-import { StudyInsightsInputSchema, StudyInsightsOutputSchema, getStudyInsights as getStudyInsightsLogic } from '@/ai/flows/ai-study-insights';
-ai.defineFlow({ name: 'studyInsightsFlow', inputSchema: StudyInsightsInputSchema, outputSchema: StudyInsightsOutputSchema }, getStudyInsightsLogic);
+import { StudyInsightsInputSchema, getStudyInsights } from '@/ai/flows/ai-study-insights';
+import { AiStudyInsightsOutputSchema } from './flows/schemas';
+const studyInsightsPrompt = ai.definePrompt({
+    name: 'studyInsightsPrompt',
+    input: {schema: StudyInsightsInputSchema},
+    output: {schema: AiStudyInsightsOutputSchema},
+    prompt: `You are an AI study assistant that analyzes student data and provides personalized insights.
+
+    Analyze the following data to provide the student with an overview of their performance, their strengths and weaknesses, and personalized recommendations for improvement.
+
+    Study Streaks: {{{studyStreaks}}} days
+    Total Time Studied: {{{totalTimeStudied}}} minutes
+    Quizzes Completed: {{{quizzesCompleted}}}
+    Topics Mastered: {{{topicsMastered}}}
+    Performance in Math: {{{performanceInMath}}}%
+    Performance in English: {{{performanceInEnglish}}}%
+    Performance in Science: {{{performanceInScience}}}%
+    Performance in History: {{{performanceInHistory}}}%
+    Performance in Chichewa: {{{performanceInChichewa}}}%
+    Recent Math Scores: {{{recentMathScores}}}
+    Recent English Scores: {{{recentEnglishScores}}}
+    Favourite Subject: {{{favouriteSubject}}}
+
+    Provide the analysis in the following format:
+
+    Overall Performance: [Overall assessment of the student\u0027s performance]
+    Strengths: [Specific strengths of the student]
+    Weaknesses: [Specific weaknesses of the student]
+    Recommendations: [Personalized recommendations for the student]`,
+});
+ai.defineFlow({ name: 'studyInsightsFlow', inputSchema: StudyInsightsInputSchema, outputSchema: AiStudyInsightsOutputSchema }, async (input) => {
+    const {output} = await studyInsightsPrompt(input);
+    return output!;
+});
+
 
 // AI Grade Quizzes
-import { AiGradeQuizzesInputSchema, AiGradeQuizzesOutputSchema, aiGradeQuizzes as aiGradeQuizzesLogic } from '@/ai/flows/ai-grade-quizzes';
+import { AiGradeQuizzesInputSchema, aiGradeQuizzes } from '@/ai/flows/ai-grade-quizzes';
+import { AiGradeQuizzesOutputSchema } from './flows/schemas';
 const gradeQuizPrompt = ai.definePrompt({
     name: 'aiGradeQuizzesPrompt',
     input: {schema: AiGradeQuizzesInputSchema},
@@ -46,7 +74,8 @@ ai.defineFlow({ name: 'aiGradeQuizzesFlow', inputSchema: AiGradeQuizzesInputSche
 
 
 // AI Smart Tutor
-import { AiSmartTutorInputSchema, AiSmartTutorOutputSchema } from '@/ai/flows/ai-smart-tutor';
+import { AiSmartTutorInputSchema, aiSmartTutor } from '@/ai/flows/ai-smart-tutor';
+import { AiSmartTutorOutputSchema } from './flows/schemas';
 const smartTutorPrompt = ai.definePrompt({
     name: 'aiSmartTutorPrompt',
     input: {schema: AiSmartTutorInputSchema},
@@ -66,7 +95,8 @@ ai.defineFlow({ name: 'aiSmartTutorFlow', inputSchema: AiSmartTutorInputSchema, 
 
 
 // AI Career Guidance
-import { PerformanceDataSchema, aiCareerGuidance as aiCareerGuidanceLogic } from '@/ai/flows/ai-career-guidance';
+import { PerformanceDataSchema, aiCareerGuidance } from '@/ai/flows/ai-career-guidance';
+import { AiCareerGuidanceOutputSchema } from './flows/schemas';
 const careerGuidancePrompt = ai.definePrompt({
     name: 'aiCareerGuidancePrompt',
     input: {schema: PerformanceDataSchema},
@@ -84,7 +114,8 @@ ai.defineFlow({ name: 'aiCareerGuidanceFlow', inputSchema: PerformanceDataSchema
 
 
 // AI Study Planner
-import { PlannerInputSchema, aiStudyPlanner as aiStudyPlannerLogic } from '@/ai/flows/ai-study-planner';
+import { PlannerInputSchema, aiStudyPlanner } from '@/ai/flows/ai-study-planner';
+import { AiStudyPlannerOutputSchema } from './flows/schemas';
 const studyPlannerPrompt = ai.definePrompt({
     name: 'aiStudyPlannerPrompt',
     input: {schema: PlannerInputSchema},
@@ -101,7 +132,8 @@ ai.defineFlow({ name: 'aiStudyPlannerFlow', inputSchema: PlannerInputSchema, out
 
 
 // AI Quiz Generator
-import { QuizGeneratorInputSchema, AiQuizGeneratorOutputSchema, aiQuizGenerator as aiQuizGeneratorLogic } from '@/ai/flows/ai-quiz-generator';
+import { QuizGeneratorInputSchema, aiQuizGenerator } from '@/ai/flows/ai-quiz-generator';
+import { AiQuizGeneratorOutputSchema } from './flows/schemas';
 const quizGeneratorPrompt = ai.definePrompt({
     name: 'aiQuizGeneratorPrompt',
     input: {schema: QuizGeneratorInputSchema},
@@ -118,13 +150,11 @@ ai.defineFlow({ name: 'aiQuizGeneratorFlow', inputSchema: QuizGeneratorInputSche
     return output!;
 });
 
-export {
-    aiStudyPlannerLogic,
-    aiCareerGuidanceLogic,
-    aiGradeQuizzesLogic,
-    aiQuizGeneratorLogic,
-    getStudyInsightsLogic
+export { 
+    aiCareerGuidance, 
+    aiGradeQuizzes, 
+    aiQuizGenerator, 
+    aiSmartTutor, 
+    aiStudyPlanner, 
+    getStudyInsights 
 };
-// This export is needed to avoid a build error, but the 'aiSmartTutor'
-// function is the one that should be used in the application.
-export { aiSmartTutor as aiSmartTutorLogic } from '@/ai/flows/ai-smart-tutor';

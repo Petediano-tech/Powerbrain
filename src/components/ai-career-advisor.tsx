@@ -11,14 +11,14 @@ import {
 import { Button } from '@/components/ui/button';
 import { Briefcase, Lightbulb, ShieldAlert, Sparkles, University, Check, Crown } from 'lucide-react';
 import {
-  aiCareerGuidance,
-  AiCareerGuidanceOutput,
+  type AiCareerGuidanceOutput,
 } from '@/ai/flows/ai-career-guidance';
 import { Skeleton } from './ui/skeleton';
 import { useDoc, useMemoFirebase } from '@/firebase';
 import { doc, getFirestore } from 'firebase/firestore';
 import { useUserStore } from '@/hooks/use-user-store';
 import Link from 'next/link';
+import { aiCareerGuidance } from '@/ai/flows/ai-career-guidance';
 
 export function AICareerAdvisor() {
   const [report, setReport] = useState<AiCareerGuidanceOutput | null>(null);

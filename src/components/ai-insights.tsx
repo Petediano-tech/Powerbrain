@@ -1,4 +1,3 @@
-
 'use client';
 import { useState } from "react";
 import {
@@ -11,11 +10,12 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { BrainCircuit, Lightbulb, ShieldAlert, Sparkles, Target } from "lucide-react";
-import { getStudyInsights, StudyInsightsOutput } from "@/ai/flows/ai-study-insights";
+import { type StudyInsightsOutput } from "@/ai/flows/ai-study-insights";
 import { Skeleton } from "./ui/skeleton";
 import { useDoc, useMemoFirebase } from "@/firebase";
 import { doc, getFirestore } from "firebase/firestore";
 import { useUserStore } from "@/hooks/use-user-store";
+import { getStudyInsights } from "@/ai/flows/ai-study-insights";
 
 export function AIInsights() {
   const [insights, setInsights] = useState<StudyInsightsOutput | null>(null);
