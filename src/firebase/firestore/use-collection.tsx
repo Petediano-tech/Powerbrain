@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -64,18 +65,17 @@ export function useCollection<T = any>(
   const [error, setError] = useState<FirestoreError | Error | null>(null);
 
   useEffect(() => {
-    // Determine the initial loading state based on auth and query presence.
-    // We are loading if auth is not ready OR if we don't have a query ref yet.
-    setIsLoading(isAuthLoading || !memoizedTargetRefOrQuery);
-
-    if (isAuthLoading || !memoizedTargetRefOrQuery) {
-      // If we are in a loading state, ensure data and error are reset.
-      setData(null);
-      setError(null);
-      return;
+    // If there's no query, we are not loading data.
+    if (!memoizedTargetRefOrQuery) {
+        setIsLoading(false);
+        setData(null);
+        setError(null);
+        return;
     }
 
-    // At this point, auth is ready and we have a query. Start the snapshot listener.
+    // Start loading as soon as we have a query reference.
+    setIsLoading(true);
+
     const unsubscribe = onSnapshot(
       memoizedTargetRefOrQuery,
       (snapshot: QuerySnapshot<DocumentData>) => {
@@ -107,10 +107,12 @@ export function useCollection<T = any>(
     );
 
     return () => unsubscribe();
-  }, [memoizedTargetRefOrQuery, isAuthLoading]);
+  }, [memoizedTargetRefOrQuery]);
   
   if(memoizedTargetRefOrQuery && !memoizedTargetRefOrQuery.__memo) {
     throw new Error(memoizedTargetRefOrQuery + ' was not properly memoized using useMemoFirebase');
   }
-  return { data, isLoading, error };
+
+  // The hook is considered to be in a loading state if auth is still resolving OR if data fetching has started but not completed.
+  return { data, isLoading: isAuthLoading || isLoading, error };
 }

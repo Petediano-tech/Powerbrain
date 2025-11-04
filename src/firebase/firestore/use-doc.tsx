@@ -1,3 +1,4 @@
+
 'use client';
     
 import { useState, useEffect } from 'react';
@@ -50,17 +51,17 @@ export function useDoc<T = any>(
   const [error, setError] = useState<FirestoreError | Error | null>(null);
 
   useEffect(() => {
-    // We are in a loading state if auth is resolving OR if there is no doc ref.
-    setIsLoading(isUserLoading || !memoizedDocRef);
-
-    if (isUserLoading || !memoizedDocRef) {
-      // If we are waiting, ensure data and error are cleared.
+    // If we don't have a document reference, we are not loading data.
+    if (!memoizedDocRef) {
+      setIsLoading(false);
       setData(null);
       setError(null);
       return;
     }
+    
+    // Start loading as soon as we have a reference.
+    setIsLoading(true);
 
-    // Auth is ready and we have a doc ref, so attach the listener.
     const unsubscribe = onSnapshot(
       memoizedDocRef,
       (snapshot: DocumentSnapshot<DocumentData>) => {
@@ -88,7 +89,8 @@ export function useDoc<T = any>(
     );
 
     return () => unsubscribe();
-  }, [memoizedDocRef, isUserLoading]); // Re-run if the docRef or user loading state changes.
+  }, [memoizedDocRef]);
 
-  return { data, isLoading, error };
+  // The hook is considered to be in a loading state if auth is still resolving OR if data fetching has started but not completed.
+  return { data, isLoading: isUserLoading || isLoading, error };
 }
