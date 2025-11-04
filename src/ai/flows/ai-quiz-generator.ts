@@ -7,8 +7,9 @@ import { ai } from '@/ai/genkit';
 import { z } from 'zod';
 import { getFirestore } from 'firebase-admin/firestore';
 import { getAuthenticatedUser } from '@/firebase/auth/get-authenticated-user';
+import { runFlow } from 'genkit/flow';
 
-const QuizGeneratorInputSchema = z.object({
+export const QuizGeneratorInputSchema = z.object({
   subject: z.string().describe('The subject for the quiz.'),
   topic: z.string().describe('The specific topic within the subject.'),
   numberOfQuestions: z.number().int().min(1).max(20).describe('The number of multiple-choice questions to generate.'),
@@ -47,25 +48,5 @@ export async function aiQuizGenerator(input: z.infer<typeof QuizGeneratorInputSc
     throw new Error('Access denied. This feature is for teachers only.');
   }
   
-  const prompt = ai.definePrompt({
-    name: 'aiQuizGeneratorPrompt',
-    input: { schema: QuizGeneratorInputSchema },
-    output: { schema: AiQuizGeneratorOutputSchema },
-    system: `You are an expert curriculum designer for the Malawian education system. Your task is to create high-quality multiple-choice quizzes for teachers.
-
-    All questions must:
-    - Be directly relevant to the specified subject and topic.
-    - Be appropriate for the specified grade level in Malawi.
-    - Have exactly 4 plausible options.
-    - Include a clear correct answer and a concise explanation.`,
-    prompt: `Generate a quiz with {{numberOfQuestions}} multiple-choice questions for a {{gradeLevel}} class.
-
-    Subject: {{subject}}
-    Topic: {{topic}}
-    
-    For each question, provide the question text, 4 options, the correct answer, and an explanation.`,
-  });
-
-  const { output } = await prompt(input);
-  return output!;
+  return await runFlow(ai.flow('aiQuizGeneratorFlow'), input);
 }

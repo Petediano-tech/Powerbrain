@@ -10,8 +10,9 @@
 
 import { ai } from '@/ai/genkit';
 import { z } from 'zod';
+import { runFlow } from 'genkit/flow';
 
-const StudyInsightsInputSchema = z.object({
+export const StudyInsightsInputSchema = z.object({
   studyStreaks: z.number().describe('Number of consecutive days the student has studied.'),
   totalTimeStudied: z.number().describe('Total time in minutes the student has studied.'),
   quizzesCompleted: z.number().describe('Total number of quizzes the student has completed.'),
@@ -28,7 +29,7 @@ const StudyInsightsInputSchema = z.object({
 
 export type StudyInsightsInput = z.infer<typeof StudyInsightsInputSchema>;
 
-const StudyInsightsOutputSchema = z.object({
+export const StudyInsightsOutputSchema = z.object({
   overallPerformance: z.string().describe('An overall assessment of the student\u0027s performance.'),
   strengths: z.string().describe('Specific strengths of the student based on the data.'),
   weaknesses: z.string().describe('Specific weaknesses of the student based on the data.'),
@@ -37,13 +38,7 @@ const StudyInsightsOutputSchema = z.object({
 
 export type StudyInsightsOutput = z.infer<typeof StudyInsightsOutputSchema>;
 
-const studyInsightsFlow = ai.defineFlow(
-  {
-    name: 'studyInsightsFlow',
-    inputSchema: StudyInsightsInputSchema,
-    outputSchema: StudyInsightsOutputSchema,
-  },
-  async input => {
+export async function getStudyInsights(input: StudyInsightsInput): Promise<StudyInsightsOutput> {
     const studyInsightsPrompt = ai.definePrompt({
         name: 'studyInsightsPrompt',
         input: {schema: StudyInsightsInputSchema},
@@ -74,10 +69,4 @@ const studyInsightsFlow = ai.defineFlow(
     });
     const {output} = await studyInsightsPrompt(input);
     return output!;
-  }
-);
-
-
-export async function getStudyInsights(input: StudyInsightsInput): Promise<StudyInsightsOutput> {
-  return studyInsightsFlow(input);
 }

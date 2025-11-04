@@ -8,8 +8,9 @@ import { z } from 'zod';
 import { AiStudyPlannerOutputSchema, AiStudyPlannerOutput } from '@/ai/schemas';
 import { getFirestore } from 'firebase-admin/firestore';
 import { getAuthenticatedUser } from '@/firebase/auth/get-authenticated-user';
+import { runFlow } from 'genkit/flow';
 
-const PlannerInputSchema = z.object({
+export const PlannerInputSchema = z.object({
   weakestSubjects: z.array(z.string()).describe("The student's weakest subjects, which need more focus."),
   upcomingExams: z.array(z.object({ subject: z.string(), date: z.string() })).describe("A list of upcoming exams and their dates."),
 });
@@ -33,25 +34,5 @@ export async function aiStudyPlanner(input: z.infer<typeof PlannerInputSchema>):
     throw new Error('This is a premium feature. Please upgrade to a VIP plan.');
   }
   
-  const prompt = ai.definePrompt({
-    name: 'aiStudyPlannerPrompt',
-    input: { schema: PlannerInputSchema },
-    output: { schema: AiStudyPlannerOutputSchema },
-    system: `You are an expert academic advisor for Malawian secondary school students. Your goal is to create a realistic and effective weekly study plan.
-
-    The plan should:
-    - Prioritize the student's weakest subjects.
-    - Incorporate preparation for upcoming exams.
-    - Be balanced, with a mix of subjects each day and recommendations for breaks.
-    - Include one unique, actionable study tip for each day.
-    - The tone should be encouraging and motivational.`,
-    prompt: `A student needs a study plan. Here is their information:
-    - Weakest Subjects to focus on: {{weakestSubjects}}
-    - Upcoming Exams: {{#each upcomingExams}}{{subject}} ({{date}}){{/each}}
-
-    Please generate a balanced 7-day study schedule starting from Monday. For each day, provide a clear plan and a helpful study tip.`,
-  });
-
-  const { output } = await prompt(input);
-  return output!;
+  return await runFlow(ai.flow('aiStudyPlannerFlow'), input);
 }
