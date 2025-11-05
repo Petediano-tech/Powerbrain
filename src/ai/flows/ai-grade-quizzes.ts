@@ -1,3 +1,5 @@
+
+'use server';
 /**
  * @fileOverview AI-powered quiz grading flow logic.
  */
@@ -23,7 +25,7 @@ const gradeQuizzesFlow = ai.defineFlow({
     outputSchema: AiGradeQuizzesOutputSchema 
 }, async (input) => {
   const { output } = await ai.generate({
-    model: 'googleai/gemini-1.5-flash-preview',
+    model: 'googleai/gemini-1.5-flash-latest',
     prompt: `You are an AI grading assistant that automatically grades quizzes based on the provided content and student answers.
 
     Quiz Content:
