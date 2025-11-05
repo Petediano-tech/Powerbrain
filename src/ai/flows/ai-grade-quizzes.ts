@@ -1,4 +1,4 @@
-'use server';
+
 /**
  * @fileOverview AI-powered quiz grading flow logic.
  */
@@ -36,7 +36,7 @@ const aiGradeQuizzesPrompt = ai.definePrompt({
     Feedback: `,
 });
 
-export const gradeQuizzesFlow = ai.defineFlow({ 
+const gradeQuizzesFlow = ai.defineFlow({ 
     name: 'aiGradeQuizzesFlow', 
     inputSchema: AiGradeQuizzesInputSchema, 
     outputSchema: AiGradeQuizzesOutputSchema 
@@ -44,3 +44,7 @@ export const gradeQuizzesFlow = ai.defineFlow({
   const { output } = await aiGradeQuizzesPrompt(input);
   return output!;
 });
+
+export async function gradeQuiz(input: AiGradeQuizzesInput): Promise<AiGradeQuizzesOutput> {
+    return await gradeQuizzesFlow(input);
+}

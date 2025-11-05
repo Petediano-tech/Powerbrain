@@ -1,4 +1,4 @@
-'use server';
+
 /**
  * @fileOverview AI-powered career guidance flow logic.
  */
@@ -26,7 +26,7 @@ const careerGuidancePrompt = ai.definePrompt({
     Student's Interests: {{{interests}}}`,
 });
 
-export const careerGuidanceFlow = ai.defineFlow({ 
+const careerGuidanceFlow = ai.defineFlow({ 
     name: 'careerGuidanceFlow', 
     inputSchema: PerformanceDataSchema, 
     outputSchema: AiCareerGuidanceOutputSchema 
@@ -53,3 +53,7 @@ export const careerGuidanceFlow = ai.defineFlow({
     const { output } = await careerGuidancePrompt(input);
     return output!;
 });
+
+export async function getCareerGuidance(input: PerformanceData): Promise<AiCareerGuidanceOutput> {
+    return await careerGuidanceFlow(input);
+}

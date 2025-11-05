@@ -1,4 +1,4 @@
-'use server';
+
 /**
  * @fileOverview An AI tutor that can answer questions, summarize notes, or generate practice questions.
  */
@@ -26,7 +26,7 @@ const smartTutorPrompt = ai.definePrompt({
     prompt: `You are Brainy, a friendly and expert AI tutor for students in Malawi. Your goal is to help students understand concepts, practice problems, and learn effectively. Use simple, clear language. Grade Level: {{gradeLevel}}. Subject: {{subject}}. Student's question: "{{query}}"`
 });
 
-export const smartTutorFlow = ai.defineFlow({
+const smartTutorFlow = ai.defineFlow({
     name: 'smartTutorFlow',
     inputSchema: AiSmartTutorInputSchema,
     outputSchema: AiSmartTutorOutputSchema,
@@ -72,3 +72,7 @@ export const smartTutorFlow = ai.defineFlow({
 
     return { response: text };
 });
+
+export async function getTutorResponse(input: AiSmartTutorInput): Promise<AiSmartTutorOutput> {
+    return await smartTutorFlow(input);
+}

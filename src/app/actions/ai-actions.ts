@@ -2,12 +2,12 @@
 'use server';
 
 import {
-    careerGuidanceFlow,
-    gradeQuizzesFlow,
-    quizGeneratorFlow,
-    smartTutorFlow,
-    studyInsightsFlow,
-    studyPlannerFlow,
+    getCareerGuidance,
+    gradeQuiz,
+    generateQuiz,
+    getTutorResponse,
+    getStudyPlan,
+    generateStudyInsights,
 } from '@/ai/flows';
 import type { 
     PerformanceData,
@@ -20,26 +20,26 @@ import type {
 import type { AiCareerGuidanceOutput, AiGradeQuizzesOutput, AiQuizGeneratorOutput, AiSmartTutorOutput, AiStudyPlannerOutput, StudyInsightsOutput } from '@/ai/flows/schemas';
 
 
-export async function getCareerGuidance(input: PerformanceData): Promise<AiCareerGuidanceOutput> {
-    return await careerGuidanceFlow(input);
+export async function getCareerGuidanceAction(input: PerformanceData): Promise<AiCareerGuidanceOutput> {
+    return await getCareerGuidance(input);
 }
 
-export async function gradeQuiz(input: AiGradeQuizzesInput): Promise<AiGradeQuizzesOutput> {
-    return await gradeQuizzesFlow(input);
+export async function gradeQuizAction(input: AiGradeQuizzesInput): Promise<AiGradeQuizzesOutput> {
+    return await gradeQuiz(input);
 }
 
-export async function generateQuiz(input: QuizGeneratorInput): Promise<AiQuizGeneratorOutput> {
-    return await quizGeneratorFlow(input);
+export async function generateQuizAction(input: QuizGeneratorInput): Promise<AiQuizGeneratorOutput> {
+    return await generateQuiz(input);
 }
 
-export async function getTutorResponse(input: AiSmartTutorInput): Promise<AiSmartTutorOutput> {
-    return await smartTutorFlow(input);
+export async function getTutorResponseAction(input: AiSmartTutorInput): Promise<AiSmartTutorOutput> {
+    return await getTutorResponse(input);
 }
 
-export async function getStudyPlan(input: PlannerInput): Promise<AiStudyPlannerOutput> {
-    return await studyPlannerFlow(input);
+export async function getStudyPlanAction(input: PlannerInput): Promise<AiStudyPlannerOutput> {
+    return await getStudyPlan(input);
 }
 
-export async function generateStudyInsights(input: StudyInsightsInput): Promise<StudyInsightsOutput> {
-    return await studyInsightsFlow(input);
+export async function generateStudyInsightsAction(input: StudyInsightsInput): Promise<StudyInsightsOutput> {
+    return await generateStudyInsights(input);
 }

@@ -1,3 +1,4 @@
+
 'use client';
 import { useState } from 'react';
 import {
@@ -12,13 +13,13 @@ import { Button } from '@/components/ui/button';
 import { Briefcase, Lightbulb, ShieldAlert, Sparkles, University, Check, Crown } from 'lucide-react';
 import {
   type AiCareerGuidanceOutput,
-} from '@/ai/flows/ai-career-guidance';
+} from '@/ai/flows/schemas';
 import { Skeleton } from './ui/skeleton';
 import { useDoc, useMemoFirebase } from '@/firebase';
 import { doc, getFirestore } from 'firebase/firestore';
 import { useUserStore } from '@/hooks/use-user-store';
 import Link from 'next/link';
-import { getCareerGuidance } from '@/app/actions/ai-actions';
+import { getCareerGuidanceAction } from '@/app/actions/ai-actions';
 
 export function AICareerAdvisor() {
   const [report, setReport] = useState<AiCareerGuidanceOutput | null>(null);
@@ -49,7 +50,7 @@ export function AICareerAdvisor() {
     };
 
     try {
-      const result = await getCareerGuidance(performanceData);
+      const result = await getCareerGuidanceAction(performanceData);
       setReport(result);
     } catch (error) {
       console.error('Failed to get AI career report:', error);

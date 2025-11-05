@@ -1,3 +1,4 @@
+
 'use client';
 
 import React, { useState, useRef, useEffect } from 'react';
@@ -11,7 +12,7 @@ import { useUser, useDoc, useMemoFirebase, useFirestore } from '@/firebase';
 import { doc } from 'firebase/firestore';
 import { useUserStore } from '@/hooks/use-user-store';
 import { useToast } from '@/hooks/use-toast';
-import { getTutorResponse } from '@/app/actions/ai-actions';
+import { getTutorResponseAction } from '@/app/actions/ai-actions';
 
 interface Message {
   role: 'user' | 'assistant';
@@ -88,7 +89,7 @@ export function AITutor() {
     setIsLoading(true);
 
     try {
-      const response = await getTutorResponse({ query: prompt, gradeLevel: userProfile?.gradeLevel || 'Form 3' });
+      const response = await getTutorResponseAction({ query: prompt, gradeLevel: userProfile?.gradeLevel || 'Form 3' });
       const assistantMessage: Message = { role: 'assistant', content: response.response };
       setMessages((prev) => [...prev, assistantMessage]);
     } catch (error) {

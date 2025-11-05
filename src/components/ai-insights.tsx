@@ -1,3 +1,4 @@
+
 'use client';
 import { useState } from "react";
 import {
@@ -10,12 +11,12 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { BrainCircuit, Lightbulb, ShieldAlert, Sparkles, Target } from "lucide-react";
-import { type StudyInsightsOutput } from "@/ai/flows/ai-study-insights";
+import { type StudyInsightsOutput } from "@/ai/flows/schemas";
 import { Skeleton } from "./ui/skeleton";
 import { useDoc, useMemoFirebase } from "@/firebase";
 import { doc, getFirestore } from "firebase/firestore";
 import { useUserStore } from "@/hooks/use-user-store";
-import { generateStudyInsights } from "@/app/actions/ai-actions";
+import { generateStudyInsightsAction } from "@/app/actions/ai-actions";
 
 export function AIInsights() {
   const [insights, setInsights] = useState<StudyInsightsOutput | null>(null);
@@ -52,7 +53,7 @@ export function AIInsights() {
     };
 
     try {
-      const result = await generateStudyInsights(insightData);
+      const result = await generateStudyInsightsAction(insightData);
       setInsights(result);
     } catch (error) {
       console.error("Failed to get AI insights:", error);

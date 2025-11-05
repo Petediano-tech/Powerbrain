@@ -1,4 +1,4 @@
-'use server';
+
 /**
  * @fileOverview AI-powered quiz and assignment generator logic for teachers.
  */
@@ -28,7 +28,7 @@ const aiQuizGeneratorPrompt = ai.definePrompt({
     Grade Level: {{{gradeLevel}}}`,
 });
 
-export const quizGeneratorFlow = ai.defineFlow({ 
+const quizGeneratorFlow = ai.defineFlow({ 
     name: 'aiQuizGeneratorFlow', 
     inputSchema: QuizGeneratorInputSchema, 
     outputSchema: AiQuizGeneratorOutputSchema 
@@ -55,3 +55,8 @@ export const quizGeneratorFlow = ai.defineFlow({
     const { output } = await aiQuizGeneratorPrompt(input);
     return output!;
 });
+
+
+export async function generateQuiz(input: QuizGeneratorInput): Promise<AiQuizGeneratorOutput> {
+    return await quizGeneratorFlow(input);
+}

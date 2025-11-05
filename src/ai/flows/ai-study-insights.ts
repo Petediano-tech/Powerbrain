@@ -1,4 +1,4 @@
-'use server';
+
 /**
  * @fileOverview An AI agent that provides study insights based on student data.
  */
@@ -53,7 +53,7 @@ const studyInsightsPrompt = ai.definePrompt({
     Recommendations: [Personalized recommendations for the student]`,
 });
 
-export const studyInsightsFlow = ai.defineFlow({ 
+const studyInsightsFlow = ai.defineFlow({ 
     name: 'studyInsightsFlow', 
     inputSchema: StudyInsightsInputSchema, 
     outputSchema: AiStudyInsightsOutputSchema 
@@ -61,3 +61,7 @@ export const studyInsightsFlow = ai.defineFlow({
   const { output } = await studyInsightsPrompt(input);
   return output!;
 });
+
+export async function generateStudyInsights(input: StudyInsightsInput): Promise<AiStudyInsightsOutput> {
+    return await studyInsightsFlow(input);
+}

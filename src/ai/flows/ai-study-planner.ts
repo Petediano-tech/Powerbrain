@@ -1,4 +1,4 @@
-'use server';
+
 /**
  * @fileOverview AI-powered study plan generator logic.
  */
@@ -24,7 +24,7 @@ const aiStudyPlannerPrompt = ai.definePrompt({
     Upcoming Exams: {{#each upcomingExams}}{{subject}} on {{date}}{{/each}}`,
 });
 
-export const studyPlannerFlow = ai.defineFlow({ 
+const studyPlannerFlow = ai.defineFlow({ 
     name: 'aiStudyPlannerFlow', 
     inputSchema: PlannerInputSchema, 
     outputSchema: AiStudyPlannerOutputSchema 
@@ -50,3 +50,7 @@ export const studyPlannerFlow = ai.defineFlow({
     const { output } = await aiStudyPlannerPrompt(input);
     return output!;
 });
+
+export async function getStudyPlan(input: PlannerInput): Promise<AiStudyPlannerOutput> {
+    return await studyPlannerFlow(input);
+}

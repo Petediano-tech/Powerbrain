@@ -1,3 +1,4 @@
+
 'use client';
 import { useState } from 'react';
 import {
@@ -20,7 +21,7 @@ import {
 } from 'lucide-react';
 import {
   type AiQuizGeneratorOutput,
-} from '@/ai/flows/ai-quiz-generator';
+} from '@/ai/flows/schemas';
 import { Skeleton } from './ui/skeleton';
 import { useDoc, useMemoFirebase } from '@/firebase';
 import { doc, getFirestore } from 'firebase/firestore';
@@ -37,7 +38,7 @@ import {
 } from './ui/select';
 import { useToast } from '@/hooks/use-toast';
 import { subjectsData } from '@/lib/subjects-data';
-import { generateQuiz } from '@/app/actions/ai-actions';
+import { generateQuizAction } from '@/app/actions/ai-actions';
 
 export function AIQuizGenerator() {
   const [quiz, setQuiz] = useState<AiQuizGeneratorOutput | null>(null);
@@ -68,7 +69,7 @@ export function AIQuizGenerator() {
     setQuiz(null);
 
     try {
-      const result = await generateQuiz({
+      const result = await generateQuizAction({
         subject,
         topic,
         numberOfQuestions: numQuestions,

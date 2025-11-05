@@ -1,3 +1,4 @@
+
 'use client';
 import { useState } from 'react';
 import {
@@ -12,14 +13,14 @@ import { Button } from '@/components/ui/button';
 import { Calendar, Lightbulb, Sparkles, Target, Crown, Check } from 'lucide-react';
 import {
   type AiStudyPlannerOutput,
-} from '@/ai/flows/ai-study-planner';
+} from '@/ai/flows/schemas';
 import { Skeleton } from './ui/skeleton';
 import { useDoc, useMemoFirebase } from '@/firebase';
 import { doc, getFirestore } from 'firebase/firestore';
 import { useUserStore } from '@/hooks/use-user-store';
 import Link from 'next/link';
 import { Badge } from './ui/badge';
-import { getStudyPlan } from '@/app/actions/ai-actions';
+import { getStudyPlanAction } from '@/app/actions/ai-actions';
 
 export function AIStudyPlanner() {
   const [plan, setPlan] = useState<AiStudyPlannerOutput | null>(null);
@@ -49,7 +50,7 @@ export function AIStudyPlanner() {
     };
 
     try {
-      const result = await getStudyPlan(plannerInput);
+      const result = await getStudyPlanAction(plannerInput);
       setPlan(result);
     } catch (error) {
       console.error('Failed to get AI study plan:', error);
