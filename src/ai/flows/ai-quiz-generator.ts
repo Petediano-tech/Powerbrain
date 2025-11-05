@@ -27,10 +27,13 @@ const aiQuizGeneratorPrompt = ai.definePrompt({
 
 const quizGeneratorFlow = ai.defineFlow({ 
     name: 'aiQuizGeneratorFlow', 
-    inputSchema: QuizGeneratorInputSchema, 
+    inputSchema: z.object({
+        input: QuizGeneratorInputSchema,
+        idToken: z.string(),
+    }),
     outputSchema: AiQuizGeneratorOutputSchema 
-}, async (input) => {
-    const user = await getAuthenticatedUser();
+}, async ({ input, idToken }) => {
+    const user = await getAuthenticatedUser(idToken);
     if (!user) {
         throw new Error('Authentication required. You must be a teacher to use this feature.');
     }
@@ -54,6 +57,6 @@ const quizGeneratorFlow = ai.defineFlow({
 });
 
 
-export async function generateQuiz(input: QuizGeneratorInput): Promise<AiQuizGeneratorOutput> {
-    return await quizGeneratorFlow(input);
+export async function generateQuiz(input: QuizGeneratorInput, idToken: string): Promise<AiQuizGeneratorOutput> {
+    return await quizGeneratorFlow({input, idToken});
 }

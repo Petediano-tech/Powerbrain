@@ -25,10 +25,13 @@ const careerGuidancePrompt = ai.definePrompt({
 
 const careerGuidanceFlow = ai.defineFlow({ 
     name: 'careerGuidanceFlow', 
-    inputSchema: PerformanceDataSchema, 
+    inputSchema: z.object({
+        input: PerformanceDataSchema,
+        idToken: z.string(),
+    }),
     outputSchema: AiCareerGuidanceOutputSchema 
-}, async (input) => {
-    const user = await getAuthenticatedUser();
+}, async ({ input, idToken }) => {
+    const user = await getAuthenticatedUser(idToken);
     if (!user) {
         throw new Error('Authentication required.');
     }
@@ -51,6 +54,6 @@ const careerGuidanceFlow = ai.defineFlow({
     return output!;
 });
 
-export async function getCareerGuidance(input: PerformanceData): Promise<AiCareerGuidanceOutput> {
-    return await careerGuidanceFlow(input);
+export async function getCareerGuidance(input: PerformanceData, idToken: string): Promise<AiCareerGuidanceOutput> {
+    return await careerGuidanceFlow({input, idToken});
 }

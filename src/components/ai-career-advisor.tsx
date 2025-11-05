@@ -15,7 +15,7 @@ import {
   type AiCareerGuidanceOutput,
 } from '@/ai/flows/schemas';
 import { Skeleton } from './ui/skeleton';
-import { useDoc, useMemoFirebase } from '@/firebase';
+import { useDoc, useMemoFirebase, useUser } from '@/firebase';
 import { doc, getFirestore } from 'firebase/firestore';
 import { useUserStore } from '@/hooks/use-user-store';
 import Link from 'next/link';
@@ -26,6 +26,7 @@ export function AICareerAdvisor() {
   const [isLoading, setIsLoading] = useState(false);
   const firestore = getFirestore();
   const { profileId } = useUserStore();
+  const { user } = useUser();
 
   const userProfileRef = useMemoFirebase(() => {
     if (!profileId) return null;
@@ -38,7 +39,7 @@ export function AICareerAdvisor() {
   const isPremiumUser = userProfile?.subscriptionTier && userProfile.subscriptionTier !== 'free';
 
   const handleGetReport = async () => {
-    if (!userProfile) return;
+    if (!userProfile || !user) return;
 
     setIsLoading(true);
     setReport(null);
@@ -50,7 +51,8 @@ export function AICareerAdvisor() {
     };
 
     try {
-      const result = await getCareerGuidanceAction(performanceData);
+      const idToken = await user.getIdToken();
+      const result = await getCareerGuidanceAction(performanceData, idToken);
       setReport(result);
     } catch (error) {
       console.error('Failed to get AI career report:', error);

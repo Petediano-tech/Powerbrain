@@ -23,10 +23,13 @@ const aiStudyPlannerPrompt = ai.definePrompt({
 
 const studyPlannerFlow = ai.defineFlow({ 
     name: 'aiStudyPlannerFlow', 
-    inputSchema: PlannerInputSchema, 
+    inputSchema: z.object({
+        input: PlannerInputSchema,
+        idToken: z.string(),
+    }),
     outputSchema: AiStudyPlannerOutputSchema 
-}, async (input) => {
-    const user = await getAuthenticatedUser();
+}, async ({ input, idToken }) => {
+    const user = await getAuthenticatedUser(idToken);
     if (!user) {
         throw new Error('Authentication required.');
     }
@@ -48,6 +51,6 @@ const studyPlannerFlow = ai.defineFlow({
     return output!;
 });
 
-export async function getStudyPlan(input: PlannerInput): Promise<AiStudyPlannerOutput> {
-    return await studyPlannerFlow(input);
+export async function getStudyPlan(input: PlannerInput, idToken: string): Promise<AiStudyPlannerOutput> {
+    return await studyPlannerFlow({input, idToken});
 }

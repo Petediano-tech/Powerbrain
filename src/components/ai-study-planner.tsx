@@ -15,7 +15,7 @@ import {
   type AiStudyPlannerOutput,
 } from '@/ai/flows/schemas';
 import { Skeleton } from './ui/skeleton';
-import { useDoc, useMemoFirebase } from '@/firebase';
+import { useDoc, useMemoFirebase, useUser } from '@/firebase';
 import { doc, getFirestore } from 'firebase/firestore';
 import { useUserStore } from '@/hooks/use-user-store';
 import Link from 'next/link';
@@ -27,6 +27,7 @@ export function AIStudyPlanner() {
   const [isLoading, setIsLoading] = useState(false);
   const firestore = getFirestore();
   const { profileId } = useUserStore();
+  const { user } = useUser();
 
   const userProfileRef = useMemoFirebase(() => {
     if (!profileId) return null;
@@ -39,7 +40,7 @@ export function AIStudyPlanner() {
   const isPremiumUser = userProfile?.subscriptionTier && userProfile.subscriptionTier !== 'free';
 
   const handleGeneratePlan = async () => {
-    if (!userProfile) return;
+    if (!userProfile || !user) return;
 
     setIsLoading(true);
     setPlan(null);
@@ -50,7 +51,8 @@ export function AIStudyPlanner() {
     };
 
     try {
-      const result = await getStudyPlanAction(plannerInput);
+      const idToken = await user.getIdToken();
+      const result = await getStudyPlanAction(plannerInput, idToken);
       setPlan(result);
     } catch (error) {
       console.error('Failed to get AI study plan:', error);

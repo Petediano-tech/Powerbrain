@@ -23,7 +23,7 @@ import {
   type AiQuizGeneratorOutput,
 } from '@/ai/flows/schemas';
 import { Skeleton } from './ui/skeleton';
-import { useDoc, useMemoFirebase } from '@/firebase';
+import { useDoc, useMemoFirebase, useUser } from '@/firebase';
 import { doc, getFirestore } from 'firebase/firestore';
 import { useUserStore } from '@/hooks/use-user-store';
 import Link from 'next/link';
@@ -49,6 +49,7 @@ export function AIQuizGenerator() {
 
   const firestore = getFirestore();
   const { profileId } = useUserStore();
+  const { user } = useUser();
   const { toast } = useToast();
 
   const userProfileRef = useMemoFirebase(() => {
@@ -63,18 +64,19 @@ export function AIQuizGenerator() {
     userProfile?.subscriptionTier && userProfile.subscriptionTier !== 'free';
 
   const handleGenerateQuiz = async () => {
-    if (!userProfile) return;
+    if (!userProfile || !user) return;
 
     setIsLoading(true);
     setQuiz(null);
 
     try {
+      const idToken = await user.getIdToken();
       const result = await generateQuizAction({
         subject,
         topic,
         numberOfQuestions: numQuestions,
         gradeLevel: userProfile.gradeLevel || 'Form 2',
-      });
+      }, idToken);
       setQuiz(result);
     } catch (error) {
       console.error('Failed to generate AI quiz:', error);
