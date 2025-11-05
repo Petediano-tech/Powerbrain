@@ -1,5 +1,3 @@
-'use server';
-
 /**
  * @fileOverview An AI tutor that can answer questions, summarize notes, or generate practice questions.
  */
@@ -16,26 +14,28 @@ export const AiSmartTutorInputSchema = z.object({
 });
 export type AiSmartTutorInput = z.infer<typeof AiSmartTutorInputSchema>;
 
+
 export async function getTutorResponse(input: AiSmartTutorInput, idToken: string): Promise<AiSmartTutorOutput> {
-    return await smartTutorFlow({input, idToken});
+    return smartTutorFlow(input, idToken);
 }
 
 const smartTutorFlow = ai.defineFlow({
     name: 'smartTutorFlow',
-    inputSchema: z.object({
-      input: AiSmartTutorInputSchema,
-      idToken: z.string(),
-    }),
+    inputSchema: AiSmartTutorInputSchema,
     outputSchema: AiSmartTutorOutputSchema,
-}, async ({ input, idToken }) => {
+}, async (input, streamingCallback, context) => {
+    // Auth check must be inside the flow
+    const idToken = context.auth?.idToken;
+    if (!idToken) {
+        return { response: "I'm sorry, but you must be logged in to chat with me. Please log in and try again." };
+    }
     const user = await getAuthenticatedUser(idToken);
     if (!user) {
         return { response: "I'm sorry, but you must be logged in to chat with me. Please log in and try again." };
     }
     
-    // This feature is now free for all users.
-    // The authentication check above is sufficient.
-
+    // This feature is free for all users, so no subscription check is needed.
+    
     const { text } = await ai.generate({
         model: 'googleai/gemini-1.5-flash-preview',
         prompt: `You are Brainy, a friendly and expert AI tutor for students in Malawi. Your goal is to help students understand concepts, practice problems, and learn effectively. Use simple, clear language. Grade Level: {{gradeLevel}}. Subject: {{subject}}. Student's question: "{{query}}"`,

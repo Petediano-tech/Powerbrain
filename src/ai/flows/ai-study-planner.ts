@@ -1,5 +1,3 @@
-'use server';
-
 import { z } from 'zod';
 import { getFirestore } from 'firebase-admin/firestore';
 import { getAuthenticatedUser } from '@/firebase/auth/get-authenticated-user';
@@ -12,21 +10,24 @@ export const PlannerInputSchema = z.object({
 });
 export type PlannerInput = z.infer<typeof PlannerInputSchema>;
 
+
 export async function getStudyPlan(input: PlannerInput, idToken: string): Promise<AiStudyPlannerOutput> {
-    return await studyPlannerFlow({input, idToken});
+    return studyPlannerFlow(input, idToken);
 }
 
 const studyPlannerFlow = ai.defineFlow({ 
     name: 'aiStudyPlannerFlow', 
-    inputSchema: z.object({
-        input: PlannerInputSchema,
-        idToken: z.string(),
-    }),
+    inputSchema: PlannerInputSchema,
     outputSchema: AiStudyPlannerOutputSchema 
-}, async ({ input, idToken }) => {
+}, async (input, streamingCallback, context) => {
+    // Auth check must be inside the flow
+    const idToken = context.auth?.idToken;
+    if (!idToken) {
+         throw new Error('Authentication required.');
+    }
     const user = await getAuthenticatedUser(idToken);
     if (!user) {
-        throw new Error('Authentication required.');
+        throw new Error('Authentication failed.');
     }
 
     const firestore = getFirestore();
@@ -46,9 +47,9 @@ const studyPlannerFlow = ai.defineFlow({
         model: 'googleai/gemini-1.5-flash-preview',
         prompt: `You are an AI study planner. Create a personalized 7-day study schedule for a student. The plan should prioritize their weakest subjects and prepare them for upcoming exams. Include a short, actionable study tip for each day.
 
-    Weakest Subjects: {{#each input.weakestSubjects}}{{.}}, {{/each}}
-    Upcoming Exams: {{#each input.upcomingExams}}{{subject}} on {{date}}{{/each}}`,
-        input: { input },
+    Weakest Subjects: {{#each weakestSubjects}}{{.}}, {{/each}}
+    Upcoming Exams: {{#each upcomingExams}}{{subject}} on {{date}}{{/each}}`,
+        input: input,
         output: { schema: AiStudyPlannerOutputSchema },
     });
     return output!;

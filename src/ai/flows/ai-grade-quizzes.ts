@@ -1,5 +1,3 @@
-'use server';
-
 /**
  * @fileOverview AI-powered quiz grading flow logic.
  */
@@ -14,8 +12,9 @@ export const AiGradeQuizzesInputSchema = z.object({
 });
 export type AiGradeQuizzesInput = z.infer<typeof AiGradeQuizzesInputSchema>;
 
+
 export async function gradeQuiz(input: AiGradeQuizzesInput): Promise<AiGradeQuizzesOutput> {
-    return await gradeQuizzesFlow(input);
+    return gradeQuizzesFlow(input);
 }
 
 const gradeQuizzesFlow = ai.defineFlow({ 

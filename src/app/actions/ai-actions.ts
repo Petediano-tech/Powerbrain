@@ -1,27 +1,12 @@
 'use server';
 
-import {
-    getCareerGuidance,
-    gradeQuiz,
-    generateQuiz,
-    getTutorResponse,
-    getStudyPlan,
-    generateStudyInsights,
-} from '@/ai/flows';
-import type { 
-    PerformanceData,
-    AiGradeQuizzesInput,
-    QuizGeneratorInput,
-    PlannerInput,
-    StudyInsightsInput,
-    AiSmartTutorInput,
-    AiCareerGuidanceOutput, 
-    AiGradeQuizzesOutput, 
-    AiQuizGeneratorOutput, 
-    AiSmartTutorOutput, 
-    AiStudyPlannerOutput, 
-    StudyInsightsOutput 
-} from '@/ai/flows';
+import { getCareerGuidance, type PerformanceData, type AiCareerGuidanceOutput } from '@/ai/flows/ai-career-guidance';
+import { gradeQuiz, type AiGradeQuizzesInput, type AiGradeQuizzesOutput } from '@/ai/flows/ai-grade-quizzes';
+import { generateQuiz, type QuizGeneratorInput, type AiQuizGeneratorOutput } from '@/ai/flows/ai-quiz-generator';
+import { getTutorResponse, type AiSmartTutorInput, type AiSmartTutorOutput } from '@/ai/flows/ai-smart-tutor';
+import { generateStudyInsights, type StudyInsightsInput, type StudyInsightsOutput } from '@/ai/flows/ai-study-insights';
+import { getStudyPlan, type PlannerInput, type AiStudyPlannerOutput } from '@/ai/flows/ai-study-planner';
+
 
 export async function getCareerGuidanceAction(input: PerformanceData, idToken: string): Promise<AiCareerGuidanceOutput> {
     return await getCareerGuidance(input, idToken);

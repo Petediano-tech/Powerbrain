@@ -1,5 +1,3 @@
-'use server';
-
 import { z } from 'zod';
 import { getFirestore } from 'firebase-admin/firestore';
 import { getAuthenticatedUser } from '@/firebase/auth/get-authenticated-user';
@@ -13,21 +11,25 @@ export const PerformanceDataSchema = z.object({
 });
 export type PerformanceData = z.infer<typeof PerformanceDataSchema>;
 
+
 export async function getCareerGuidance(input: PerformanceData, idToken: string): Promise<AiCareerGuidanceOutput> {
-    return await careerGuidanceFlow({input, idToken});
+    return careerGuidanceFlow(input, idToken);
 }
 
 const careerGuidanceFlow = ai.defineFlow({ 
     name: 'careerGuidanceFlow', 
-    inputSchema: z.object({
-        input: PerformanceDataSchema,
-        idToken: z.string(),
-    }),
+    inputSchema: PerformanceDataSchema,
     outputSchema: AiCareerGuidanceOutputSchema 
-}, async ({ input, idToken }) => {
+}, async (input, streamingCallback, context) => {
+    
+    // Auth check must be inside the flow
+    const idToken = context.auth?.idToken;
+    if (!idToken) {
+         throw new Error('Authentication required.');
+    }
     const user = await getAuthenticatedUser(idToken);
     if (!user) {
-        throw new Error('Authentication required.');
+        throw new Error('Authentication failed.');
     }
 
     const firestore = getFirestore();
@@ -48,10 +50,10 @@ const careerGuidanceFlow = ai.defineFlow({
         model: 'googleai/gemini-1.5-flash-preview',
         prompt: `You are an AI career advisor for Malawian students. Based on the student's performance and interests, provide 2-3 tailored career recommendations, suggest specific degree/diploma programs at Malawian universities (e.g., University of Malawi, MUBAS, KUHeS, Mzuni), and give actionable next steps.
 
-    Student's Strongest Subjects: {{#each input.strongestSubjects}}{{.}}, {{/each}}
-    Student's Average Score: {{input.averageScore}}%
-    Student's Interests: {{#each input.interests}}{{.}}, {{/each}}`,
-        input: { input }, // Nest input to match handlebars template
+    Student's Strongest Subjects: {{#each strongestSubjects}}{{.}}, {{/each}}
+    Student's Average Score: {{averageScore}}%
+    Student's Interests: {{#each interests}}{{.}}, {{/each}}`,
+        input: input,
         output: { schema: AiCareerGuidanceOutputSchema },
     });
     return output!;

@@ -1,5 +1,3 @@
-'use server';
-
 /**
  * @fileOverview An AI agent that provides study insights based on student data.
  */
@@ -25,8 +23,9 @@ export const StudyInsightsInputSchema = z.object({
 });
 export type StudyInsightsInput = z.infer<typeof StudyInsightsInputSchema>;
 
+
 export async function generateStudyInsights(input: StudyInsightsInput): Promise<StudyInsightsOutput> {
-    return await studyInsightsFlow(input);
+    return studyInsightsFlow(input);
 }
 
 const studyInsightsFlow = ai.defineFlow({ 

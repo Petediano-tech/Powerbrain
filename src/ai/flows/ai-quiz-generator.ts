@@ -1,5 +1,3 @@
-'use server';
-
 import { z } from 'zod';
 import { getFirestore } from 'firebase-admin/firestore';
 import { getAuthenticatedUser } from '@/firebase/auth/get-authenticated-user';
@@ -12,26 +10,28 @@ export const QuizGeneratorInputSchema = z.object({
   numberOfQuestions: z.number().int().min(1).max(20).describe('The number of multiple-choice questions to generate.'),
   gradeLevel: z.string().describe('The grade level of the students (e.g., Form 2, Standard 8).'),
 });
-export type QuizGeneratorInput = z
-  .infer<typeof QuizGeneratorInputSchema>;
+export type QuizGeneratorInput = z.infer<typeof QuizGeneratorInputSchema>;
+
 
 export async function generateQuiz(
   input: QuizGeneratorInput,
   idToken: string
 ): Promise<AiQuizGeneratorOutput> {
-  return await quizGeneratorFlow({ input, idToken });
+  return quizGeneratorFlow(input, idToken);
 }
 
 const quizGeneratorFlow = ai.defineFlow(
   {
     name: 'aiQuizGeneratorFlow',
-    inputSchema: z.object({
-      input: QuizGeneratorInputSchema,
-      idToken: z.string(),
-    }),
+    inputSchema: QuizGeneratorInputSchema,
     outputSchema: AiQuizGeneratorOutputSchema,
   },
-  async ({ input, idToken }) => {
+  async (input, streamingCallback, context) => {
+    // Auth check must be inside the flow
+    const idToken = context.auth?.idToken;
+    if (!idToken) {
+         throw new Error('Authentication required.');
+    }
     const user = await getAuthenticatedUser(idToken);
     if (!user) {
       throw new Error(
