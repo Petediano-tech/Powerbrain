@@ -24,7 +24,7 @@ export default function AccessibilitySettingsPage() {
   } = useSettingsStore();
 
   return (
-    <div className="space-y-8 max-w-2xl mx-auto">
+    <div className="space-y-8">
       
       <Card>
         <CardHeader>

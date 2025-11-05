@@ -43,8 +43,7 @@ export default function SettingsPage() {
 
   return (
     <div className="pb-8">
-      <div className="max-w-2xl mx-auto">
-        <div className="space-y-4">
+      <div className="space-y-4">
           {settingsItems.map((item) => (
             <Link href={item.href} key={item.title} className="block">
                 <div className="flex items-center gap-4 p-4 rounded-lg border bg-card hover:bg-muted/50 transition-colors cursor-pointer">
@@ -60,7 +59,6 @@ export default function SettingsPage() {
             </Link>
           ))}
         </div>
-      </div>
     </div>
   );
 }

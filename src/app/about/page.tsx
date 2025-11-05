@@ -7,7 +7,7 @@ import { BookOpen, BrainCircuit, Target } from "lucide-react";
 export default function AboutPage() {
 
     return (
-        <div className="max-w-3xl mx-auto">
+        <div>
             <Card>
                 <CardHeader className="text-center items-center gap-4">
                     <div className="p-4 bg-primary/10 rounded-full">

@@ -38,8 +38,7 @@ export default function AboutLegalPage() {
 
   return (
     <div className="pb-8">
-      <div className="max-w-2xl mx-auto">
-        <div className="space-y-2">
+      <div className="space-y-2">
           {aboutItems.map((item) => (
             <Link href={item.href} key={item.title} className="block">
                 <div className="flex items-center p-4 rounded-lg border bg-card hover:bg-muted/50 transition-colors cursor-pointer">
@@ -50,7 +49,6 @@ export default function AboutLegalPage() {
             </Link>
           ))}
         </div>
-      </div>
     </div>
   );
 }

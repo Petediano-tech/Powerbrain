@@ -91,7 +91,7 @@ export default function DevelopersPage() {
             
             <div>
                 <h2 className="text-2xl font-bold text-center mb-6">Club Patrons</h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-2xl mx-auto">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 justify-center">
                     {patrons.map(patron => (
                         <Card key={patron.name} className="text-center">
                             <CardContent className="p-6 flex flex-col items-center gap-3">
@@ -113,7 +113,7 @@ export default function DevelopersPage() {
 
             <div>
                 <h2 className="text-2xl font-bold text-center mb-6">Team Members</h2>
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
                     {teamMembers.map(member => (
                         <Card key={member.name} className="text-center">
                             <CardContent className="p-6 flex flex-col items-center gap-3">

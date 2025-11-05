@@ -18,7 +18,7 @@ export default function ContactPage() {
     const location = "Dzenje Secondary School, Mulanje, Malawi";
 
     return (
-        <div className="max-w-2xl mx-auto">
+        <div>
             <Card>
                 <CardHeader className="text-center">
                     <CardTitle className="text-3xl">Get in Touch</CardTitle>
