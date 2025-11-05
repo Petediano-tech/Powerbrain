@@ -12,8 +12,6 @@ import { useRouter } from "next/navigation";
 const pageTitles: { [key: string]: string } = {
     '/home': 'Home',
     '/subjects': 'Subjects',
-    '/flashcards': 'Flashcards',
-    '/notes': 'My Notes',
     '/quizzes': 'Quizzes',
     '/repository': 'Resources',
     '/dashboard': 'Dashboard',
@@ -29,6 +27,8 @@ const pageTitles: { [key: string]: string } = {
     '/privacy': 'Privacy Policy',
     '/contact': 'Contact Us',
     '/developers': 'The Team',
+    '/flashcards': 'Flashcards',
+    '/notes': 'My Notes',
 };
 
 function getPageTitle(pathname: string) {

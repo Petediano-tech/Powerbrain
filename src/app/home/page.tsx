@@ -9,7 +9,7 @@ import { AppShell } from '@/components/app-shell';
 import TeacherPage from '../teacher/page';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Search, BarChart2, GraduationCap, FolderKanban, PencilRuler, BrainCircuit, BookCopy, ArrowRight } from 'lucide-react';
+import { Search, BarChart2, GraduationCap, FolderKanban, PencilRuler, Layers, FilePenLine, BookCopy, ArrowRight } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
@@ -22,7 +22,8 @@ const navGridItems = [
     { href: '/subjects', label: 'Modules', icon: GraduationCap, description: 'Access courses' },
     { href: '/repository', label: 'Resources', icon: FolderKanban, description: 'Find notes & videos' },
     { href: '/quizzes', label: 'Quizzes', icon: PencilRuler, description: 'Assess knowledge' },
-    { href: '/subjects', label: 'My Subjects', icon: BookCopy, description: 'Enrolled subjects' },
+    { href: '/flashcards', label: 'Flashcards', icon: Layers, description: 'Create & study cards' },
+    { href: '/notes', label: 'My Notes', icon: FilePenLine, description: 'Personal notepad' },
 ];
 
 
