@@ -25,7 +25,7 @@ const studyInsightsFlow = ai.defineFlow({
     outputSchema: AiStudyInsightsOutputSchema 
 }, async (input) => {
   const { output } = await ai.generate({
-    model: 'googleai/gemini-1.5-flash-latest',
+    model: 'googleai/gemini-pro',
     prompt: `You are an AI study assistant that analyzes student data and provides personalized insights.
 
     Analyze the following data to provide the student with an overview of their performance, their strengths and weaknesses, and personalized recommendations for improvement.
