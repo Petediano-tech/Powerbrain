@@ -1,3 +1,4 @@
+'use server';
 import { z } from 'zod';
 import { getFirestore } from 'firebase-admin/firestore';
 import { getAuthenticatedUser } from '@/firebase/auth/get-authenticated-user';
@@ -11,25 +12,32 @@ export const PerformanceDataSchema = z.object({
 });
 export type PerformanceData = z.infer<typeof PerformanceDataSchema>;
 
+const prompt = ai.definePrompt({
+  name: 'careerGuidancePrompt',
+  input: { schema: PerformanceDataSchema },
+  output: { schema: AiCareerGuidanceOutputSchema },
+  prompt: `You are an AI career advisor for Malawian students. Based on the student's performance and interests, provide 2-3 tailored career recommendations, suggest specific degree/diploma programs at Malawian universities (e.g., University of Malawi, MUBAS, KUHeS, Mzuni), and give actionable next steps.
 
-export async function getCareerGuidance(input: PerformanceData, idToken: string): Promise<AiCareerGuidanceOutput> {
-    return careerGuidanceFlow(input, idToken);
-}
+    Student's Strongest Subjects: {{#each strongestSubjects}}{{.}}, {{/each}}
+    Student's Average Score: {{averageScore}}%
+    Student's Interests: {{#each interests}}{{.}}, {{/each}}`,
+});
 
-const careerGuidanceFlow = ai.defineFlow({ 
-    name: 'careerGuidanceFlow', 
+const careerGuidanceFlow = ai.defineFlow(
+  {
+    name: 'careerGuidanceFlow',
     inputSchema: PerformanceDataSchema,
-    outputSchema: AiCareerGuidanceOutputSchema 
-}, async (input, streamingCallback, context) => {
-    
+    outputSchema: AiCareerGuidanceOutputSchema,
+  },
+  async (input, streamingCallback, context) => {
     // Auth check must be inside the flow
     const idToken = context.auth?.idToken;
     if (!idToken) {
-         throw new Error('Authentication required.');
+      throw new Error('Authentication required.');
     }
     const user = await getAuthenticatedUser(idToken);
     if (!user) {
-        throw new Error('Authentication failed.');
+      throw new Error('Authentication failed.');
     }
 
     const firestore = getFirestore();
@@ -37,24 +45,22 @@ const careerGuidanceFlow = ai.defineFlow({
     const profileSnap = await profileRef.get();
 
     if (!profileSnap.exists()) {
-        throw new Error("User profile not found.");
+      throw new Error('User profile not found.');
     }
-    
+
     const userProfile = profileSnap.data();
 
     if (!userProfile || userProfile.subscriptionTier === 'free') {
-        throw new Error('This is a premium feature. Please upgrade to a VIP plan.');
+      throw new Error(
+        'This is a premium feature. Please upgrade to a VIP plan.'
+      );
     }
 
-    const { output } = await ai.generate({
-        model: 'googleai/gemini-1.5-flash-preview',
-        prompt: `You are an AI career advisor for Malawian students. Based on the student's performance and interests, provide 2-3 tailored career recommendations, suggest specific degree/diploma programs at Malawian universities (e.g., University of Malawi, MUBAS, KUHeS, Mzuni), and give actionable next steps.
-
-    Student's Strongest Subjects: {{#each strongestSubjects}}{{.}}, {{/each}}
-    Student's Average Score: {{averageScore}}%
-    Student's Interests: {{#each interests}}{{.}}, {{/each}}`,
-        input: input,
-        output: { schema: AiCareerGuidanceOutputSchema },
-    });
+    const { output } = await prompt(input);
     return output!;
-});
+  }
+);
+
+export async function getCareerGuidance(input: PerformanceData, context: any): Promise<AiCareerGuidanceOutput> {
+  return careerGuidanceFlow(input, context);
+}

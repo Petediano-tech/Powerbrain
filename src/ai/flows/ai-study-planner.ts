@@ -1,3 +1,4 @@
+'use server';
 import { z } from 'zod';
 import { getFirestore } from 'firebase-admin/firestore';
 import { getAuthenticatedUser } from '@/firebase/auth/get-authenticated-user';
@@ -10,10 +11,15 @@ export const PlannerInputSchema = z.object({
 });
 export type PlannerInput = z.infer<typeof PlannerInputSchema>;
 
+const prompt = ai.definePrompt({
+    name: 'aiStudyPlannerPrompt',
+    input: { schema: PlannerInputSchema },
+    output: { schema: AiStudyPlannerOutputSchema },
+    prompt: `You are an AI study planner. Create a personalized 7-day study schedule for a student. The plan should prioritize their weakest subjects and prepare them for upcoming exams. Include a short, actionable study tip for each day.
 
-export async function getStudyPlan(input: PlannerInput, idToken: string): Promise<AiStudyPlannerOutput> {
-    return studyPlannerFlow(input, idToken);
-}
+    Weakest Subjects: {{#each weakestSubjects}}{{.}}, {{/each}}
+    Upcoming Exams: {{#each upcomingExams}}{{subject}} on {{date}}{{/each}}`,
+});
 
 const studyPlannerFlow = ai.defineFlow({ 
     name: 'aiStudyPlannerFlow', 
@@ -43,14 +49,10 @@ const studyPlannerFlow = ai.defineFlow({
         throw new Error('This is a premium feature. Please upgrade to a VIP plan.');
     }
     
-    const { output } = await ai.generate({
-        model: 'googleai/gemini-1.5-flash-preview',
-        prompt: `You are an AI study planner. Create a personalized 7-day study schedule for a student. The plan should prioritize their weakest subjects and prepare them for upcoming exams. Include a short, actionable study tip for each day.
-
-    Weakest Subjects: {{#each weakestSubjects}}{{.}}, {{/each}}
-    Upcoming Exams: {{#each upcomingExams}}{{subject}} on {{date}}{{/each}}`,
-        input: input,
-        output: { schema: AiStudyPlannerOutputSchema },
-    });
+    const { output } = await prompt(input);
     return output!;
 });
+
+export async function getStudyPlan(input: PlannerInput, context: any): Promise<AiStudyPlannerOutput> {
+    return studyPlannerFlow(input, context);
+}

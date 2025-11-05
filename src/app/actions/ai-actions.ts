@@ -9,7 +9,7 @@ import { getStudyPlan, type PlannerInput, type AiStudyPlannerOutput } from '@/ai
 
 
 export async function getCareerGuidanceAction(input: PerformanceData, idToken: string): Promise<AiCareerGuidanceOutput> {
-    return await getCareerGuidance(input, idToken);
+    return await getCareerGuidance(input, { auth: { idToken, uid: '' } });
 }
 
 export async function gradeQuizAction(input: AiGradeQuizzesInput): Promise<AiGradeQuizzesOutput> {
@@ -17,15 +17,15 @@ export async function gradeQuizAction(input: AiGradeQuizzesInput): Promise<AiGra
 }
 
 export async function generateQuizAction(input: QuizGeneratorInput, idToken: string): Promise<AiQuizGeneratorOutput> {
-    return await generateQuiz(input, idToken);
+    return await generateQuiz(input, { auth: { idToken, uid: '' } });
 }
 
 export async function getTutorResponseAction(input: AiSmartTutorInput, idToken: string): Promise<AiSmartTutorOutput> {
-    return await getTutorResponse(input, idToken);
+    return await getTutorResponse(input, { auth: { idToken, uid: '' } });
 }
 
 export async function getStudyPlanAction(input: PlannerInput, idToken: string): Promise<AiStudyPlannerOutput> {
-    return await getStudyPlan(input, idToken);
+    return await getStudyPlan(input, { auth: { idToken, uid: '' } });
 }
 
 export async function generateStudyInsightsAction(input: StudyInsightsInput): Promise<StudyInsightsOutput> {

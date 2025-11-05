@@ -1,3 +1,4 @@
+'use server';
 /**
  * @fileOverview An AI tutor that can answer questions, summarize notes, or generate practice questions.
  */
@@ -14,10 +15,11 @@ export const AiSmartTutorInputSchema = z.object({
 });
 export type AiSmartTutorInput = z.infer<typeof AiSmartTutorInputSchema>;
 
-
-export async function getTutorResponse(input: AiSmartTutorInput, idToken: string): Promise<AiSmartTutorOutput> {
-    return smartTutorFlow(input, idToken);
-}
+const prompt = ai.definePrompt({
+    name: 'smartTutorPrompt',
+    input: { schema: AiSmartTutorInputSchema },
+    prompt: `You are Brainy, a friendly and expert AI tutor for students in Malawi. Your goal is to help students understand concepts, practice problems, and learn effectively. Use simple, clear language. Grade Level: {{gradeLevel}}. Subject: {{subject}}. Student's question: "{{query}}"`,
+});
 
 const smartTutorFlow = ai.defineFlow({
     name: 'smartTutorFlow',
@@ -36,11 +38,11 @@ const smartTutorFlow = ai.defineFlow({
     
     // This feature is free for all users, so no subscription check is needed.
     
-    const { text } = await ai.generate({
-        model: 'googleai/gemini-1.5-flash-preview',
-        prompt: `You are Brainy, a friendly and expert AI tutor for students in Malawi. Your goal is to help students understand concepts, practice problems, and learn effectively. Use simple, clear language. Grade Level: {{gradeLevel}}. Subject: {{subject}}. Student's question: "{{query}}"`,
-        input: input,
-    });
+    const { text } = await prompt(input);
 
     return { response: text };
 });
+
+export async function getTutorResponse(input: AiSmartTutorInput, context: any): Promise<AiSmartTutorOutput> {
+    return smartTutorFlow(input, context);
+}
