@@ -1,5 +1,4 @@
 
-'use server';
 import { z } from 'zod';
 import { AiQuizGeneratorOutputSchema, type AiQuizGeneratorOutput } from './schemas';
 import { ai } from '@/ai/genkit';
@@ -27,7 +26,6 @@ const quizGeneratorFlow = ai.defineFlow(
         Topic: {{topic}}
         Number of Questions: {{numberOfQuestions}}
         Grade Level: {{gradeLevel}}`,
-        input,
         output: { schema: AiQuizGeneratorOutputSchema },
     });
     return output!;

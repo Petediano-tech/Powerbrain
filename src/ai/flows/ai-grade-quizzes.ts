@@ -1,8 +1,4 @@
 
-'use server';
-/**
- * @fileOverview AI-powered quiz grading flow logic.
- */
 import { z } from 'zod';
 import { ai } from '@/ai/genkit';
 import { AiGradeQuizzesOutputSchema, type AiGradeQuizzesOutput } from './schemas';
@@ -42,7 +38,6 @@ const gradeQuizzesFlow = ai.defineFlow({
     Ensure that the grade and feedback are aligned with the quiz content and any teacher instructions provided.  Give the grade in the format A,B,C,D,E or F.
     Grade:
     Feedback: `,
-    input,
     output: { schema: AiGradeQuizzesOutputSchema },
   });
   return output!;

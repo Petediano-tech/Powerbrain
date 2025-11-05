@@ -1,8 +1,4 @@
 
-'use server';
-/**
- * @fileOverview An AI tutor that can answer questions, summarize notes, or generate practice questions.
- */
 import { z } from 'zod';
 import { AiSmartTutorOutputSchema, type AiSmartTutorOutput } from './schemas';
 import { ai } from '../genkit';
@@ -22,7 +18,6 @@ const smartTutorFlow = ai.defineFlow({
     const { text } = await ai.generate({
         model: 'googleai/gemini-1.5-flash-latest',
         prompt: `You are Brainy, a friendly and expert AI tutor for students in Malawi. Your goal is to help students understand concepts, practice problems, and learn effectively. Use simple, clear language. Grade Level: {{gradeLevel}}. Subject: {{subject}}. Student's question: "{{query}}"`,
-        input,
     });
 
     return { response: text };

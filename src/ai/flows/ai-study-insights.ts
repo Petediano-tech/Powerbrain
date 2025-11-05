@@ -1,9 +1,4 @@
 
-'use server';
-/**
- * @fileOverview An AI agent that provides study insights based on student data.
- */
-
 import { z } from 'zod';
 import { AiStudyInsightsOutputSchema, type StudyInsightsOutput } from './schemas';
 import { ai } from '@/ai/genkit';
@@ -60,7 +55,6 @@ const studyInsightsFlow = ai.defineFlow({
     Strengths: [Specific strengths of the student]
     Weaknesses: [Specific weaknesses of the student]
     Recommendations: [Personalized recommendations for the student]`,
-    input,
     output: { schema: AiStudyInsightsOutputSchema },
   });
   return output!;

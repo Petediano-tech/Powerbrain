@@ -1,5 +1,4 @@
 
-'use server';
 import { z } from 'zod';
 import { ai } from '@/ai/genkit';
 import { AiCareerGuidanceOutputSchema, type AiCareerGuidanceOutput } from './schemas';
@@ -25,7 +24,6 @@ const careerGuidanceFlow = ai.defineFlow(
         Student's Strongest Subjects: {{#each strongestSubjects}}{{.}}, {{/each}}
         Student's Average Score: {{averageScore}}%
         Student's Interests: {{#each interests}}{{.}}, {{/each}}`,
-        input,
         output: { schema: AiCareerGuidanceOutputSchema },
     });
     return output!;

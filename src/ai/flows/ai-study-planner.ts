@@ -1,5 +1,4 @@
 
-'use server';
 import { z } from 'zod';
 import { ai } from '@/ai/genkit';
 import { AiStudyPlannerOutputSchema, type AiStudyPlannerOutput } from './schemas';
@@ -21,7 +20,6 @@ const studyPlannerFlow = ai.defineFlow({
 
         Weakest Subjects: {{#each weakestSubjects}}{{.}}, {{/each}}
         Upcoming Exams: {{#each upcomingExams}}{{subject}} on {{date}}{{/each}}`,
-        input,
         output: { schema: AiStudyPlannerOutputSchema },
     });
     return output!;
