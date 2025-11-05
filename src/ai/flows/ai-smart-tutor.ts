@@ -1,4 +1,5 @@
 
+'use server';
 /**
  * @fileOverview An AI tutor that can answer questions, summarize notes, or generate practice questions.
  */
@@ -28,10 +29,13 @@ const smartTutorPrompt = ai.definePrompt({
 
 const smartTutorFlow = ai.defineFlow({
     name: 'smartTutorFlow',
-    inputSchema: AiSmartTutorInputSchema,
+    inputSchema: z.object({
+      input: AiSmartTutorInputSchema,
+      idToken: z.string(),
+    }),
     outputSchema: AiSmartTutorOutputSchema,
-}, async (input) => {
-    const user = await getAuthenticatedUser();
+}, async ({ input, idToken }) => {
+    const user = await getAuthenticatedUser(idToken);
     if (!user) {
         return { response: "I'm sorry, but you must be logged in to chat with me. Please log in and try again." };
     }
@@ -73,6 +77,6 @@ const smartTutorFlow = ai.defineFlow({
     return { response: text };
 });
 
-export async function getTutorResponse(input: AiSmartTutorInput): Promise<AiSmartTutorOutput> {
-    return await smartTutorFlow(input);
+export async function getTutorResponse(input: AiSmartTutorInput, idToken: string): Promise<AiSmartTutorOutput> {
+    return await smartTutorFlow({input, idToken});
 }

@@ -1,7 +1,4 @@
 
-/**
- * @fileOverview AI-powered quiz and assignment generator logic for teachers.
- */
 import { z } from 'zod';
 import { getFirestore } from 'firebase-admin/firestore';
 import { getAuthenticatedUser } from '@/firebase/auth/get-authenticated-user';

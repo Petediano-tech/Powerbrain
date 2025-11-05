@@ -1,7 +1,4 @@
 
-/**
- * @fileOverview AI-powered career guidance flow logic.
- */
 import { z } from 'zod';
 import { getFirestore } from 'firebase-admin/firestore';
 import { getAuthenticatedUser } from '@/firebase/auth/get-authenticated-user';

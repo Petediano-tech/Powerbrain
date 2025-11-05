@@ -32,8 +32,8 @@ export async function generateQuizAction(input: QuizGeneratorInput): Promise<AiQ
     return await generateQuiz(input);
 }
 
-export async function getTutorResponseAction(input: AiSmartTutorInput): Promise<AiSmartTutorOutput> {
-    return await getTutorResponse(input);
+export async function getTutorResponseAction(input: AiSmartTutorInput, idToken: string): Promise<AiSmartTutorOutput> {
+    return await getTutorResponse(input, idToken);
 }
 
 export async function getStudyPlanAction(input: PlannerInput): Promise<AiStudyPlannerOutput> {
