@@ -3,9 +3,7 @@
  * @fileOverview An AI tutor that can answer questions, summarize notes, or generate practice questions.
  */
 import { z } from 'zod';
-import { getFirestore } from 'firebase-admin/firestore';
 import { getAuthenticatedUser } from '@/firebase/auth/get-authenticated-user';
-import { format } from 'date-fns';
 import { AiSmartTutorOutputSchema } from './schemas';
 import { ai } from '../genkit';
 
@@ -18,10 +16,16 @@ export const AiSmartTutorInputSchema = z.object({
 export type AiSmartTutorInput = z.infer<typeof AiSmartTutorInputSchema>;
 
 export async function getTutorResponse(input: AiSmartTutorInput, idToken: string): Promise<AiSmartTutorOutput> {
+    // The user check can be done here or in the flow.
+    // For consistency, let's check auth at the beginning of the flow.
+    const user = await getAuthenticatedUser(idToken);
+    if (!user) {
+        return { response: "I'm sorry, but you must be logged in to chat with me. Please log in and try again." };
+    }
+    
+    // Now, call the main logic.
     return await smartTutorFlow({input, idToken});
 }
-
-const FREE_TIER_DAILY_LIMIT = 5;
 
 const smartTutorFlow = ai.defineFlow({
     name: 'smartTutorFlow',
@@ -31,49 +35,16 @@ const smartTutorFlow = ai.defineFlow({
     }),
     outputSchema: AiSmartTutorOutputSchema,
 }, async ({ input, idToken }) => {
+    // Authentication is now checked before calling the flow,
+    // but we can leave a redundant check here as a safeguard.
     const user = await getAuthenticatedUser(idToken);
     if (!user) {
-        return { response: "I'm sorry, but you must be logged in to chat with me. Please log in and try again." };
-    }
-
-    const firestore = getFirestore();
-    const profileRef = firestore.collection('userProfiles').doc(user.uid);
-    const profileSnap = await profileRef.get();
-
-    if (!profileSnap.exists()) {
-        return { response: "It seems I can't find your user profile. Please make sure your account is set up correctly." };
+        return { response: "Authentication failed. Please ensure you are logged in." };
     }
     
-    const userProfile = profileSnap.data();
-
-    if (userProfile?.subscriptionTier && userProfile.subscriptionTier !== 'free') {
-        const { text } = await ai.generate({
-            prompt: `You are Brainy, a friendly and expert AI tutor for students in Malawi. Your goal is to help students understand concepts, practice problems, and learn effectively. Use simple, clear language. Grade Level: {{gradeLevel}}. Subject: {{subject}}. Student's question: "{{query}}"`,
-            input,
-        });
-        return { response: text };
-    }
-    
-    const today = format(new Date(), 'yyyy-MM-dd');
-    const lastChatDate = userProfile?.lastChatDate;
-    let dailyChatCount = userProfile?.dailyChatCount || 0;
-
-    if (lastChatDate !== today) {
-        dailyChatCount = 0;
-    }
-
-    if (dailyChatCount >= FREE_TIER_DAILY_LIMIT) {
-        return { response: "You have reached your daily limit of free questions. Please upgrade to a VIP plan for unlimited access to Brainy AI Tutor." };
-    }
-
     const { text } = await ai.generate({
         prompt: `You are Brainy, a friendly and expert AI tutor for students in Malawi. Your goal is to help students understand concepts, practice problems, and learn effectively. Use simple, clear language. Grade Level: {{gradeLevel}}. Subject: {{subject}}. Student's question: "{{query}}"`,
-        input,
-    });
-
-    await profileRef.update({
-        dailyChatCount: dailyChatCount + 1,
-        lastChatDate: today,
+        input: input,
     });
 
     return { response: text };

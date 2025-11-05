@@ -4,7 +4,7 @@ import { z } from 'zod';
 import { getFirestore } from 'firebase-admin/firestore';
 import { getAuthenticatedUser } from '@/firebase/auth/get-authenticated-user';
 import { ai } from '@/ai/genkit';
-import { AiCareerGuidanceOutputSchema } from './schemas';
+import { AiCareerGuidanceOutputSchema, type AiCareerGuidanceOutput } from './schemas';
 
 export const PerformanceDataSchema = z.object({
   strongestSubjects: z.array(z.string()).describe("The student's strongest subjects in school."),
@@ -47,10 +47,10 @@ const careerGuidanceFlow = ai.defineFlow({
     const { output } = await ai.generate({
         prompt: `You are an AI career advisor for Malawian students. Based on the student's performance and interests, provide 2-3 tailored career recommendations, suggest specific degree/diploma programs at Malawian universities (e.g., University of Malawi, MUBAS, KUHeS, Mzuni), and give actionable next steps.
 
-    Student's Strongest Subjects: {{{strongestSubjects}}}
-    Student's Average Score: {{{averageScore}}}%
-    Student's Interests: {{{interests}}}`,
-        input,
+    Student's Strongest Subjects: {{#each input.strongestSubjects}}{{.}}, {{/each}}
+    Student's Average Score: {{input.averageScore}}%
+    Student's Interests: {{#each input.interests}}{{.}}, {{/each}}`,
+        input: { input }, // Nest input to match handlebars template
         output: { schema: AiCareerGuidanceOutputSchema },
     });
     return output!;

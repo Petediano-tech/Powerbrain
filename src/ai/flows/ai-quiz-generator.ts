@@ -3,7 +3,7 @@
 import { z } from 'zod';
 import { getFirestore } from 'firebase-admin/firestore';
 import { getAuthenticatedUser } from '@/firebase/auth/get-authenticated-user';
-import { AiQuizGeneratorOutputSchema } from './schemas';
+import { AiQuizGeneratorOutputSchema, type AiQuizGeneratorOutput } from './schemas';
 import { ai } from '@/ai/genkit';
 
 export const QuizGeneratorInputSchema = z.object({
@@ -48,10 +48,10 @@ const quizGeneratorFlow = ai.defineFlow({
     const { output } = await ai.generate({
         prompt: `You are an AI assistant for teachers in Malawi. Generate a multiple-choice quiz with a specified number of questions on a given topic and for a specific grade level. Each question should have 4 options, a correct answer, and a brief explanation.
 
-    Subject: {{{subject}}}
-    Topic: {{{topic}}}
-    Number of Questions: {{{numberOfQuestions}}}
-    Grade Level: {{{gradeLevel}}}`,
+    Subject: {{subject}}
+    Topic: {{topic}}
+    Number of Questions: {{numberOfQuestions}}
+    Grade Level: {{gradeLevel}}`,
         input,
         output: { schema: AiQuizGeneratorOutputSchema },
     });

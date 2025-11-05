@@ -5,7 +5,7 @@
  */
 import { z } from 'zod';
 import { ai } from '@/ai/genkit';
-import { AiGradeQuizzesOutputSchema } from './schemas';
+import { AiGradeQuizzesOutputSchema, type AiGradeQuizzesOutput } from './schemas';
 
 export const AiGradeQuizzesInputSchema = z.object({
   quizContent: z.string().describe('The content of the quiz, including questions and possible answers.'),

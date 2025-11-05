@@ -5,7 +5,7 @@
  */
 
 import { z } from 'zod';
-import { AiStudyInsightsOutputSchema } from './schemas';
+import { AiStudyInsightsOutputSchema, type StudyInsightsOutput } from './schemas';
 import { ai } from '@/ai/genkit';
 
 
@@ -25,7 +25,7 @@ export const StudyInsightsInputSchema = z.object({
 });
 export type StudyInsightsInput = z.infer<typeof StudyInsightsInputSchema>;
 
-export async function generateStudyInsights(input: StudyInsightsInput): Promise<AiStudyInsightsOutput> {
+export async function generateStudyInsights(input: StudyInsightsInput): Promise<StudyInsightsOutput> {
     return await studyInsightsFlow(input);
 }
 
@@ -39,18 +39,18 @@ const studyInsightsFlow = ai.defineFlow({
 
     Analyze the following data to provide the student with an overview of their performance, their strengths and weaknesses, and personalized recommendations for improvement.
 
-    Study Streaks: {{{studyStreaks}}} days
-    Total Time Studied: {{{totalTimeStudied}}} minutes
-    Quizzes Completed: {{{quizzesCompleted}}}
-    Topics Mastered: {{{topicsMastered}}}
-    Performance in Math: {{{performanceInMath}}}%
-    Performance in English: {{{performanceInEnglish}}}%
-    Performance in Science: {{{performanceInScience}}}%
-    Performance in History: {{{performanceInHistory}}}%
-    Performance in Chichewa: {{{performanceInChichewa}}}%
-    Recent Math Scores: {{{recentMathScores}}}
-    Recent English Scores: {{{recentEnglishScores}}}
-    Favourite Subject: {{{favouriteSubject}}}
+    Study Streaks: {{studyStreaks}} days
+    Total Time Studied: {{totalTimeStudied}} minutes
+    Quizzes Completed: {{quizzesCompleted}}
+    Topics Mastered: {{topicsMastered}}
+    Performance in Math: {{performanceInMath}}%
+    Performance in English: {{performanceInEnglish}}%
+    Performance in Science: {{performanceInScience}}%
+    Performance in History: {{performanceInHistory}}%
+    Performance in Chichewa: {{performanceInChichewa}}%
+    Recent Math Scores: {{#each recentMathScores}}{{.}}, {{/each}}
+    Recent English Scores: {{#each recentEnglishScores}}{{.}}, {{/each}}
+    Favourite Subject: {{favouriteSubject}}
 
     Provide the analysis in the following format:
 

@@ -4,7 +4,7 @@ import { z } from 'zod';
 import { getFirestore } from 'firebase-admin/firestore';
 import { getAuthenticatedUser } from '@/firebase/auth/get-authenticated-user';
 import { ai } from '@/ai/genkit';
-import { AiStudyPlannerOutputSchema } from './schemas';
+import { AiStudyPlannerOutputSchema, type AiStudyPlannerOutput } from './schemas';
 
 export const PlannerInputSchema = z.object({
   weakestSubjects: z.array(z.string()).describe("The student's weakest subjects, which need more focus."),
@@ -45,9 +45,9 @@ const studyPlannerFlow = ai.defineFlow({
     const { output } = await ai.generate({
         prompt: `You are an AI study planner. Create a personalized 7-day study schedule for a student. The plan should prioritize their weakest subjects and prepare them for upcoming exams. Include a short, actionable study tip for each day.
 
-    Weakest Subjects: {{{weakestSubjects}}}
-    Upcoming Exams: {{#each upcomingExams}}{{subject}} on {{date}}{{/each}}`,
-        input,
+    Weakest Subjects: {{#each input.weakestSubjects}}{{.}}, {{/each}}
+    Upcoming Exams: {{#each input.upcomingExams}}{{subject}} on {{date}}{{/each}}`,
+        input: { input },
         output: { schema: AiStudyPlannerOutputSchema },
     });
     return output!;
