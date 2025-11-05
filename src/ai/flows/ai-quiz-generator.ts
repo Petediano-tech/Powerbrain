@@ -1,11 +1,12 @@
+'use server';
 /**
  * @fileOverview AI-powered quiz and assignment generator logic for teachers.
  */
 import { z } from 'zod';
 import { getFirestore } from 'firebase-admin/firestore';
 import { getAuthenticatedUser } from '@/firebase/auth/get-authenticated-user';
-import type { GenkitPrompt } from 'genkit';
 import { AiQuizGeneratorOutputSchema } from './schemas';
+import { ai } from '@/ai/genkit';
 
 export const QuizGeneratorInputSchema = z.object({
   subject: z.string().describe('The subject for the quiz.'),
@@ -15,26 +16,42 @@ export const QuizGeneratorInputSchema = z.object({
 });
 export type QuizGeneratorInput = z.infer<typeof QuizGeneratorInputSchema>;
 
-export async function quizGeneratorLogic(input: QuizGeneratorInput, prompt: GenkitPrompt) {
-  const user = await getAuthenticatedUser();
-  if (!user) {
-    throw new Error('Authentication required. You must be a teacher to use this feature.');
-  }
+const aiQuizGeneratorPrompt = ai.definePrompt({
+    name: 'aiQuizGeneratorPrompt',
+    input: {schema: QuizGeneratorInputSchema},
+    output: {schema: AiQuizGeneratorOutputSchema},
+    prompt: `You are an AI assistant for teachers in Malawi. Generate a multiple-choice quiz with a specified number of questions on a given topic and for a specific grade level. Each question should have 4 options, a correct answer, and a brief explanation.
 
-  const firestore = getFirestore();
-  const profileRef = firestore.collection('userProfiles').doc(user.uid);
-  const profileSnap = await profileRef.get();
+    Subject: {{{subject}}}
+    Topic: {{{topic}}}
+    Number of Questions: {{{numberOfQuestions}}}
+    Grade Level: {{{gradeLevel}}}`,
+});
 
-  if (!profileSnap.exists()) {
-      throw new Error("User profile not found.");
-  }
-  
-  const userProfile = profileSnap.data();
+export const quizGeneratorFlow = ai.defineFlow({ 
+    name: 'aiQuizGeneratorFlow', 
+    inputSchema: QuizGeneratorInputSchema, 
+    outputSchema: AiQuizGeneratorOutputSchema 
+}, async (input) => {
+    const user = await getAuthenticatedUser();
+    if (!user) {
+        throw new Error('Authentication required. You must be a teacher to use this feature.');
+    }
 
-  if (userProfile?.role !== 'teacher') {
-    throw new Error('Access denied. This feature is for teachers only.');
-  }
-  
-  const { output } = await prompt(input);
-  return output!;
-}
+    const firestore = getFirestore();
+    const profileRef = firestore.collection('userProfiles').doc(user.uid);
+    const profileSnap = await profileRef.get();
+
+    if (!profileSnap.exists()) {
+        throw new Error("User profile not found.");
+    }
+    
+    const userProfile = profileSnap.data();
+
+    if (userProfile?.role !== 'teacher') {
+        throw new Error('Access denied. This feature is for teachers only.');
+    }
+    
+    const { output } = await aiQuizGeneratorPrompt(input);
+    return output!;
+});

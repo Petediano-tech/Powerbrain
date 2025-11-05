@@ -1,10 +1,11 @@
+'use server';
 /**
  * @fileOverview An AI agent that provides study insights based on student data.
  */
 
 import { z } from 'zod';
-import type { GenkitPrompt } from 'genkit';
-import type { StudyInsightsOutput } from './schemas';
+import { AiStudyInsightsOutputSchema } from './schemas';
+import { ai } from '@/ai/genkit';
 
 
 export const StudyInsightsInputSchema = z.object({
@@ -23,7 +24,40 @@ export const StudyInsightsInputSchema = z.object({
 });
 export type StudyInsightsInput = z.infer<typeof StudyInsightsInputSchema>;
 
-export async function studyInsightsLogic(input: StudyInsightsInput, prompt: GenkitPrompt): Promise<StudyInsightsOutput> {
-  const { output } = await prompt(input);
+const studyInsightsPrompt = ai.definePrompt({
+    name: 'studyInsightsPrompt',
+    input: {schema: StudyInsightsInputSchema},
+    output: {schema: AiStudyInsightsOutputSchema},
+    prompt: `You are an AI study assistant that analyzes student data and provides personalized insights.
+
+    Analyze the following data to provide the student with an overview of their performance, their strengths and weaknesses, and personalized recommendations for improvement.
+
+    Study Streaks: {{{studyStreaks}}} days
+    Total Time Studied: {{{totalTimeStudied}}} minutes
+    Quizzes Completed: {{{quizzesCompleted}}}
+    Topics Mastered: {{{topicsMastered}}}
+    Performance in Math: {{{performanceInMath}}}%
+    Performance in English: {{{performanceInEnglish}}}%
+    Performance in Science: {{{performanceInScience}}}%
+    Performance in History: {{{performanceInHistory}}}%
+    Performance in Chichewa: {{{performanceInChichewa}}}%
+    Recent Math Scores: {{{recentMathScores}}}
+    Recent English Scores: {{{recentEnglishScores}}}
+    Favourite Subject: {{{favouriteSubject}}}
+
+    Provide the analysis in the following format:
+
+    Overall Performance: [Overall assessment of the student\u0027s performance]
+    Strengths: [Specific strengths of the student]
+    Weaknesses: [Specific weaknesses of the student]
+    Recommendations: [Personalized recommendations for the student]`,
+});
+
+export const studyInsightsFlow = ai.defineFlow({ 
+    name: 'studyInsightsFlow', 
+    inputSchema: StudyInsightsInputSchema, 
+    outputSchema: AiStudyInsightsOutputSchema 
+}, async (input) => {
+  const { output } = await studyInsightsPrompt(input);
   return output!;
-}
+});

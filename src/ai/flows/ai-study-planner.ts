@@ -1,10 +1,12 @@
+'use server';
 /**
  * @fileOverview AI-powered study plan generator logic.
  */
 import { z } from 'zod';
 import { getFirestore } from 'firebase-admin/firestore';
 import { getAuthenticatedUser } from '@/firebase/auth/get-authenticated-user';
-import type { GenkitPrompt } from 'genkit';
+import { ai } from '@/ai/genkit';
+import { AiStudyPlannerOutputSchema } from './schemas';
 
 export const PlannerInputSchema = z.object({
   weakestSubjects: z.array(z.string()).describe("The student's weakest subjects, which need more focus."),
@@ -12,25 +14,39 @@ export const PlannerInputSchema = z.object({
 });
 export type PlannerInput = z.infer<typeof PlannerInputSchema>;
 
-export async function studyPlannerLogic(input: PlannerInput, prompt: GenkitPrompt) {
-  const user = await getAuthenticatedUser();
-  if (!user) {
-    throw new Error('Authentication required.');
-  }
+const aiStudyPlannerPrompt = ai.definePrompt({
+    name: 'aiStudyPlannerPrompt',
+    input: {schema: PlannerInputSchema},
+    output: {schema: AiStudyPlannerOutputSchema},
+    prompt: `You are an AI study planner. Create a personalized 7-day study schedule for a student. The plan should prioritize their weakest subjects and prepare them for upcoming exams. Include a short, actionable study tip for each day.
 
-  const firestore = getFirestore();
-  const profileRef = firestore.collection('userProfiles').doc(user.uid);
-  const profileSnap = await profileRef.get();
+    Weakest Subjects: {{{weakestSubjects}}}
+    Upcoming Exams: {{#each upcomingExams}}{{subject}} on {{date}}{{/each}}`,
+});
 
-  if (!profileSnap.exists()) {
-      throw new Error("User profile not found.");
-  }
-  
-  const userProfile = profileSnap.data();
-  if (!userProfile || userProfile.subscriptionTier === 'free') {
-    throw new Error('This is a premium feature. Please upgrade to a VIP plan.');
-  }
-  
-  const { output } = await prompt(input);
-  return output!;
-}
+export const studyPlannerFlow = ai.defineFlow({ 
+    name: 'aiStudyPlannerFlow', 
+    inputSchema: PlannerInputSchema, 
+    outputSchema: AiStudyPlannerOutputSchema 
+}, async (input) => {
+    const user = await getAuthenticatedUser();
+    if (!user) {
+        throw new Error('Authentication required.');
+    }
+
+    const firestore = getFirestore();
+    const profileRef = firestore.collection('userProfiles').doc(user.uid);
+    const profileSnap = await profileRef.get();
+
+    if (!profileSnap.exists()) {
+        throw new Error("User profile not found.");
+    }
+    
+    const userProfile = profileSnap.data();
+    if (!userProfile || userProfile.subscriptionTier === 'free') {
+        throw new Error('This is a premium feature. Please upgrade to a VIP plan.');
+    }
+    
+    const { output } = await aiStudyPlannerPrompt(input);
+    return output!;
+});

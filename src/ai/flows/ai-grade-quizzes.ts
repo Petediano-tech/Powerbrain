@@ -1,8 +1,10 @@
+'use server';
 /**
  * @fileOverview AI-powered quiz grading flow logic.
  */
 import { z } from 'zod';
-import type { GenkitPrompt } from 'genkit';
+import { ai } from '@/ai/genkit';
+import { AiGradeQuizzesOutputSchema } from './schemas';
 
 export const AiGradeQuizzesInputSchema = z.object({
   quizContent: z.string().describe('The content of the quiz, including questions and possible answers.'),
@@ -11,7 +13,34 @@ export const AiGradeQuizzesInputSchema = z.object({
 });
 export type AiGradeQuizzesInput = z.infer<typeof AiGradeQuizzesInputSchema>;
 
-export async function gradeQuizzesLogic(input: AiGradeQuizzesInput, prompt: GenkitPrompt) {
-  const { output } = await prompt(input);
+
+const aiGradeQuizzesPrompt = ai.definePrompt({
+    name: 'aiGradeQuizzesPrompt',
+    input: {schema: AiGradeQuizzesInputSchema},
+    output: {schema: AiGradeQuizzesOutputSchema},
+    prompt: `You are an AI grading assistant that automatically grades quizzes based on the provided content and student answers.
+
+    Quiz Content:
+    {{quizContent}}
+
+    Student Answers:
+    {{studentAnswers}}
+
+    Teacher Instructions (if any):
+    {{teacherInstructions}}
+
+    Provide an overall grade and detailed feedback on the student's answers. The feedback should include specific corrections and explanations.
+
+    Ensure that the grade and feedback are aligned with the quiz content and any teacher instructions provided.  Give the grade in the format A,B,C,D,E or F.
+    Grade:
+    Feedback: `,
+});
+
+export const gradeQuizzesFlow = ai.defineFlow({ 
+    name: 'aiGradeQuizzesFlow', 
+    inputSchema: AiGradeQuizzesInputSchema, 
+    outputSchema: AiGradeQuizzesOutputSchema 
+}, async (input) => {
+  const { output } = await aiGradeQuizzesPrompt(input);
   return output!;
-}
+});
