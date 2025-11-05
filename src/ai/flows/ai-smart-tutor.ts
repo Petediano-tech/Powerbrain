@@ -1,4 +1,3 @@
-'use server';
 /**
  * @fileOverview An AI tutor that can answer questions, summarize notes, or generate practice questions.
  */
