@@ -5,14 +5,16 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { useUser } from "@/firebase";
-import { BarChart, FileQuestion, FileUp, Megaphone, PlusCircle, PencilRuler } from "lucide-react";
+import { BarChart, FileQuestion, FileUp, Megaphone, PlusCircle, PencilRuler, BookCopy, Users } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { Bar, BarChart as RechartsBarChart, ResponsiveContainer, XAxis, YAxis } from "recharts"
 
 const quickActions = [
-    { name: "New Resource", icon: <FileUp />, href: "#" },
-    { name: "New Assignment", icon: <PlusCircle />, href: "#" },
+    { name: "Resource Library", icon: <BookCopy />, href: "/repository" },
+    { name: "Create Assignment", icon: <PlusCircle />, href: "#" },
+    { name: "Student Analytics", icon: <BarChart />, href: "#" },
+    { name: "Quiz Creator", icon: <PencilRuler />, href: "/teacher/quiz-generator" },
 ]
 
 const classes = [
@@ -50,7 +52,7 @@ export default function TeacherPage() {
 
   return (
     <div className="space-y-6 text-foreground bg-background">
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {quickActions.map(action => (
                 <Link href={action.href} key={action.name} onClick={(e) => {
                     if (action.href === '#') {
@@ -84,6 +86,12 @@ export default function TeacherPage() {
                         </Card>
                     </button>
                  ))}
+                 <button onClick={() => handleFeatureClick("Create Class")} className="text-left">
+                    <Card className="min-w-[220px] w-[220px] flex-shrink-0 bg-muted hover:bg-muted/80 flex flex-col items-center justify-center text-center p-6 transition-colors">
+                        <PlusCircle className="h-8 w-8 text-muted-foreground mb-2" />
+                        <p className="font-semibold text-muted-foreground">Create New Class</p>
+                    </Card>
+                </button>
             </div>
         </div>
 
@@ -132,5 +140,3 @@ export default function TeacherPage() {
     </div>
   );
 }
-
-    
