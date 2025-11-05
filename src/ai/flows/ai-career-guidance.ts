@@ -17,7 +17,7 @@ const careerGuidanceFlow = ai.defineFlow(
   },
   async (input) => {
     const { output } = await ai.generate({
-        model: 'googleai/gemini-pro',
+        model: 'googleai/gemini-1.0-pro',
         prompt: `You are an AI career advisor for Malawian students. Based on the student's performance and interests, provide 2-3 tailored career recommendations, suggest specific degree/diploma programs at Malawian universities (e.g., University of Malawi, MUBAS, KUHeS, Mzuni), and give actionable next steps.
 
         Student's Strongest Subjects: {{#each strongestSubjects}}{{.}}, {{/each}}

@@ -18,7 +18,7 @@ const quizGeneratorFlow = ai.defineFlow(
   },
   async (input) => {
     const { output } = await ai.generate({
-        model: 'googleai/gemini-pro',
+        model: 'googleai/gemini-1.0-pro',
         prompt: `You are an AI assistant for teachers in Malawi. Generate a multiple-choice quiz with a specified number of questions on a given topic and for a specific grade level. Each question should have 4 options, a correct answer, and a brief explanation.
 
         Subject: {{subject}}

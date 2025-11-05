@@ -15,7 +15,7 @@ const gradeQuizzesFlow = ai.defineFlow({
     outputSchema: AiGradeQuizzesOutputSchema 
 }, async (input) => {
   const { output } = await ai.generate({
-    model: 'googleai/gemini-pro',
+    model: 'googleai/gemini-1.0-pro',
     prompt: `You are an AI grading assistant that automatically grades quizzes based on the provided content and student answers.
 
     Quiz Content:
