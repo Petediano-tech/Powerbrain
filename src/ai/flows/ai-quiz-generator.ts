@@ -1,6 +1,4 @@
 import { z } from 'zod';
-import { getFirestore } from 'firebase-admin/firestore';
-import { getAuthenticatedUser } from '@/firebase/auth/get-authenticated-user';
 import { AiQuizGeneratorOutputSchema, type AiQuizGeneratorOutput } from './schemas';
 import { ai } from '@/ai/genkit';
 
@@ -12,60 +10,31 @@ export const QuizGeneratorInputSchema = z.object({
 });
 export type QuizGeneratorInput = z.infer<typeof QuizGeneratorInputSchema>;
 
-const prompt = ai.definePrompt({
-    name: 'aiQuizGeneratorPrompt',
-    input: { schema: QuizGeneratorInputSchema },
-    output: { schema: AiQuizGeneratorOutputSchema },
-    prompt: `You are an AI assistant for teachers in Malawi. Generate a multiple-choice quiz with a specified number of questions on a given topic and for a specific grade level. Each question should have 4 options, a correct answer, and a brief explanation.
-
-    Subject: {{subject}}
-    Topic: {{topic}}
-    Number of Questions: {{numberOfQuestions}}
-    Grade Level: {{gradeLevel}}`,
-});
-
 const quizGeneratorFlow = ai.defineFlow(
   {
     name: 'aiQuizGeneratorFlow',
     inputSchema: QuizGeneratorInputSchema,
     outputSchema: AiQuizGeneratorOutputSchema,
   },
-  async (input, streamingCallback, context) => {
-    // Auth check must be inside the flow
-    const idToken = context.auth?.idToken;
-    if (!idToken) {
-         throw new Error('Authentication required.');
-    }
-    const user = await getAuthenticatedUser(idToken);
-    if (!user) {
-      throw new Error(
-        'Authentication required. You must be a teacher to use this feature.'
-      );
-    }
+  async (input) => {
+    const { output } = await ai.generate({
+        model: 'googleai/gemini-1.5-flash-preview',
+        prompt: `You are an AI assistant for teachers in Malawi. Generate a multiple-choice quiz with a specified number of questions on a given topic and for a specific grade level. Each question should have 4 options, a correct answer, and a brief explanation.
 
-    const firestore = getFirestore();
-    const profileRef = firestore.collection('userProfiles').doc(user.uid);
-    const profileSnap = await profileRef.get();
-
-    if (!profileSnap.exists()) {
-      throw new Error('User profile not found.');
-    }
-
-    const userProfile = profileSnap.data();
-
-    if (userProfile?.role !== 'teacher') {
-      throw new Error('Access denied. This feature is for teachers only.');
-    }
-
-    const { output } = await prompt(input);
+        Subject: {{subject}}
+        Topic: {{topic}}
+        Number of Questions: {{numberOfQuestions}}
+        Grade Level: {{gradeLevel}}`,
+        input,
+        output: { schema: AiQuizGeneratorOutputSchema },
+    });
     return output!;
   }
 );
 
 
 export async function generateQuiz(
-  input: QuizGeneratorInput,
-  context: any
+  input: QuizGeneratorInput
 ): Promise<AiQuizGeneratorOutput> {
-  return quizGeneratorFlow(input, context);
+  return quizGeneratorFlow(input);
 }

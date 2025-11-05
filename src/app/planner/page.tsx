@@ -1,4 +1,3 @@
-
 'use client';
 import { AIStudyPlanner } from '@/components/ai-study-planner';
 

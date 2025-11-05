@@ -1,4 +1,3 @@
-
 'use client';
 import { AICareerAdvisor } from '@/components/ai-career-advisor';
 

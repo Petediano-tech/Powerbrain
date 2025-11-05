@@ -1,4 +1,3 @@
-
 'use client';
 import { useState } from 'react';
 import {
@@ -12,21 +11,16 @@ import {
 import { Button } from '@/components/ui/button';
 import {
   PencilRuler,
-  Lightbulb,
   Sparkles,
-  Crown,
-  Check,
   Clipboard,
-  ClipboardCheck,
 } from 'lucide-react';
 import {
   type AiQuizGeneratorOutput,
 } from '@/ai/flows/schemas';
 import { Skeleton } from './ui/skeleton';
-import { useDoc, useMemoFirebase, useUser } from '@/firebase';
+import { useDoc, useMemoFirebase } from '@/firebase';
 import { doc, getFirestore } from 'firebase/firestore';
 import { useUserStore } from '@/hooks/use-user-store';
-import Link from 'next/link';
 import { Label } from './ui/label';
 import { Input } from './ui/input';
 import {
@@ -49,7 +43,6 @@ export function AIQuizGenerator() {
 
   const firestore = getFirestore();
   const { profileId } = useUserStore();
-  const { user } = useUser();
   const { toast } = useToast();
 
   const userProfileRef = useMemoFirebase(() => {
@@ -60,23 +53,19 @@ export function AIQuizGenerator() {
   const { data: userProfile, isLoading: isProfileLoading } =
     useDoc(userProfileRef);
 
-  const isPremiumUser =
-    userProfile?.subscriptionTier && userProfile.subscriptionTier !== 'free';
-
   const handleGenerateQuiz = async () => {
-    if (!userProfile || !user) return;
+    if (!userProfile) return;
 
     setIsLoading(true);
     setQuiz(null);
 
     try {
-      const idToken = await user.getIdToken();
       const result = await generateQuizAction({
         subject,
         topic,
         numberOfQuestions: numQuestions,
         gradeLevel: userProfile.gradeLevel || 'Form 2',
-      }, idToken);
+      });
       setQuiz(result);
     } catch (error) {
       console.error('Failed to generate AI quiz:', error);
@@ -109,50 +98,6 @@ export function AIQuizGenerator() {
       })
       .join('\n\n');
   };
-
-  if (isProfileLoading) {
-    return <Skeleton className="h-[500px] w-full" />;
-  }
-
-  if (!isPremiumUser) {
-    return (
-      <Card className="flex flex-col items-center justify-center text-center">
-        <CardHeader>
-          <div className="p-3 bg-yellow-400/20 rounded-full mx-auto">
-            <Crown className="h-10 w-10 text-yellow-500" />
-          </div>
-          <CardTitle className="mt-4 text-2xl">
-            Unlock the AI Quiz Generator
-          </CardTitle>
-          <CardDescription>
-            This is a premium feature for teachers. Upgrade to save hours on
-            creating assessments.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <ul className="space-y-2 text-left text-muted-foreground text-sm">
-            <li className="flex items-center gap-2">
-              <Check className="h-4 w-4 text-primary" /> Instantly generate
-              curriculum-aligned quizzes.
-            </li>
-            <li className="flex items-center gap-2">
-              <Check className="h-4 w-4 text-primary" /> Specify any topic,
-              subject, and difficulty.
-            </li>
-            <li className="flex items-center gap-2">
-              <Check className="h-4 w-4 text-primary" /> Get questions, answers,
-              and explanations.
-            </li>
-          </ul>
-        </CardContent>
-        <CardFooter>
-          <Button asChild size="lg" className="w-full">
-            <Link href="/subscribe">Upgrade to VIP</Link>
-          </Button>
-        </CardFooter>
-      </Card>
-    );
-  }
 
   return (
     <Card>

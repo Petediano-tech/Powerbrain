@@ -1,4 +1,3 @@
-
 'use client';
 import { AIQuizGenerator } from '@/components/ai-quiz-generator';
 

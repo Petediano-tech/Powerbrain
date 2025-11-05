@@ -1,4 +1,3 @@
-
 'use client';
 import { useState } from 'react';
 import {
@@ -10,7 +9,7 @@ import {
   CardFooter,
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Briefcase, Lightbulb, ShieldAlert, Sparkles, University, Check, Crown } from 'lucide-react';
+import { Briefcase, Lightbulb, Sparkles, University } from 'lucide-react';
 import {
   type AiCareerGuidanceOutput,
 } from '@/ai/flows/schemas';
@@ -18,7 +17,6 @@ import { Skeleton } from './ui/skeleton';
 import { useDoc, useMemoFirebase, useUser } from '@/firebase';
 import { doc, getFirestore } from 'firebase/firestore';
 import { useUserStore } from '@/hooks/use-user-store';
-import Link from 'next/link';
 import { getCareerGuidanceAction } from '@/app/actions/ai-actions';
 
 export function AICareerAdvisor() {
@@ -36,10 +34,8 @@ export function AICareerAdvisor() {
   const { data: userProfile, isLoading: isProfileLoading } =
     useDoc(userProfileRef);
 
-  const isPremiumUser = userProfile?.subscriptionTier && userProfile.subscriptionTier !== 'free';
-
   const handleGetReport = async () => {
-    if (!userProfile || !user) return;
+    if (!userProfile) return;
 
     setIsLoading(true);
     setReport(null);
@@ -51,8 +47,7 @@ export function AICareerAdvisor() {
     };
 
     try {
-      const idToken = await user.getIdToken();
-      const result = await getCareerGuidanceAction(performanceData, idToken);
+      const result = await getCareerGuidanceAction(performanceData);
       setReport(result);
     } catch (error) {
       console.error('Failed to get AI career report:', error);
@@ -92,49 +87,6 @@ export function AICareerAdvisor() {
       </div>
     </div>
   );
-
-  if (isProfileLoading) {
-     return (
-         <Card className="flex flex-col h-full">
-             <CardHeader>
-                 <Skeleton className="h-8 w-1/2" />
-                 <Skeleton className="h-4 w-3/4" />
-             </CardHeader>
-             <CardContent className="flex-1 flex items-center justify-center">
-                 <div className="h-10 w-10 animate-spin rounded-full border-4 border-solid border-primary border-t-transparent"></div>
-             </CardContent>
-             <CardFooter>
-                 <Skeleton className="h-12 w-full" />
-             </CardFooter>
-         </Card>
-     )
-  }
-
-  if (!isPremiumUser) {
-    return (
-        <Card className="flex flex-col items-center justify-center text-center h-full">
-            <CardHeader>
-                <div className="p-3 bg-yellow-400/20 rounded-full mx-auto">
-                    <Crown className="h-10 w-10 text-yellow-500" />
-                </div>
-                <CardTitle className="mt-4 text-2xl">Unlock Your Future</CardTitle>
-                <CardDescription>This is a premium feature. Upgrade to get personalized career and course recommendations.</CardDescription>
-            </CardHeader>
-            <CardContent>
-                <ul className="space-y-2 text-left text-muted-foreground text-sm">
-                    <li className="flex items-center gap-2"><Check className="h-4 w-4 text-primary" /> Discover careers based on your strengths.</li>
-                    <li className="flex items-center gap-2"><Check className="h-4 w-4 text-primary" /> Get matched with courses at Malawian universities.</li>
-                    <li className="flex items-center gap-2"><Check className="h-4 w-4 text-primary" /> Receive actionable advice to reach your goals.</li>
-                </ul>
-            </CardContent>
-            <CardFooter>
-                <Button asChild size="lg" className="w-full">
-                    <Link href="/subscribe">Upgrade to VIP</Link>
-                </Button>
-            </CardFooter>
-        </Card>
-    )
-  }
 
   return (
     <Card className="flex flex-col h-full">

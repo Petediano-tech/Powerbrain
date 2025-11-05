@@ -8,24 +8,24 @@ import { generateStudyInsights, type StudyInsightsInput, type StudyInsightsOutpu
 import { getStudyPlan, type PlannerInput, type AiStudyPlannerOutput } from '@/ai/flows/ai-study-planner';
 
 
-export async function getCareerGuidanceAction(input: PerformanceData, idToken: string): Promise<AiCareerGuidanceOutput> {
-    return await getCareerGuidance(input, { auth: { idToken, uid: '' } });
+export async function getCareerGuidanceAction(input: PerformanceData): Promise<AiCareerGuidanceOutput> {
+    return await getCareerGuidance(input);
 }
 
 export async function gradeQuizAction(input: AiGradeQuizzesInput): Promise<AiGradeQuizzesOutput> {
     return await gradeQuiz(input);
 }
 
-export async function generateQuizAction(input: QuizGeneratorInput, idToken: string): Promise<AiQuizGeneratorOutput> {
-    return await generateQuiz(input, { auth: { idToken, uid: '' } });
+export async function generateQuizAction(input: QuizGeneratorInput): Promise<AiQuizGeneratorOutput> {
+    return await generateQuiz(input);
 }
 
-export async function getTutorResponseAction(input: AiSmartTutorInput, idToken: string): Promise<AiSmartTutorOutput> {
-    return await getTutorResponse(input, { auth: { idToken, uid: '' } });
+export async function getTutorResponseAction(input: AiSmartTutorInput): Promise<AiSmartTutorOutput> {
+    return await getTutorResponse(input);
 }
 
-export async function getStudyPlanAction(input: PlannerInput, idToken: string): Promise<AiStudyPlannerOutput> {
-    return await getStudyPlan(input, { auth: { idToken, uid: '' } });
+export async function getStudyPlanAction(input: PlannerInput): Promise<AiStudyPlannerOutput> {
+    return await getStudyPlan(input);
 }
 
 export async function generateStudyInsightsAction(input: StudyInsightsInput): Promise<StudyInsightsOutput> {

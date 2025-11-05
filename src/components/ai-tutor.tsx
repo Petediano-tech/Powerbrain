@@ -1,4 +1,3 @@
-
 'use client';
 
 import React, { useState, useRef, useEffect } from 'react';
@@ -81,7 +80,7 @@ export function AITutor() {
   }, [messages, isLoading]);
 
   const handleSendMessage = async (prompt: string) => {
-    if (!prompt.trim() || !user) return;
+    if (!prompt.trim()) return;
 
     const userMessage: Message = { role: 'user', content: prompt };
     setMessages((prev) => [...prev, userMessage]);
@@ -89,8 +88,7 @@ export function AITutor() {
     setIsLoading(true);
 
     try {
-      const idToken = await user.getIdToken();
-      const response = await getTutorResponseAction({ query: prompt, gradeLevel: userProfile?.gradeLevel || 'Form 3' }, idToken);
+      const response = await getTutorResponseAction({ query: prompt, gradeLevel: userProfile?.gradeLevel || 'Form 3' });
       const assistantMessage: Message = { role: 'assistant', content: response.response };
       setMessages((prev) => [...prev, assistantMessage]);
     } catch (error) {
