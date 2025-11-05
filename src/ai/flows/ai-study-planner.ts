@@ -1,4 +1,6 @@
 
+'use server';
+
 import { z } from 'zod';
 import { ai } from '@/ai/genkit';
 import { AiStudyPlannerOutputSchema, type AiStudyPlannerOutput } from './schemas';
@@ -15,7 +17,7 @@ const studyPlannerFlow = ai.defineFlow({
     outputSchema: AiStudyPlannerOutputSchema 
 }, async (input) => {
     const { output } = await ai.generate({
-        model: 'googleai/gemini-1.5-flash-latest',
+        model: 'googleai/gemini-pro',
         prompt: `You are an AI study planner. Create a personalized 7-day study schedule for a student. The plan should prioritize their weakest subjects and prepare them for upcoming exams. Include a short, actionable study tip for each day.
 
         Weakest Subjects: {{#each weakestSubjects}}{{.}}, {{/each}}

@@ -1,4 +1,6 @@
 
+'use server';
+
 import { z } from 'zod';
 import { AiSmartTutorOutputSchema, type AiSmartTutorOutput } from './schemas';
 import { ai } from '../genkit';
@@ -10,19 +12,19 @@ export const AiSmartTutorInputSchema = z.object({
 });
 export type AiSmartTutorInput = z.infer<typeof AiSmartTutorInputSchema>;
 
+export async function getTutorResponse(input: AiSmartTutorInput): Promise<AiSmartTutorOutput> {
+    return smartTutorFlow(input);
+}
+
 const smartTutorFlow = ai.defineFlow({
     name: 'smartTutorFlow',
     inputSchema: AiSmartTutorInputSchema,
     outputSchema: AiSmartTutorOutputSchema,
 }, async (input) => {
     const { text } = await ai.generate({
-        model: 'googleai/gemini-1.5-flash-latest',
+        model: 'googleai/gemini-pro',
         prompt: `You are Brainy, a friendly and expert AI tutor for students in Malawi. Your goal is to help students understand concepts, practice problems, and learn effectively. Use simple, clear language. Grade Level: {{gradeLevel}}. Subject: {{subject}}. Student's question: "{{query}}"`,
     });
 
     return { response: text };
 });
-
-export async function getTutorResponse(input: AiSmartTutorInput): Promise<AiSmartTutorOutput> {
-    return smartTutorFlow(input);
-}

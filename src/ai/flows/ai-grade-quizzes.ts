@@ -1,4 +1,6 @@
 
+'use server';
+
 import { z } from 'zod';
 import { ai } from '@/ai/genkit';
 import { AiGradeQuizzesOutputSchema, type AiGradeQuizzesOutput } from './schemas';
@@ -21,7 +23,7 @@ const gradeQuizzesFlow = ai.defineFlow({
     outputSchema: AiGradeQuizzesOutputSchema 
 }, async (input) => {
   const { output } = await ai.generate({
-    model: 'googleai/gemini-1.5-flash-latest',
+    model: 'googleai/gemini-pro',
     prompt: `You are an AI grading assistant that automatically grades quizzes based on the provided content and student answers.
 
     Quiz Content:
