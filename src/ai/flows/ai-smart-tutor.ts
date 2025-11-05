@@ -15,7 +15,7 @@ const smartTutorFlow = ai.defineFlow({
     outputSchema: AiSmartTutorOutputSchema,
 }, async (input) => {
     const { text } = await ai.generate({
-        model: 'googleai/gemini-1.0-pro',
+        model: 'googleai/gemini-1.5-flash-latest',
         prompt: `You are Brainy, a friendly and expert AI tutor for students in Malawi. Your goal is to help students understand concepts, practice problems, and learn effectively. Use simple, clear language. Grade Level: {{gradeLevel}}. Subject: {{subject}}. Student's question: "{{query}}"`,
     });
 
