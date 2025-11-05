@@ -38,7 +38,7 @@ export default function HomePage() {
         return doc(firestore, 'userAccounts', user.uid);
       }, [firestore, user]);
 
-    const { data: userAccount } = useDoc(userAccountRef);
+    const { data: userAccount, isLoading: isAccountLoading } = useDoc(userAccountRef);
     
     useEffect(() => {
         if (userAccount) {
@@ -83,7 +83,7 @@ export default function HomePage() {
         return PlaceHolderImages[0]?.imageUrl;
     }, [user]);
 
-    const isLoading = isUserLoading || !user || isProfileLoading;
+    const isLoading = isUserLoading || isAccountLoading || isProfileLoading;
 
     if (isLoading) {
         return <LoadingSpinner />;
@@ -91,9 +91,7 @@ export default function HomePage() {
 
     if (userProfile?.role === 'teacher') {
         return (
-            <AppShell>
-                <TeacherPage />
-            </AppShell>
+            <TeacherPage />
         );
     }
     
@@ -132,7 +130,7 @@ export default function HomePage() {
             </Link>
             
 
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 gap-4">
                 {navGridItems.map((item) => (
                     <Link key={item.label} href={item.href} passHref>
                         <Card className="hover:bg-muted transition-colors h-full">
