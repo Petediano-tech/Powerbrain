@@ -43,6 +43,7 @@ const studyPlannerFlow = ai.defineFlow({
     }
     
     const { output } = await ai.generate({
+        model: 'googleai/gemini-1.5-flash-preview',
         prompt: `You are an AI study planner. Create a personalized 7-day study schedule for a student. The plan should prioritize their weakest subjects and prepare them for upcoming exams. Include a short, actionable study tip for each day.
 
     Weakest Subjects: {{#each input.weakestSubjects}}{{.}}, {{/each}}

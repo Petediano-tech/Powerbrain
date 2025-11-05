@@ -12,23 +12,31 @@ export const QuizGeneratorInputSchema = z.object({
   numberOfQuestions: z.number().int().min(1).max(20).describe('The number of multiple-choice questions to generate.'),
   gradeLevel: z.string().describe('The grade level of the students (e.g., Form 2, Standard 8).'),
 });
-export type QuizGeneratorInput = z.infer<typeof QuizGeneratorInputSchema>;
+export type QuizGeneratorInput = z
+  .infer<typeof QuizGeneratorInputSchema>;
 
-export async function generateQuiz(input: QuizGeneratorInput, idToken: string): Promise<AiQuizGeneratorOutput> {
-    return await quizGeneratorFlow({input, idToken});
+export async function generateQuiz(
+  input: QuizGeneratorInput,
+  idToken: string
+): Promise<AiQuizGeneratorOutput> {
+  return await quizGeneratorFlow({ input, idToken });
 }
 
-const quizGeneratorFlow = ai.defineFlow({ 
-    name: 'aiQuizGeneratorFlow', 
+const quizGeneratorFlow = ai.defineFlow(
+  {
+    name: 'aiQuizGeneratorFlow',
     inputSchema: z.object({
-        input: QuizGeneratorInputSchema,
-        idToken: z.string(),
+      input: QuizGeneratorInputSchema,
+      idToken: z.string(),
     }),
-    outputSchema: AiQuizGeneratorOutputSchema 
-}, async ({ input, idToken }) => {
+    outputSchema: AiQuizGeneratorOutputSchema,
+  },
+  async ({ input, idToken }) => {
     const user = await getAuthenticatedUser(idToken);
     if (!user) {
-        throw new Error('Authentication required. You must be a teacher to use this feature.');
+      throw new Error(
+        'Authentication required. You must be a teacher to use this feature.'
+      );
     }
 
     const firestore = getFirestore();
@@ -36,24 +44,26 @@ const quizGeneratorFlow = ai.defineFlow({
     const profileSnap = await profileRef.get();
 
     if (!profileSnap.exists()) {
-        throw new Error("User profile not found.");
+      throw new Error('User profile not found.');
     }
-    
+
     const userProfile = profileSnap.data();
 
     if (userProfile?.role !== 'teacher') {
-        throw new Error('Access denied. This feature is for teachers only.');
+      throw new Error('Access denied. This feature is for teachers only.');
     }
-    
+
     const { output } = await ai.generate({
-        prompt: `You are an AI assistant for teachers in Malawi. Generate a multiple-choice quiz with a specified number of questions on a given topic and for a specific grade level. Each question should have 4 options, a correct answer, and a brief explanation.
+      model: 'googleai/gemini-1.5-flash-preview',
+      prompt: `You are an AI assistant for teachers in Malawi. Generate a multiple-choice quiz with a specified number of questions on a given topic and for a specific grade level. Each question should have 4 options, a correct answer, and a brief explanation.
 
     Subject: {{subject}}
     Topic: {{topic}}
     Number of Questions: {{numberOfQuestions}}
     Grade Level: {{gradeLevel}}`,
-        input,
-        output: { schema: AiQuizGeneratorOutputSchema },
+      input,
+      output: { schema: AiQuizGeneratorOutputSchema },
     });
     return output!;
-});
+  }
+);
