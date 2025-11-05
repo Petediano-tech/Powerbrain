@@ -35,14 +35,13 @@ const mainDeveloper = {
     ]
 };
 
-const assistant = { name: "Christina Matipwiri", role: "Assistant", avatar: "https://picsum.photos/seed/christina/200" };
-
 const patrons = [
     { name: "Mr. Skinner", role: "Club Patron", avatar: "https://picsum.photos/seed/skinner/200", hint: "man portrait" },
     { name: "Mr. Nkhata", role: "Club Patron", avatar: "https://picsum.photos/seed/nkhata/200", hint: "man portrait" },
 ];
 
 const teamMembers = [
+    { name: "Christina Matipwiri", role: "Assistant", avatar: "https://picsum.photos/seed/christina/200", hint: "woman portrait" },
     { name: "Fyson Nagolomwa", role: "Team Member", avatar: "https://picsum.photos/seed/fyson/200" },
     { name: "Aaron Ntuwa", role: "Team Member", avatar: "https://picsum.photos/seed/aaron/200" },
     { name: "Alfred Mathewe", role: "Team Member", avatar: "https://picsum.photos/seed/alfred/200" },
@@ -91,26 +90,6 @@ export default function DevelopersPage() {
             <Separator />
             
             <div>
-                 <h2 className="text-2xl font-bold text-center mb-6">Core Team</h2>
-                 <div className="flex justify-center">
-                    <Card className="text-center w-full max-w-xs">
-                        <CardContent className="p-6 flex flex-col items-center gap-3">
-                            <Avatar className="h-24 w-24 border-2 border-muted">
-                                <AvatarImage src={assistant.avatar} alt={assistant.name} data-ai-hint="woman portrait" />
-                                <AvatarFallback>{getInitials(assistant.name)}</AvatarFallback>
-                            </Avatar>
-                            <div>
-                                <p className="font-semibold text-lg">{assistant.name}</p>
-                                <p className="text-sm text-muted-foreground">{assistant.role}</p>
-                            </div>
-                        </CardContent>
-                    </Card>
-                 </div>
-            </div>
-
-            <Separator />
-
-            <div>
                 <h2 className="text-2xl font-bold text-center mb-6">Club Patrons</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-2xl mx-auto">
                     {patrons.map(patron => (
@@ -139,7 +118,7 @@ export default function DevelopersPage() {
                         <Card key={member.name} className="text-center">
                             <CardContent className="p-6 flex flex-col items-center gap-3">
                                 <Avatar className="h-20 w-20">
-                                    <AvatarImage src={member.avatar} alt={member.name} data-ai-hint="person portrait" />
+                                    <AvatarImage src={member.avatar} alt={member.name} data-ai-hint={member.hint || 'person portrait'} />
                                     <AvatarFallback>{getInitials(member.name)}</AvatarFallback>
                                 </Avatar>
                                 <div>
