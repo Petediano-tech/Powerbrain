@@ -1,4 +1,3 @@
-
 import { z } from 'zod';
 import { AiStudyInsightsOutputSchema, type StudyInsightsOutput } from './schemas';
 import { ai } from '@/ai/genkit';
