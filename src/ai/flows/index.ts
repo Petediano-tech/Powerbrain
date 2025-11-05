@@ -1,6 +1,3 @@
-
-'use server';
-
 /**
  * @fileOverview Barrel file for exporting all AI flow functions and types.
  * This file should only export the public-facing async functions and their I/O types.
