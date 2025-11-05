@@ -15,7 +15,6 @@ import { useMemo } from "react";
 import { doc, getFirestore } from "firebase/firestore";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
-import { AIInsights } from "@/components/ai-insights";
 import { DashboardNotes } from "@/components/dashboard-notes";
 
 export default function DashboardPage() {
@@ -108,10 +107,7 @@ export default function DashboardPage() {
         </Card>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <AIInsights />
-        <DashboardNotes />
-      </div>
+      <DashboardNotes />
 
     </div>
   );

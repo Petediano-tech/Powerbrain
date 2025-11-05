@@ -13,7 +13,6 @@ import { Bar, BarChart as RechartsBarChart, ResponsiveContainer, XAxis, YAxis } 
 const quickActions = [
     { name: "New Resource", icon: <FileUp />, href: "#" },
     { name: "New Assignment", icon: <PlusCircle />, href: "#" },
-    { name: "Quiz Generator", icon: <PencilRuler />, href: "/teacher/quiz-generator" },
 ]
 
 const classes = [
@@ -43,9 +42,6 @@ export default function TeacherPage() {
     const displayName = user?.displayName || 'Atikonda';
 
     const handleFeatureClick = (featureName: string) => {
-        if (featureName === 'Quiz Generator') {
-            return;
-        }
         toast({
             title: "Coming Soon!",
             description: `The "${featureName}" feature is under development.`,
@@ -54,7 +50,7 @@ export default function TeacherPage() {
 
   return (
     <div className="space-y-6 text-foreground bg-background">
-        <div className="grid grid-cols-3 gap-4">
+        <div className="grid grid-cols-2 gap-4">
             {quickActions.map(action => (
                 <Link href={action.href} key={action.name} onClick={(e) => {
                     if (action.href === '#') {

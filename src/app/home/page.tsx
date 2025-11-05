@@ -23,7 +23,6 @@ const navGridItems = [
     { href: '/repository', label: 'Resources', icon: FolderKanban, description: 'Find notes & videos' },
     { href: '/quizzes', label: 'Quizzes', icon: PencilRuler, description: 'Assess knowledge' },
     { href: '/subjects', label: 'My Subjects', icon: BookCopy, description: 'Enrolled subjects' },
-    { href: '/planner', label: 'AI Planner', icon: BrainCircuit, description: 'Create study plans' },
 ];
 
 
