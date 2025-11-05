@@ -43,12 +43,12 @@ export default function WelcomePage() {
 
   return (
     <div className="flex min-h-screen flex-col bg-background">
-      <header className="flex h-16 items-center justify-between px-4">
+      <header className="flex h-16 items-center justify-between px-4 sm:px-6">
         <Logo />
       </header>
 
-      <main className="flex-1">
-        <Carousel setApi={setApi} className="h-full">
+      <main className="flex-1 flex flex-col justify-center">
+        <Carousel setApi={setApi} className="w-full max-w-md mx-auto">
           <CarouselContent>
             {onboardingSlides.map((slide, index) => (
               <CarouselItem key={index} className="h-full">
@@ -59,11 +59,11 @@ export default function WelcomePage() {
                     width={350}
                     height={250}
                     data-ai-hint={slide.imageHint}
-                    className="aspect-[4/3] w-full max-w-sm rounded-lg object-cover"
+                    className="aspect-[4/3] w-full max-w-xs sm:max-w-sm rounded-lg object-cover"
                   />
                   <div className="space-y-2">
                     <h1 className="text-3xl font-bold">{slide.title}</h1>
-                    <p className="text-muted-foreground">{slide.description}</p>
+                    <p className="text-muted-foreground max-w-xs mx-auto">{slide.description}</p>
                   </div>
                 </div>
               </CarouselItem>
@@ -86,7 +86,7 @@ export default function WelcomePage() {
             />
           ))}
         </div>
-        <div className="space-y-3">
+        <div className="space-y-3 max-w-sm mx-auto">
           <Button size="lg" className="w-full" asChild>
             <Link href="/auth">Get Started</Link>
           </Button>

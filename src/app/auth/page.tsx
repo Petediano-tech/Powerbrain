@@ -291,7 +291,6 @@ export default function AuthPage() {
                   onChange={(e) => setName(e.target.value)}
                   required
                   disabled={isLoading}
-                  className="h-12"
                 />
               </div>
               <div className="space-y-2">
@@ -304,7 +303,6 @@ export default function AuthPage() {
                   onChange={(e) => setSignUpEmail(e.target.value)}
                   required
                   disabled={isLoading}
-                  className="h-12"
                 />
               </div>
               <div className="space-y-2">
@@ -317,7 +315,6 @@ export default function AuthPage() {
                   onChange={(e) => setSignUpPassword(e.target.value)}
                   required
                   disabled={isLoading}
-                  className="h-12"
                 />
               </div>
               {error && isSignUp && <p className="text-sm text-destructive">{error}</p>}
@@ -349,7 +346,6 @@ export default function AuthPage() {
                   onChange={(e) => setLoginEmail(e.target.value)}
                   required
                   disabled={isLoading}
-                  className="h-12"
                 />
               </div>
               <div className="space-y-2">
@@ -362,7 +358,6 @@ export default function AuthPage() {
                   onChange={(e) => setLoginPassword(e.target.value)}
                   required
                   disabled={isLoading}
-                  className="h-12"
                 />
               </div>
                {error && !isSignUp && <p className="text-sm text-destructive">{error}</p>}

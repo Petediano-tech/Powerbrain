@@ -132,7 +132,7 @@ export default function HomePage() {
             </Link>
             
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
                 {navGridItems.map((item) => (
                     <Link key={item.label} href={item.href} passHref>
                         <Card className="hover:bg-muted transition-colors h-full">
