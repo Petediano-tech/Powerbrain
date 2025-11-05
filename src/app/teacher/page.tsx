@@ -5,21 +5,16 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { useUser } from "@/firebase";
-import { BarChart, FileQuestion, FileUp, Megaphone, PlusCircle, PencilRuler, BookCopy, Users } from "lucide-react";
+import { BarChart, FileQuestion, FileUp, Megaphone, PlusCircle, PencilRuler, BookCopy, Users, ArrowRight } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { Bar, BarChart as RechartsBarChart, ResponsiveContainer, XAxis, YAxis } from "recharts"
 
 const quickActions = [
     { name: "Resource Library", icon: <BookCopy />, href: "/repository" },
-    { name: "Create Assignment", icon: <PlusCircle />, href: "#" },
-    { name: "Student Analytics", icon: <BarChart />, href: "#" },
     { name: "Quiz Creator", icon: <PencilRuler />, href: "/teacher/quiz-generator" },
-]
-
-const classes = [
-    { name: "Standard 8 Maths", students: 32, notifications: 1, gradient: "from-orange-400 to-rose-400" },
-    { name: "Form 2 English", students: 28, notifications: 0, gradient: "from-blue-400 to-indigo-500" },
+    { name: "Student Analytics", icon: <BarChart />, href: "/teacher/analytics" },
+    { name: "My Classes", icon: <Users />, href: "/teacher/classes" },
 ]
 
 const recentActivity = [
@@ -70,35 +65,27 @@ export default function TeacherPage() {
             ))}
         </div>
 
-        <div>
-            <h2 className="text-xl font-bold mb-4">My Classes</h2>
-            <div className="flex space-x-4 overflow-x-auto pb-4 -mx-4 px-4">
-                 {classes.map((cls) => (
-                    <button key={cls.name} onClick={() => handleFeatureClick("Class Details")} className="text-left">
-                        <Card className={`min-w-[220px] w-[220px] flex-shrink-0 text-white bg-gradient-to-br ${cls.gradient} relative overflow-hidden hover:scale-105 transition-transform`}>
-                            <CardHeader>
-                                {cls.notifications > 0 && 
-                                    <Badge className="absolute top-3 right-3 bg-red-500 text-white border-0 w-6 h-6 justify-center p-0">{cls.notifications}</Badge>
-                                }
-                                <CardTitle>{cls.name}</CardTitle>
-                                <CardDescription className="text-white/80">{cls.students} Students</CardDescription>
-                            </CardHeader>
-                        </Card>
-                    </button>
-                 ))}
-                 <button onClick={() => handleFeatureClick("Create Class")} className="text-left">
-                    <Card className="min-w-[220px] w-[220px] flex-shrink-0 bg-muted hover:bg-muted/80 flex flex-col items-center justify-center text-center p-6 transition-colors">
-                        <PlusCircle className="h-8 w-8 text-muted-foreground mb-2" />
-                        <p className="font-semibold text-muted-foreground">Create New Class</p>
-                    </Card>
-                </button>
-            </div>
-        </div>
+        <Link href="/teacher/classes">
+            <Card className="bg-primary/10 border-primary/20 hover:bg-primary/20 transition-colors">
+                <CardContent className="pt-6">
+                    <div className="flex items-center justify-between">
+                        <div className="space-y-1">
+                            <h3 className="text-xl font-bold">Manage My Classes</h3>
+                                <p className="text-muted-foreground">View student progress and manage assignments.</p>
+                        </div>
+                        <div className="p-3 bg-background rounded-lg shadow-sm">
+                            <ArrowRight className="text-primary" />
+                        </div>
+                    </div>
+                </CardContent>
+            </Card>
+        </Link>
+        
 
         <Card className="bg-card/80">
             <CardHeader>
-                <CardTitle>Student Progress</CardTitle>
-                <CardDescription>Overall class performance for Standard 8 Maths.</CardDescription>
+                <CardTitle>Overall Student Performance</CardTitle>
+                <CardDescription>Average performance across all your classes.</CardDescription>
             </CardHeader>
             <CardContent>
                 <div className="h-48">

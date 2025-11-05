@@ -18,6 +18,8 @@ const pageTitles: { [key: string]: string } = {
     '/repository': 'Resources',
     '/dashboard': 'Dashboard',
     '/teacher': "Teacher's Corner",
+    '/teacher/quiz-generator': 'Quiz Generator',
+    '/teacher/classes': 'My Classes',
     '/profile': 'Profile',
     '/settings': 'Settings',
     '/settings/about': 'About & Legal',
@@ -29,7 +31,6 @@ const pageTitles: { [key: string]: string } = {
     '/privacy': 'Privacy Policy',
     '/contact': 'Contact Us',
     '/developers': 'The Team',
-    '/teacher/quiz-generator': 'Quiz Generator',
 };
 
 function getPageTitle(pathname: string) {
@@ -38,6 +39,7 @@ function getPageTitle(pathname: string) {
     }
     if (pathname.startsWith('/subjects/')) return 'Subjects';
     if (pathname.startsWith('/quizzes/')) return 'Quizzes';
+    if (pathname.startsWith('/teacher/classes/')) return 'Class Details';
     
     return null;
 }
@@ -54,6 +56,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     }
 
     const showBackArrow = pathname.startsWith('/settings/') || 
+                          pathname.startsWith('/teacher/classes/') ||
                           ['/about', '/terms', '/privacy', '/contact', '/developers', '/teacher/quiz-generator', '/profile'].includes(pathname);
 
     return (

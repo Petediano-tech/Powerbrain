@@ -41,9 +41,23 @@
         "role": { "type": "string", "enum": ["student", "teacher"], "description": "The role of the user within the application." },
         "phoneNumber": { "type": "string", "description": "User's phone number." },
         "location": { "type": "string", "description": "User's city and country." },
-        "subjectsOfInterest": { "type": "array", "items": { "type": "string" }, "description": "List of subjects the user is interested in." }
+        "subjectsOfInterest": { "type": "array", "items": { "type": "string" }, "description": "List of subjects the user is interested in." },
+        "classIds": { "type": "array", "items": { "type": "string" }, "description": "List of class IDs the student is enrolled in."}
       },
       "required": ["id", "firstName", "lastName", "gradeLevel", "role"]
+    },
+    "Class": {
+      "title": "Class", "type": "object", "description": "Represents a virtual class created by a teacher.",
+      "properties": {
+        "id": { "type": "string", "description": "Unique identifier for the class." },
+        "name": { "type": "string", "description": "Name of the class (e.g., 'Form 4 Biology')." },
+        "subject": { "type": "string", "description": "The primary subject of the class." },
+        "teacherId": { "type": "string", "description": "The profile ID of the teacher who owns the class." },
+        "joinCode": { "type": "string", "description": "A short, unique code for students to join the class." },
+        "studentIds": { "type": "array", "items": { "type": "string" }, "description": "A list of profile IDs of students enrolled in the class." },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "name", "subject", "teacherId", "joinCode", "createdAt"]
     },
     "Note": {
       "title": "Note", "type": "object", "description": "Represents a single note or document as text content.",
@@ -154,6 +168,10 @@
     "userProfiles/{profileId}/flashcardSets/{setId}/flashcards/{cardId}": {
       "schema": { "$ref": "#/entities/Flashcard" },
       "description": "Stores individual flashcards within a set."
+    },
+    "classes/{classId}": {
+      "schema": { "$ref": "#/entities/Class" },
+      "description": "Stores information about teacher-created classes."
     },
     "notes/{noteId}": {
       "schema": { "$ref": "#/entities/Note" },

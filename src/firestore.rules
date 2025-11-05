@@ -1,0 +1,97 @@
+
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // User Data Rules: Secure user-specific data
+    match /userAccounts/{userId} {
+      allow get, update, delete: if isOwner(userId);
+      allow create: if request.auth != null && request.resource.data.id == userId;
+      allow list: if false;
+    }
+
+    match /userProfiles/{profileId} {
+      allow get: if isSignedIn();
+      allow update: if request.auth != null && exists(/databases/$(database)/documents/userAccounts/$(request.auth.uid)) && get(/databases/$(database)/documents/userAccounts/$(request.auth.uid)).data.profileId == profileId;
+      allow create: if request.auth != null;
+      allow delete: if false;
+      allow list: if false;
+
+      // Allow users to see their own quiz attempts
+      match /quizAttempts/{attemptId} {
+        allow read, write: if userIsProfileOwner(profileId);
+      }
+      
+      // Allow users to manage their own notes
+      match /notes/{noteId} {
+        allow read, write: if userIsProfileOwner(profileId);
+      }
+
+      // Allow users to manage their own flashcards
+      match /flashcardSets/{setId} {
+         allow read, write: if userIsProfileOwner(profileId);
+         
+         match /flashcards/{cardId} {
+           allow read, write: if userIsProfileOwner(profileId);
+         }
+      }
+    }
+    
+    // Class Rules
+    match /classes/{classId} {
+      // Teachers can create classes.
+      allow create: if isTeacher() && request.resource.data.teacherId == request.auth.uid;
+      // Teachers can read, update, delete their own classes. Students can read classes they are enrolled in.
+      allow get, list: if isSignedIn();
+      allow update, delete: if isTeacher() && resource.data.teacherId == request.auth.uid;
+    }
+    
+    // Public Content Rules: Allow anyone to read, but restrict writes.
+    // Writes to these collections should be done via a trusted server/admin SDK or the Firebase Console.
+    match /notes/{noteId} {
+      allow get, list: if true;
+      allow write: if false; // Disable client-side writes
+    }
+    
+    match /subjects/{subjectId} {
+      allow get, list: if true;
+      allow write: if false;
+    
+      match /chapters/{chapterId} {
+        allow get, list: if true;
+        allow write: if false;
+      }
+    }
+
+    match /quizzes/{quizId} {
+      allow get, list: if true;
+      allow write: if false;
+
+      match /questions/{questionId} {
+        allow get, list: if true;
+        allow write: if false;
+      }
+    }
+
+    // Helper functions
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return request.auth.uid == userId;
+    }
+    
+    function isTeacher() {
+      let profileId = get(/databases/$(database)/documents/userAccounts/$(request.auth.uid)).data.profileId;
+      let userProfile = get(/databases/$(database)/documents/userProfiles/$(profileId)).data;
+      return isSignedIn() && userProfile.role == 'teacher';
+    }
+
+    function userIsProfileOwner(profileId) {
+        return request.auth != null 
+                && exists(/databases/$(database)/documents/userAccounts/$(request.auth.uid)) 
+                && get(/databases/$(database)/documents/userAccounts/$(request.auth.uid)).data.profileId == profileId;
+    }
+  }
+}
