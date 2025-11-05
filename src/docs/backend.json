@@ -62,26 +62,24 @@
       "title": "UserNote", "type": "object", "description": "Represents a personal note created by a user.",
       "properties": {
         "id": { "type": "string", "description": "Unique identifier for the note." },
-        "userId": { "type": "string", "description": "ID of the user who created the note." },
         "title": { "type": "string", "description": "Title of the note." },
         "content": { "type": "string", "description": "The content of the note in markdown or plain text." },
         "subject": { "type": "string", "description": "Optional subject tag for the note." },
         "createdAt": { "type": "string", "format": "date-time", "description": "Timestamp when the note was created." },
         "updatedAt": { "type": "string", "format": "date-time", "description": "Timestamp when the note was last updated." }
       },
-      "required": ["id", "userId", "title", "content", "createdAt", "updatedAt"]
+      "required": ["id", "title", "content", "createdAt", "updatedAt"]
     },
     "FlashcardSet": {
       "title": "FlashcardSet", "type": "object", "description": "Represents a collection of flashcards created by a user.",
       "properties": {
         "id": { "type": "string", "description": "Unique identifier for the flashcard set." },
-        "userId": { "type": "string", "description": "ID of the user who created the set." },
         "title": { "type": "string", "description": "Title of the flashcard set." },
         "description": { "type": "string", "description": "A brief description of the set." },
         "subject": { "type": "string", "description": "The subject the flashcards are for." },
         "createdAt": { "type": "string", "format": "date-time" }
       },
-      "required": ["id", "userId", "title", "subject", "createdAt"]
+      "required": ["id", "title", "subject", "createdAt"]
     },
     "Flashcard": {
       "title": "Flashcard", "type": "object", "description": "Represents a single flashcard within a set.",
