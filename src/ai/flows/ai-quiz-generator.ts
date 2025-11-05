@@ -1,3 +1,4 @@
+'use server';
 
 import { z } from 'zod';
 import { getFirestore } from 'firebase-admin/firestore';
@@ -13,17 +14,9 @@ export const QuizGeneratorInputSchema = z.object({
 });
 export type QuizGeneratorInput = z.infer<typeof QuizGeneratorInputSchema>;
 
-const aiQuizGeneratorPrompt = ai.definePrompt({
-    name: 'aiQuizGeneratorPrompt',
-    input: {schema: QuizGeneratorInputSchema},
-    output: {schema: AiQuizGeneratorOutputSchema},
-    prompt: `You are an AI assistant for teachers in Malawi. Generate a multiple-choice quiz with a specified number of questions on a given topic and for a specific grade level. Each question should have 4 options, a correct answer, and a brief explanation.
-
-    Subject: {{{subject}}}
-    Topic: {{{topic}}}
-    Number of Questions: {{{numberOfQuestions}}}
-    Grade Level: {{{gradeLevel}}}`,
-});
+export async function generateQuiz(input: QuizGeneratorInput, idToken: string): Promise<AiQuizGeneratorOutput> {
+    return await quizGeneratorFlow({input, idToken});
+}
 
 const quizGeneratorFlow = ai.defineFlow({ 
     name: 'aiQuizGeneratorFlow', 
@@ -52,11 +45,15 @@ const quizGeneratorFlow = ai.defineFlow({
         throw new Error('Access denied. This feature is for teachers only.');
     }
     
-    const { output } = await aiQuizGeneratorPrompt(input);
+    const { output } = await ai.generate({
+        prompt: `You are an AI assistant for teachers in Malawi. Generate a multiple-choice quiz with a specified number of questions on a given topic and for a specific grade level. Each question should have 4 options, a correct answer, and a brief explanation.
+
+    Subject: {{{subject}}}
+    Topic: {{{topic}}}
+    Number of Questions: {{{numberOfQuestions}}}
+    Grade Level: {{{gradeLevel}}}`,
+        input,
+        output: { schema: AiQuizGeneratorOutputSchema },
+    });
     return output!;
 });
-
-
-export async function generateQuiz(input: QuizGeneratorInput, idToken: string): Promise<AiQuizGeneratorOutput> {
-    return await quizGeneratorFlow({input, idToken});
-}

@@ -1,3 +1,4 @@
+'use server';
 
 import { z } from 'zod';
 import { getFirestore } from 'firebase-admin/firestore';
@@ -12,16 +13,9 @@ export const PerformanceDataSchema = z.object({
 });
 export type PerformanceData = z.infer<typeof PerformanceDataSchema>;
 
-const careerGuidancePrompt = ai.definePrompt({
-    name: 'aiCareerGuidancePrompt',
-    input: {schema: PerformanceDataSchema},
-    output: {schema: AiCareerGuidanceOutputSchema},
-    prompt: `You are an AI career advisor for Malawian students. Based on the student's performance and interests, provide 2-3 tailored career recommendations, suggest specific degree/diploma programs at Malawian universities (e.g., University of Malawi, MUBAS, KUHeS, Mzuni), and give actionable next steps.
-
-    Student's Strongest Subjects: {{{strongestSubjects}}}
-    Student's Average Score: {{{averageScore}}}%
-    Student's Interests: {{{interests}}}`,
-});
+export async function getCareerGuidance(input: PerformanceData, idToken: string): Promise<AiCareerGuidanceOutput> {
+    return await careerGuidanceFlow({input, idToken});
+}
 
 const careerGuidanceFlow = ai.defineFlow({ 
     name: 'careerGuidanceFlow', 
@@ -50,10 +44,14 @@ const careerGuidanceFlow = ai.defineFlow({
         throw new Error('This is a premium feature. Please upgrade to a VIP plan.');
     }
 
-    const { output } = await careerGuidancePrompt(input);
+    const { output } = await ai.generate({
+        prompt: `You are an AI career advisor for Malawian students. Based on the student's performance and interests, provide 2-3 tailored career recommendations, suggest specific degree/diploma programs at Malawian universities (e.g., University of Malawi, MUBAS, KUHeS, Mzuni), and give actionable next steps.
+
+    Student's Strongest Subjects: {{{strongestSubjects}}}
+    Student's Average Score: {{{averageScore}}}%
+    Student's Interests: {{{interests}}}`,
+        input,
+        output: { schema: AiCareerGuidanceOutputSchema },
+    });
     return output!;
 });
-
-export async function getCareerGuidance(input: PerformanceData, idToken: string): Promise<AiCareerGuidanceOutput> {
-    return await careerGuidanceFlow({input, idToken});
-}

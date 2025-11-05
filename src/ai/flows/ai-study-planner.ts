@@ -1,3 +1,4 @@
+'use server';
 
 import { z } from 'zod';
 import { getFirestore } from 'firebase-admin/firestore';
@@ -11,15 +12,9 @@ export const PlannerInputSchema = z.object({
 });
 export type PlannerInput = z.infer<typeof PlannerInputSchema>;
 
-const aiStudyPlannerPrompt = ai.definePrompt({
-    name: 'aiStudyPlannerPrompt',
-    input: {schema: PlannerInputSchema},
-    output: {schema: AiStudyPlannerOutputSchema},
-    prompt: `You are an AI study planner. Create a personalized 7-day study schedule for a student. The plan should prioritize their weakest subjects and prepare them for upcoming exams. Include a short, actionable study tip for each day.
-
-    Weakest Subjects: {{{weakestSubjects}}}
-    Upcoming Exams: {{#each upcomingExams}}{{subject}} on {{date}}{{/each}}`,
-});
+export async function getStudyPlan(input: PlannerInput, idToken: string): Promise<AiStudyPlannerOutput> {
+    return await studyPlannerFlow({input, idToken});
+}
 
 const studyPlannerFlow = ai.defineFlow({ 
     name: 'aiStudyPlannerFlow', 
@@ -47,10 +42,13 @@ const studyPlannerFlow = ai.defineFlow({
         throw new Error('This is a premium feature. Please upgrade to a VIP plan.');
     }
     
-    const { output } = await aiStudyPlannerPrompt(input);
+    const { output } = await ai.generate({
+        prompt: `You are an AI study planner. Create a personalized 7-day study schedule for a student. The plan should prioritize their weakest subjects and prepare them for upcoming exams. Include a short, actionable study tip for each day.
+
+    Weakest Subjects: {{{weakestSubjects}}}
+    Upcoming Exams: {{#each upcomingExams}}{{subject}} on {{date}}{{/each}}`,
+        input,
+        output: { schema: AiStudyPlannerOutputSchema },
+    });
     return output!;
 });
-
-export async function getStudyPlan(input: PlannerInput, idToken: string): Promise<AiStudyPlannerOutput> {
-    return await studyPlannerFlow({input, idToken});
-}

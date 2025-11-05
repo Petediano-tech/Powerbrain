@@ -1,3 +1,4 @@
+'use server';
 
 /**
  * @fileOverview AI-powered quiz grading flow logic.
@@ -13,11 +14,16 @@ export const AiGradeQuizzesInputSchema = z.object({
 });
 export type AiGradeQuizzesInput = z.infer<typeof AiGradeQuizzesInputSchema>;
 
+export async function gradeQuiz(input: AiGradeQuizzesInput): Promise<AiGradeQuizzesOutput> {
+    return await gradeQuizzesFlow(input);
+}
 
-const aiGradeQuizzesPrompt = ai.definePrompt({
-    name: 'aiGradeQuizzesPrompt',
-    input: {schema: AiGradeQuizzesInputSchema},
-    output: {schema: AiGradeQuizzesOutputSchema},
+const gradeQuizzesFlow = ai.defineFlow({ 
+    name: 'aiGradeQuizzesFlow', 
+    inputSchema: AiGradeQuizzesInputSchema, 
+    outputSchema: AiGradeQuizzesOutputSchema 
+}, async (input) => {
+  const { output } = await ai.generate({
     prompt: `You are an AI grading assistant that automatically grades quizzes based on the provided content and student answers.
 
     Quiz Content:
@@ -34,17 +40,8 @@ const aiGradeQuizzesPrompt = ai.definePrompt({
     Ensure that the grade and feedback are aligned with the quiz content and any teacher instructions provided.  Give the grade in the format A,B,C,D,E or F.
     Grade:
     Feedback: `,
-});
-
-const gradeQuizzesFlow = ai.defineFlow({ 
-    name: 'aiGradeQuizzesFlow', 
-    inputSchema: AiGradeQuizzesInputSchema, 
-    outputSchema: AiGradeQuizzesOutputSchema 
-}, async (input) => {
-  const { output } = await aiGradeQuizzesPrompt(input);
+    input,
+    output: { schema: AiGradeQuizzesOutputSchema },
+  });
   return output!;
 });
-
-export async function gradeQuiz(input: AiGradeQuizzesInput): Promise<AiGradeQuizzesOutput> {
-    return await gradeQuizzesFlow(input);
-}
