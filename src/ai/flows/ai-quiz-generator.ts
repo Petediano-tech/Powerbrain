@@ -1,6 +1,4 @@
 
-'use server';
-
 import { z } from 'zod';
 import { AiQuizGeneratorOutputSchema, type AiQuizGeneratorOutput } from './schemas';
 import { ai } from '@/ai/genkit';

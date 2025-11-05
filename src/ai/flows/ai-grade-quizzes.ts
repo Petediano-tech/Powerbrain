@@ -1,6 +1,4 @@
 
-'use server';
-
 import { z } from 'zod';
 import { ai } from '@/ai/genkit';
 import { AiGradeQuizzesOutputSchema, type AiGradeQuizzesOutput } from './schemas';
@@ -11,11 +9,6 @@ export const AiGradeQuizzesInputSchema = z.object({
   teacherInstructions: z.string().optional().describe('Any specific instructions from the teacher regarding grading.'),
 });
 export type AiGradeQuizzesInput = z.infer<typeof AiGradeQuizzesInputSchema>;
-
-
-export async function gradeQuiz(input: AiGradeQuizzesInput): Promise<AiGradeQuizzesOutput> {
-    return gradeQuizzesFlow(input);
-}
 
 const gradeQuizzesFlow = ai.defineFlow({ 
     name: 'aiGradeQuizzesFlow', 
@@ -44,3 +37,7 @@ const gradeQuizzesFlow = ai.defineFlow({
   });
   return output!;
 });
+
+export async function gradeQuiz(input: AiGradeQuizzesInput): Promise<AiGradeQuizzesOutput> {
+    return gradeQuizzesFlow(input);
+}

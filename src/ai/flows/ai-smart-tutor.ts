@@ -1,6 +1,4 @@
 
-'use server';
-
 import { z } from 'zod';
 import { AiSmartTutorOutputSchema, type AiSmartTutorOutput } from './schemas';
 import { ai } from '../genkit';
@@ -11,10 +9,6 @@ export const AiSmartTutorInputSchema = z.object({
   gradeLevel: z.string().optional().describe('The grade level of the student (e.g., Std 7, Form 4).'),
 });
 export type AiSmartTutorInput = z.infer<typeof AiSmartTutorInputSchema>;
-
-export async function getTutorResponse(input: AiSmartTutorInput): Promise<AiSmartTutorOutput> {
-    return smartTutorFlow(input);
-}
 
 const smartTutorFlow = ai.defineFlow({
     name: 'smartTutorFlow',
@@ -28,3 +22,7 @@ const smartTutorFlow = ai.defineFlow({
 
     return { response: text };
 });
+
+export async function getTutorResponse(input: AiSmartTutorInput): Promise<AiSmartTutorOutput> {
+    return smartTutorFlow(input);
+}

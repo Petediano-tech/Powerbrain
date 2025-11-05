@@ -1,6 +1,4 @@
 
-'use server';
-
 import { z } from 'zod';
 import { AiStudyInsightsOutputSchema, type StudyInsightsOutput } from './schemas';
 import { ai } from '@/ai/genkit';
@@ -21,11 +19,6 @@ export const StudyInsightsInputSchema = z.object({
   favouriteSubject: z.string().describe('Student\'s favorite subject'),
 });
 export type StudyInsightsInput = z.infer<typeof StudyInsightsInputSchema>;
-
-
-export async function generateStudyInsights(input: StudyInsightsInput): Promise<StudyInsightsOutput> {
-    return studyInsightsFlow(input);
-}
 
 const studyInsightsFlow = ai.defineFlow({ 
     name: 'studyInsightsFlow', 
@@ -61,3 +54,7 @@ const studyInsightsFlow = ai.defineFlow({
   });
   return output!;
 });
+
+export async function generateStudyInsights(input: StudyInsightsInput): Promise<StudyInsightsOutput> {
+    return studyInsightsFlow(input);
+}
