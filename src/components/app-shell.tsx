@@ -11,7 +11,6 @@ import { useRouter } from "next/navigation";
 
 const pageTitles: { [key: string]: string } = {
     '/home': 'Home',
-    '/tutor': 'Brainy AI',
     '/subjects': 'Subjects',
     '/quizzes': 'Quizzes',
     '/repository': 'Resources',

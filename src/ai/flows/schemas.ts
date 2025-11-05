@@ -39,11 +39,6 @@ export const AiStudyInsightsOutputSchema = z.object({
 });
 export type StudyInsightsOutput = z.infer<typeof AiStudyInsightsOutputSchema>;
 
-export const AiSmartTutorOutputSchema = z.object({
-  response: z.string().describe("The AI tutor's response to the student."),
-});
-export type AiSmartTutorOutput = z.infer<typeof AiSmartTutorOutputSchema>;
-
 export const AiGradeQuizzesOutputSchema = z.object({
   grade: z.string().describe('The overall grade for the quiz (e.g., A, B, C).'),
   feedback: z.string().describe('Detailed feedback on the student answers, including corrections and explanations.'),

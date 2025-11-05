@@ -22,8 +22,8 @@ const navGridItems = [
     { href: '/subjects', label: 'Modules', icon: GraduationCap, description: 'Access courses' },
     { href: '/repository', label: 'Resources', icon: FolderKanban, description: 'Find notes & videos' },
     { href: '/quizzes', label: 'Quizzes', icon: PencilRuler, description: 'Assess knowledge' },
-    { href: '/tutor', label: 'AI Chat', icon: BrainCircuit, description: 'Get instant help' },
     { href: '/subjects', label: 'My Subjects', icon: BookCopy, description: 'Enrolled subjects' },
+    { href: '/planner', label: 'AI Planner', icon: BrainCircuit, description: 'Create study plans' },
 ];
 
 
