@@ -25,12 +25,12 @@ export default function RootLayoutClient({ children }: { children: React.ReactNo
     }
     
     return (
-        <>
+        <div className="flex min-h-screen">
             <AppSidebar />
             <AppShell>
                 {children}
             </AppShell>
             {showTimerRoutes.includes(pathname) && <PomodoroTimer />}
-        </>
+        </div>
     )
 }
