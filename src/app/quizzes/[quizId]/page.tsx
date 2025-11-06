@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useMemo, useEffect } from 'react';
@@ -66,6 +67,16 @@ export default function QuizPage() {
   const [showResults, setShowResults] = useState(false);
   const [isChecking, setIsChecking] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [windowSize, setWindowSize] = useState({ width: 0, height: 0 });
+
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowSize({ width: window.innerWidth, height: window.innerHeight });
+    };
+    window.addEventListener('resize', handleResize);
+    handleResize(); // Set initial size
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const quizDocRef = useMemoFirebase(
     () => (quizId ? doc(firestore, 'quizzes', quizId) : null),
@@ -93,15 +104,19 @@ export default function QuizPage() {
     [score, questions]
   );
 
-  const handleFinishQuiz = async (calculatedScore: number) => {
-    if (!profileId || isSaving || !quiz || !questions || !user) return;
-    setIsSaving(true);
+  const isLoading = isLoadingQuiz || isLoadingQuestions;
 
+  const handleFinishQuiz = async () => {
+    if (!profileId || isSaving || !quiz || !questions || !user) {
+      setShowResults(true);
+      return;
+    }
+    setIsSaving(true);
+    const finalScorePercentage = (score / questions.length) * 100;
+    
     const userProfileRef = doc(firestore, 'userProfiles', profileId);
     const quizAttemptRef = doc(
-      firestore,
-      `userProfiles/${profileId}/quizAttempts`,
-      `${quizId}_${Date.now()}`
+      collection(firestore, `userProfiles/${profileId}/quizAttempts`)
     );
 
     try {
@@ -116,19 +131,21 @@ export default function QuizPage() {
 
         const newQuizzesCompleted = oldQuizzesCompleted + 1;
         const newAverageScore =
-          (oldAverageScore * oldQuizzesCompleted + calculatedScore) /
-          newQuizzesCompleted;
+          (oldAverageScore * oldQuizzesCompleted + finalScorePercentage) / newQuizzesCompleted;
 
         transaction.update(userProfileRef, {
           quizzesCompleted: increment(1),
           averageScore: newAverageScore,
           totalTimeStudied: increment(questions.length * 30), // Add 30s per question
+          topicsMastered: finalScorePercentage > 80 ? increment(1) : userProfileDoc.data().topicsMastered || 0,
         });
 
         transaction.set(quizAttemptRef, {
           quizId: quizId,
           quizTitle: quiz.title,
-          score: calculatedScore,
+          score: finalScorePercentage,
+          correct: score,
+          total: questions.length,
           completedAt: new Date().toISOString(),
         });
       });
@@ -136,7 +153,6 @@ export default function QuizPage() {
       setShowResults(true);
     } catch (e) {
       console.error('Quiz save transaction failed: ', e);
-      // Since this is a critical data saving operation, we'll show the results even if DB fails.
       setShowResults(true);
       toast({
         variant: 'destructive',
@@ -148,8 +164,6 @@ export default function QuizPage() {
       setIsSaving(false);
     }
   };
-
-  const isLoading = isLoadingQuiz || isLoadingQuestions;
 
   if (isLoading) {
     return (
@@ -199,6 +213,7 @@ export default function QuizPage() {
 
   const handleAnswerSelect = (answer: string) => {
     setSelectedAnswers((prev) => ({ ...prev, [currentQuestionIndex]: answer }));
+    setIsChecking(true); // Automatically check answer on selection
   };
 
   const handleNext = () => {
@@ -206,25 +221,15 @@ export default function QuizPage() {
     if (currentQuestionIndex < questions.length - 1) {
       setCurrentQuestionIndex(currentQuestionIndex + 1);
     } else {
-      const finalScore = (score / questions.length) * 100;
-      if (user) {
-        // Only save if user is logged in
-        handleFinishQuiz(finalScore);
-      } else {
-        setShowResults(true); // If no user, just show results without saving
-      }
+      handleFinishQuiz();
     }
-  };
-
-  const handleCheckAnswer = () => {
-    setIsChecking(true);
   };
   
   if (showResults) {
     return (
       <>
-        {scorePercentage === 100 && (
-          <Confetti recycle={false} numberOfPieces={200} />
+        {scorePercentage >= 80 && windowSize.width > 0 && (
+          <Confetti width={windowSize.width} height={windowSize.height} recycle={false} numberOfPieces={300} />
         )}
         <Card className="max-w-2xl mx-auto">
           <CardHeader className="text-center items-center">
@@ -246,7 +251,7 @@ export default function QuizPage() {
           <CardContent className="space-y-4">
             <h3 className="font-bold text-lg">Review Your Answers:</h3>
             {questions.map((q, index) => (
-              <div key={index} className="p-4 rounded-lg border bg-muted/50">
+              <div key={q.id} className="p-4 rounded-lg border bg-muted/50">
                 <p className="font-semibold">
                   {index + 1}. {q.question}
                 </p>
@@ -254,7 +259,7 @@ export default function QuizPage() {
                   className={cn(
                     'flex items-center gap-2 text-sm mt-2',
                     selectedAnswers[index] === q.answer
-                      ? 'text-foreground'
+                      ? 'text-green-600'
                       : 'text-destructive'
                   )}
                 >
@@ -271,7 +276,7 @@ export default function QuizPage() {
                   </p>
                 )}
                 <p className="text-xs text-muted-foreground mt-2 pt-2 border-t">
-                  {q.explanation}
+                  <span className="font-bold">Explanation:</span> {q.explanation}
                 </p>
               </div>
             ))}
@@ -321,9 +326,9 @@ export default function QuizPage() {
             const isSelected = selectedAnswer === option;
             let labelClass = '';
             if (isChecking && isSelected) {
-              labelClass = isCorrect ? 'border-green-500' : 'border-destructive';
+              labelClass = isCorrect ? 'border-green-500 bg-green-500/10' : 'border-destructive bg-destructive/10';
             } else if (isChecking && currentQuestion.answer === option) {
-              labelClass = 'border-green-500';
+              labelClass = 'border-green-500 bg-green-500/10';
             }
 
             return (
@@ -331,9 +336,9 @@ export default function QuizPage() {
                 key={option}
                 htmlFor={option}
                 className={cn(
-                  `flex items-center space-x-3 border-2 rounded-md p-3 transition-all cursor-pointer
-                  hover:border-primary
-                  ${isSelected ? 'border-primary' : 'border-border'}
+                  `flex items-center space-x-3 border-2 rounded-md p-3 transition-all
+                  ${!isChecking ? 'cursor-pointer hover:border-primary' : 'cursor-default'}
+                  ${isSelected && !isChecking ? 'border-primary' : ''}
                 `,
                   labelClass
                 )}
@@ -358,41 +363,26 @@ export default function QuizPage() {
           <div
             className={cn(
               'p-4 rounded-md text-sm',
-              isCorrect ? 'bg-green-500/10' : 'bg-destructive/10'
+              isCorrect ? 'bg-green-500/10 text-green-700 dark:text-green-300' : 'bg-destructive/10 text-destructive dark:text-destructive-foreground'
             )}
           >
             <h4 className="font-bold mb-1">
               {isCorrect ? 'Correct!' : 'Not quite...'}
             </h4>
-            <p
-              className={cn(
-                isCorrect ? 'text-green-700' : 'text-destructive-foreground-alt',
-                'dark:text-white/80'
-              )}
-            >
-              {currentQuestion.explanation}
+            <p>
+              <span className="font-bold">Explanation: </span>{currentQuestion.explanation}
             </p>
           </div>
         )}
       </CardContent>
       <CardFooter>
-        {isChecking ? (
-          <Button onClick={handleNext} className="w-full" disabled={isSaving}>
+        <Button onClick={handleNext} className="w-full" disabled={!isChecking || isSaving}>
             {isSaving
               ? 'Saving Results...'
               : currentQuestionIndex < questions.length - 1
               ? 'Next Question'
               : 'Finish Quiz'}
-          </Button>
-        ) : (
-          <Button
-            onClick={handleCheckAnswer}
-            disabled={!selectedAnswer}
-            className="w-full"
-          >
-            Check Answer
-          </Button>
-        )}
+        </Button>
       </CardFooter>
     </Card>
   );

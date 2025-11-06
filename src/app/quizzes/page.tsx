@@ -1,3 +1,4 @@
+
 'use client';
 import {
   Card,
@@ -24,19 +25,12 @@ import {
   Book,
 } from 'lucide-react';
 import Link from 'next/link';
-import { ReactElement } from 'react';
+import { ReactElement, useMemo } from 'react';
 import { useCollection, useFirestore, useMemoFirebase } from '@/firebase';
-import { collection } from 'firebase/firestore';
+import { collection, getDocs, query, where } from 'firebase/firestore';
 import { Skeleton } from '@/components/ui/skeleton';
+import { quizzesToSeed, Quiz as QuizType } from '@/lib/quizzes-data';
 
-type Quiz = {
-  id: string;
-  title: string;
-  subject: string;
-  difficulty: 'Easy' | 'Medium' | 'Hard';
-  questions: number; // Assuming this is the number of questions
-  timeLimit: number;
-};
 
 const subjectIcons: { [key: string]: ReactElement } = {
   English: <Languages className="h-6 w-6 text-primary" />,
@@ -53,13 +47,31 @@ const subjectIcons: { [key: string]: ReactElement } = {
   'Social Studies': <Users className="h-6 w-6 text-primary" />,
 };
 
+// We define a type that includes the question count, as it might not be on the base QuizType.
+type QuizWithQuestionCount = QuizType & { questions: number };
+
 export default function QuizzesPage() {
   const firestore = useFirestore();
+  
   const quizzesCollectionRef = useMemoFirebase(
     () => collection(firestore, 'quizzes'),
     [firestore]
   );
-  const { data: quizzes, isLoading } = useCollection<Quiz>(quizzesCollectionRef);
+  
+  // The useCollection hook now expects the number of questions to be on the quiz document directly.
+  const { data: quizzesFromDB, isLoading } = useCollection<QuizWithQuestionCount>(quizzesCollectionRef);
+  
+  // For demonstration, we merge seeded data if DB is empty.
+  // In a real app, you'd have a seeding script.
+  const allQuizzes = useMemo(() => {
+    const dbQuizIds = quizzesFromDB?.map(q => q.id) || [];
+    const seededQuizzesWithCount = quizzesToSeed
+        .filter(sq => !dbQuizIds.includes(sq.id!))
+        .map(q => ({...q, id: q.id!, questions: q.questions.length}));
+    
+    return [...(quizzesFromDB || []), ...seededQuizzesWithCount];
+  }, [quizzesFromDB]);
+
 
   if (isLoading) {
     return (
@@ -93,7 +105,7 @@ export default function QuizzesPage() {
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-      {(quizzes || []).map((quiz) => (
+      {(allQuizzes || []).map((quiz) => (
         <Card
           key={quiz.id}
           className="flex flex-col hover:shadow-lg transition-shadow"
