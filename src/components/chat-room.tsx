@@ -2,8 +2,8 @@
 'use client';
 
 import { useState, useRef, useEffect, useMemo } from 'react';
-import { useUser, useFirestore, useCollection, useMemoFirebase } from '@/firebase';
-import { collection, addDoc, serverTimestamp, query, orderBy, limit } from 'firebase/firestore';
+import { useUser, useFirestore, useCollection, useMemoFirebase, useDoc } from '@/firebase';
+import { collection, addDoc, serverTimestamp, query, orderBy, limit, doc } from 'firebase/firestore';
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -13,7 +13,6 @@ import { Send, MessageCircle } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { Skeleton } from './ui/skeleton';
 import { useUserStore } from '@/hooks/use-user-store';
-import { doc, getDoc } from 'firebase/firestore';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 
 type ChatMessage = {
