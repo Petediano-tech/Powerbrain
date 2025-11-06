@@ -47,20 +47,21 @@ service cloud.firestore {
     }
 
     // Community Chat Rules
+    // Rule for reading the list of chat groups
+    match /chatGroups {
+        allow list: if isSignedIn();
+    }
+    
+    // Rule for individual chat group operations
     match /chatGroups/{groupId} {
       allow get: if isSignedIn();
       allow create, update, delete: if false; // Only admins can create/edit groups
 
       match /messages/{messageId} {
-        allow get: if isSignedIn();
+        allow list, get: if isSignedIn();
         allow create: if isSignedIn() && request.resource.data.senderId == request.auth.uid;
         allow update, delete: if false; // Messages are immutable
       }
-    }
-
-    // This rule specifically allows listing the documents in the chatGroups collection.
-    match /chatGroups {
-        allow list: if isSignedIn();
     }
     
     // Public Content Rules: Allow anyone to read, but restrict writes.
