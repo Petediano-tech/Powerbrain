@@ -18,13 +18,13 @@ import { PlaceHolderImages } from "@/lib/placeholder-images";
 import { DashboardNotes } from "@/components/dashboard-notes";
 
 export default function DashboardPage() {
-  const { user } = useUser();
+  const { user, isUserLoading } = useUser();
   const firestore = getFirestore();
 
   const userAccountRef = useMemoFirebase(() => {
-    if (!user) return null;
+    if (isUserLoading || !user) return null;
     return doc(firestore, 'userAccounts', user.uid);
-  }, [firestore, user]);
+  }, [firestore, user, isUserLoading]);
   const { data: userAccount } = useDoc(userAccountRef);
 
   const userProfileRef = useMemoFirebase(() => {

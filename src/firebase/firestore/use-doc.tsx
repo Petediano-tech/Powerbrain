@@ -45,7 +45,6 @@ export function useDoc<T = any>(
 ): UseDocResult<T> {
   type StateDataType = WithId<T> | null;
 
-  const { isUserLoading } = useUser();
   const [data, setData] = useState<StateDataType>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<FirestoreError | Error | null>(null);
@@ -92,5 +91,5 @@ export function useDoc<T = any>(
   }, [memoizedDocRef]);
 
   // The hook is considered to be in a loading state if auth is still resolving OR if data fetching has started but not completed.
-  return { data, isLoading: isUserLoading || isLoading, error };
+  return { data, isLoading, error };
 }

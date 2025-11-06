@@ -1,3 +1,4 @@
+
 'use client';
 import { useUser, useDoc, useMemoFirebase } from '@/firebase';
 import { useRouter } from 'next/navigation';
@@ -21,9 +22,9 @@ export default function HomePage() {
     const { setProfileId } = useUserStore();
 
     const userAccountRef = useMemoFirebase(() => {
-        if (!user) return null;
+        if (isUserLoading || !user) return null;
         return doc(firestore, 'userAccounts', user.uid);
-      }, [firestore, user]);
+      }, [firestore, user, isUserLoading]);
 
     const { data: userAccount, isLoading: isAccountLoading } = useDoc(userAccountRef);
     

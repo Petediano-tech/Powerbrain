@@ -34,7 +34,7 @@ const createClassSchema = z.object({
 
 
 export default function TeacherClassesPage() {
-    const { user } = useUser();
+    const { user, isUserLoading } = useUser();
     const firestore = useFirestore();
     const { toast } = useToast();
 
@@ -50,8 +50,8 @@ export default function TeacherClassesPage() {
     });
 
     const classesQuery = useMemoFirebase(
-        () => user ? query(collection(firestore, 'classes'), where('teacherId', '==', user.uid)) : null,
-        [firestore, user]
+        () => (isUserLoading || !user) ? null : query(collection(firestore, 'classes'), where('teacherId', '==', user.uid)),
+        [firestore, user, isUserLoading]
     );
 
     const { data: classes, isLoading } = useCollection(classesQuery);

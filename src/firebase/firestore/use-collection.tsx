@@ -59,7 +59,6 @@ export function useCollection<T = any>(
   type ResultItemType = WithId<T>;
   type StateDataType = ResultItemType[] | null;
   
-  const { isUserLoading: isAuthLoading } = useUser();
   const [data, setData] = useState<StateDataType>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<FirestoreError | Error | null>(null);
@@ -114,5 +113,5 @@ export function useCollection<T = any>(
   }
 
   // The hook is considered to be in a loading state if auth is still resolving OR if data fetching has started but not completed.
-  return { data, isLoading: isAuthLoading || isLoading, error };
+  return { data, isLoading, error };
 }
