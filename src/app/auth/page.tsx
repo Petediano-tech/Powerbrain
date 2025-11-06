@@ -29,9 +29,11 @@ import { useToast } from '@/hooks/use-toast';
 import { Logo } from '@/components/logo';
 import { useRouter } from 'next/navigation';
 import { handleLoginAttempt } from '@/lib/login-limiter';
+import { Eye, EyeOff } from 'lucide-react';
 
 export default function AuthPage() {
   const [isSignUp, setIsSignUp] = useState(true);
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
   // Sign Up State
   const [name, setName] = useState('');
@@ -50,6 +52,20 @@ export default function AuthPage() {
   const firestore = useFirestore();
   const { toast } = useToast();
   const router = useRouter();
+
+  const validatePassword = (password: string) => {
+    const hasUpperCase = /[A-Z]/.test(password);
+    const hasLowerCase = /[a-z]/.test(password);
+    const hasNumber = /[0-9]/.test(password);
+    const isLongEnough = password.length >= 8;
+
+    if (!isLongEnough) return "Password must be at least 8 characters long.";
+    if (!hasUpperCase) return "Password must contain at least one uppercase letter.";
+    if (!hasLowerCase) return "Password must contain at least one lowercase letter.";
+    if (!hasNumber) return "Password must contain at least one number.";
+    
+    return null;
+  }
 
   const handleGoogleSignIn = async () => {
     setIsLoading(true);
@@ -125,8 +141,9 @@ export default function AuthPage() {
     setIsLoading(true);
     setError(null);
 
-    if (signUpPassword.length < 6) {
-        setError("Password must be at least 6 characters long.");
+    const passwordError = validatePassword(signUpPassword);
+    if (passwordError) {
+        setError(passwordError);
         setIsLoading(false);
         return;
     }
@@ -307,15 +324,29 @@ export default function AuthPage() {
               </div>
               <div className="space-y-2">
                 <Label htmlFor="password-signup">Password</Label>
-                <Input
-                  id="password-signup"
-                  type="password"
-                  placeholder="Enter your password"
-                  value={signUpPassword}
-                  onChange={(e) => setSignUpPassword(e.target.value)}
-                  required
-                  disabled={isLoading}
-                />
+                <div className="relative">
+                  <Input
+                    id="password-signup"
+                    type={isPasswordVisible ? 'text' : 'password'}
+                    placeholder="Enter your password"
+                    value={signUpPassword}
+                    onChange={(e) => setSignUpPassword(e.target.value)}
+                    required
+                    disabled={isLoading}
+                  />
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    className="absolute right-1 top-1/2 -translate-y-1/2 h-7 w-7 text-muted-foreground"
+                    onClick={() => setIsPasswordVisible(!isPasswordVisible)}
+                  >
+                    {isPasswordVisible ? <EyeOff size={18} /> : <Eye size={18} />}
+                  </Button>
+                </div>
+                <p className="text-xs text-muted-foreground pt-1">
+                  Password must be at least 8 characters long, with one uppercase, one lowercase, and one number.
+                </p>
               </div>
               {error && isSignUp && <p className="text-sm text-destructive">{error}</p>}
                <div className="space-y-2">
@@ -350,15 +381,26 @@ export default function AuthPage() {
               </div>
               <div className="space-y-2">
                 <Label htmlFor="password-login">Password</Label>
-                <Input
-                  id="password-login"
-                  type="password"
-                  placeholder="Enter your password"
-                  value={loginPassword}
-                  onChange={(e) => setLoginPassword(e.target.value)}
-                  required
-                  disabled={isLoading}
-                />
+                <div className="relative">
+                  <Input
+                    id="password-login"
+                    type={isPasswordVisible ? 'text' : 'password'}
+                    placeholder="Enter your password"
+                    value={loginPassword}
+                    onChange={(e) => setLoginPassword(e.target.value)}
+                    required
+                    disabled={isLoading}
+                  />
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    className="absolute right-1 top-1/2 -translate-y-1/2 h-7 w-7 text-muted-foreground"
+                    onClick={() => setIsPasswordVisible(!isPasswordVisible)}
+                  >
+                    {isPasswordVisible ? <EyeOff size={18} /> : <Eye size={18} />}
+                  </Button>
+                </div>
               </div>
                {error && !isSignUp && <p className="text-sm text-destructive">{error}</p>}
               <Button type="submit" className="w-full h-12" disabled={isLoading}>
