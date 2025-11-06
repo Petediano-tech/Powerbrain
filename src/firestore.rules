@@ -45,6 +45,17 @@ service cloud.firestore {
       allow get, list: if isSignedIn();
       allow update, delete: if isTeacher() && resource.data.teacherId == request.auth.uid;
     }
+
+    // Community Chat Rules
+    match /chatGroups/{groupId} {
+      allow get, list: if isSignedIn();
+      allow write: if false; // Only admins can create groups for now
+    }
+    match /chatGroups/{groupId}/messages/{messageId} {
+      allow get, list: if isSignedIn();
+      allow create: if isSignedIn() && request.resource.data.senderId == request.auth.uid;
+      allow update, delete: if false; // Messages are immutable
+    }
     
     // Public Content Rules: Allow anyone to read, but restrict writes.
     // Writes to these collections should be done via a trusted server/admin SDK or the Firebase Console.

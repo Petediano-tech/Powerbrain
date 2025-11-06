@@ -29,6 +29,7 @@ const pageTitles: { [key: string]: string } = {
     '/developers': 'The Team',
     '/flashcards': 'Flashcards',
     '/notes': 'My Notes',
+    '/chat': 'Community Chat',
 };
 
 function getPageTitle(pathname: string) {
