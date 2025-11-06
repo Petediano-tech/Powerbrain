@@ -47,11 +47,6 @@ service cloud.firestore {
     }
 
     // Community Chat Rules
-    match /chatGroups {
-      // Rule to allow any signed-in user to list the available chat groups.
-      allow list: if isSignedIn();
-    }
-    
     match /chatGroups/{groupId} {
       allow get: if isSignedIn(); // Allows reading a single group doc
       allow write: if false; // Prevent clients from creating/updating/deleting groups
