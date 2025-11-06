@@ -1,14 +1,14 @@
 
 import { ai } from '@/ai';
-import { GENKIT_CLIENT_HEADER } from '@genkit-ai/next/lib/constants';
 import { NextRequest, NextResponse } from 'next/server';
 
 const GENKIT_DEV_CLIENT_HOST = 'http://127.0.0.1:3100';
 
 async function handler(req: NextRequest) {
   if (process.env.NODE_ENV === 'development') {
-    const reqHeaders = new Headers(req.headers);
-    reqHeaders.set(GENKIT_CLIENT_HEADER, 'genkit-dev-webapp');
+    const reqHeaders = new new Headers(req.headers);
+    // The package prohibits importing GENKIT_CLIENT_HEADER directly, so we hardcode it.
+    reqHeaders.set('x-genkit-client', 'genkit-dev-webapp');
     const url = new URL(req.url);
     const proxyUrl = new URL(url.pathname + url.search, GENKIT_DEV_CLIENT_HOST);
 
