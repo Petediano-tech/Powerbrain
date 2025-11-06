@@ -47,8 +47,8 @@ const subjectIcons: { [key: string]: ReactElement } = {
   'Social Studies': <Users className="h-6 w-6 text-primary" />,
 };
 
-// We define a type that includes the question count, as it might not be on the base QuizType.
-type QuizWithQuestionCount = QuizType & { questions: number };
+// We define a type that includes the question count, which might not be on the base QuizType.
+type QuizWithQuestionCount = Omit<QuizType, 'questions'> & { id: string; questions: number };
 
 export default function QuizzesPage() {
   const firestore = useFirestore();
@@ -58,18 +58,25 @@ export default function QuizzesPage() {
     [firestore]
   );
   
-  // The useCollection hook now expects the number of questions to be on the quiz document directly.
-  const { data: quizzesFromDB, isLoading } = useCollection<QuizWithQuestionCount>(quizzesCollectionRef);
+  const { data: quizzesFromDB, isLoading } = useCollection<QuizType>(quizzesCollectionRef);
   
-  // For demonstration, we merge seeded data if DB is empty.
-  // In a real app, you'd have a seeding script.
   const allQuizzes = useMemo(() => {
-    const dbQuizIds = quizzesFromDB?.map(q => q.id) || [];
-    const seededQuizzesWithCount = quizzesToSeed
-        .filter(sq => !dbQuizIds.includes(sq.id!))
-        .map(q => ({...q, id: q.id!, questions: q.questions.length}));
+    const dbQuizzes = quizzesFromDB?.map(q => ({
+        ...q,
+        questions: q.questions?.length || 0, // Fallback for question count
+    })) || [];
     
-    return [...(quizzesFromDB || []), ...seededQuizzesWithCount];
+    const dbQuizIds = dbQuizzes.map(q => q.id);
+
+    const seededQuizzes = quizzesToSeed
+        .filter(sq => !dbQuizIds.includes(sq.id!))
+        .map(q => ({
+            ...q,
+            id: q.id!,
+            questions: q.questions.length
+        }));
+    
+    return [...dbQuizzes, ...seededQuizzes];
   }, [quizzesFromDB]);
 
 

@@ -29,13 +29,14 @@ import {
   useDoc,
   useCollection,
   useMemoFirebase,
-  WithId,
 } from '@/firebase';
 import { doc, runTransaction, increment, collection } from 'firebase/firestore';
 import { useToast } from '@/hooks/use-toast';
 import { useParams } from 'next/navigation';
 import { useUserStore } from '@/hooks/use-user-store';
 import { Skeleton } from '@/components/ui/skeleton';
+import { quizzesToSeed, Quiz as LocalQuiz, Question as LocalQuestion } from '@/lib/quizzes-data';
+
 
 type Question = {
   id: string;
@@ -50,7 +51,7 @@ type Quiz = {
   title: string;
   subject: string;
   difficulty: 'Easy' | 'Medium' | 'Hard';
-  questions: number;
+  questions: number; // In Firestore, this is a count
   timeLimit: number;
 };
 
@@ -69,27 +70,35 @@ export default function QuizPage() {
   const [isSaving, setIsSaving] = useState(false);
   const [windowSize, setWindowSize] = useState({ width: 0, height: 0 });
 
-  useEffect(() => {
-    const handleResize = () => {
-      setWindowSize({ width: window.innerWidth, height: window.innerHeight });
-    };
-    window.addEventListener('resize', handleResize);
-    handleResize(); // Set initial size
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
+  // Check for local quiz data first
+  const localQuizData: LocalQuiz | undefined = quizzesToSeed.find(q => q.id === quizId);
 
   const quizDocRef = useMemoFirebase(
-    () => (quizId ? doc(firestore, 'quizzes', quizId) : null),
-    [firestore, quizId]
+    () => (quizId && !localQuizData ? doc(firestore, 'quizzes', quizId) : null),
+    [firestore, quizId, localQuizData]
   );
   const questionsCollectionRef = useMemoFirebase(
-    () => (quizId ? collection(firestore, `quizzes/${quizId}/questions`) : null),
-    [firestore, quizId]
+    () => (quizId && !localQuizData ? collection(firestore, `quizzes/${quizId}/questions`) : null),
+    [firestore, quizId, localQuizData]
   );
-
-  const { data: quiz, isLoading: isLoadingQuiz } = useDoc<Quiz>(quizDocRef);
-  const { data: questions, isLoading: isLoadingQuestions } = useCollection<Question>(questionsCollectionRef);
   
+  const { data: quizFromDB, isLoading: isLoadingQuiz } = useDoc<Quiz>(quizDocRef);
+  const { data: questionsFromDB, isLoading: isLoadingQuestions } = useCollection<Question>(questionsCollectionRef);
+
+  const quiz = useMemo(() => {
+    if (localQuizData) {
+      return { ...localQuizData, id: localQuizData.id! };
+    }
+    return quizFromDB;
+  }, [localQuizData, quizFromDB]);
+
+  const questions = useMemo(() => {
+    if (localQuizData) {
+      return localQuizData.questions.map((q, i) => ({...q, id: q.id || `q${i}`}));
+    }
+    return questionsFromDB;
+  }, [localQuizData, questionsFromDB]);
+
   const score = useMemo(() => {
     if (!questions) return 0;
     return questions.reduce((correctAnswers, question, index) => {
@@ -103,8 +112,17 @@ export default function QuizPage() {
       questions && questions.length > 0 ? (score / questions.length) * 100 : 0,
     [score, questions]
   );
-
-  const isLoading = isLoadingQuiz || isLoadingQuestions;
+  
+  const isLoading = !localQuizData && (isLoadingQuiz || isLoadingQuestions);
+  
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowSize({ width: window.innerWidth, height: window.innerHeight });
+    };
+    window.addEventListener('resize', handleResize);
+    handleResize(); // Set initial size
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const handleFinishQuiz = async () => {
     if (!profileId || isSaving || !quiz || !questions || !user) {
