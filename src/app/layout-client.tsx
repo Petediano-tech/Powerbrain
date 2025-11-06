@@ -1,4 +1,3 @@
-
 'use client';
 import { usePathname } from "next/navigation";
 import { AppShell } from "@/components/app-shell";
@@ -21,11 +20,11 @@ export default function RootLayoutClient({ children }: { children: React.ReactNo
     const renderShell = !noSidebarRoutes.includes(pathname) && !pathname.startsWith('/notes/view');
 
     if (!renderShell) {
-        return <>{children}</>;
+        return <main>{children}</main>;
     }
     
     return (
-        <div className="flex min-h-screen">
+        <div className="flex min-h-screen w-full">
             <AppSidebar />
             <AppShell>
                 {children}
