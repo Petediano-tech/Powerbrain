@@ -281,6 +281,138 @@ export const quizzesToSeed: Quiz[] = [
         explanation: "Software is a collection of data or computer instructions that tell the computer how to work, in contrast to physical hardware."
       }
     ]
+  },
+  {
+    id: "chemistry-acids-bases-1",
+    title: "Acids, Bases, and Salts",
+    subject: "Chemistry",
+    difficulty: "Easy",
+    timeLimit: 10,
+    questions: [
+      {
+        question: "What does an acid produce in an aqueous solution?",
+        options: ["Hydroxide ions (OH-)", "Hydrogen ions (H+)", "Salt", "Water"],
+        answer: "Hydrogen ions (H+)",
+        explanation: "Acids are substances that increase the concentration of hydrogen ions (H+) when dissolved in water."
+      },
+      {
+        question: "A substance with a pH of 10 is considered...",
+        options: ["Acidic", "Neutral", "Basic (Alkaline)", "A salt"],
+        answer: "Basic (Alkaline)",
+        explanation: "The pH scale ranges from 0 to 14. A pH less than 7 is acidic, a pH of 7 is neutral, and a pH greater than 7 is basic or alkaline."
+      },
+      {
+        question: "What is the product of a neutralization reaction between an acid and a base?",
+        options: ["A stronger acid", "A stronger base", "Salt and water", "Only salt"],
+        answer: "Salt and water",
+        explanation: "When an acid and a base react, they neutralize each other, producing a salt and water. For example, HCl (acid) + NaOH (base) -> NaCl (salt) + H2O (water)."
+      },
+      {
+        question: "Which indicator turns red in an acidic solution and blue in a basic solution?",
+        options: ["Phenolphthalein", "Methyl Orange", "Litmus paper", "Universal Indicator"],
+        answer: "Litmus paper",
+        explanation: "Litmus paper is a common indicator used to test for acidity. Blue litmus paper turns red in acids, and red litmus paper turns blue in bases."
+      }
+    ]
+  },
+  {
+    id: "physics-matter-1",
+    title: "States of Matter",
+    subject: "Physics",
+    difficulty: "Easy",
+    timeLimit: 10,
+    questions: [
+      {
+        question: "Which state of matter has a definite volume but no definite shape?",
+        options: ["Solid", "Liquid", "Gas", "Plasma"],
+        answer: "Liquid",
+        explanation: "A liquid takes the shape of its container but has a fixed volume. Solids have a definite shape and volume, while gases have neither."
+      },
+      {
+        question: "The process of a solid changing directly into a gas is called...",
+        options: ["Melting", "Evaporation", "Condensation", "Sublimation"],
+        answer: "Sublimation",
+        explanation: "Sublimation is the phase transition of a substance directly from the solid to the gas state, without passing through the liquid state."
+      },
+      {
+        question: "What happens to the particles of a substance when it is heated?",
+        options: ["They move slower and closer together", "They stop moving", "They move faster and further apart", "They get smaller"],
+        answer: "They move faster and further apart",
+        explanation: "Heating a substance increases its internal energy, causing its particles (atoms or molecules) to vibrate and move more rapidly and spread out."
+      },
+      {
+        question: "Which of the following is NOT a physical property of matter?",
+        options: ["Density", "Boiling Point", "Flammability", "Color"],
+        answer: "Flammability",
+        explanation: "Flammability is a chemical property because it describes the ability of a substance to undergo a chemical change (combustion). The others are physical properties that can be observed without changing the substance's chemical identity."
+      }
+    ]
+  },
+  {
+    id: "geography-maps-1",
+    title: "Map Reading Skills",
+    subject: "Geography",
+    difficulty: "Easy",
+    timeLimit: 10,
+    questions: [
+      {
+        question: "What does a map scale of 1:50,000 mean?",
+        options: ["1 cm on the map is 50,000 km in reality", "1 km on the map is 50,000 cm in reality", "1 unit on the map represents 50,000 of the same unit in reality", "The map is 50,000 times larger than reality"],
+        answer: "1 unit on the map represents 50,000 of the same unit in reality",
+        explanation: "A map scale is a ratio. 1:50,000 means that one unit of measurement on the map (like a centimeter) is equal to 50,000 of those same units on the ground."
+      },
+      {
+        question: "Which part of a map explains the meaning of the symbols used?",
+        options: ["Title", "Compass Rose", "Scale", "Key (or Legend)"],
+        answer: "Key (or Legend)",
+        explanation: "The map key, or legend, is a visual explanation of the symbols used on the map."
+      },
+      {
+        question: "What are the imaginary lines that run from east to west on a globe called?",
+        options: ["Lines of Longitude", "Lines of Latitude", "Meridians", "Equators"],
+        answer: "Lines of Latitude",
+        explanation: "Lines of Latitude (also called parallels) run east-west around the globe and measure distance north or south of the Equator."
+      },
+      {
+        question: "The four cardinal directions are:",
+        options: ["Up, Down, Left, Right", "North, South, East, West", "Northeast, Northwest, Southeast, Southwest", "Here, There, Everywhere, Nowhere"],
+        answer: "North, South, East, West",
+        explanation: "The four main points of a compass are North, South, East, and West."
+      }
+    ]
+  },
+  {
+    id: "agriculture-soil-1",
+    title: "Soil Science Basics",
+    subject: "Agriculture",
+    difficulty: "Easy",
+    timeLimit: 10,
+    questions: [
+      {
+        question: "Which soil type feels smooth and silky when wet and has good water retention but poor drainage?",
+        options: ["Sandy Soil", "Clay Soil", "Silt Soil", "Loam Soil"],
+        answer: "Silt Soil",
+        explanation: "Silt particles are smaller than sand but larger than clay, giving them a smooth, flour-like feel. They hold water well but can be prone to compaction."
+      },
+      {
+        question: "What is the ideal soil type for most agricultural purposes, as it contains a balanced mixture of sand, silt, and clay?",
+        options: ["Sandy Soil", "Clay Soil", "Silt Soil", "Loam Soil"],
+        answer: "Loam Soil",
+        explanation: "Loam is considered the ideal soil for gardening and agriculture because it retains moisture but also drains well, and is rich in nutrients."
+      },
+      {
+        question: "The decayed organic matter in soil, which is rich in nutrients, is called:",
+        options: ["Bedrock", "Humus", "Subsoil", "Gravel"],
+        answer: "Humus",
+        explanation: "Humus is the dark, organic material in soil, formed from the decomposition of leaves and other plant and animal material. It is crucial for soil fertility."
+      },
+      {
+        question: "What is soil erosion?",
+        options: ["The process of adding fertilizers to soil", "The formation of new soil", "The washing or blowing away of the top layer of soil", "The process of plants growing in soil"],
+        answer: "The washing or blowing away of the top layer of soil",
+        explanation: "Soil erosion is a natural process that is accelerated by human activities like deforestation and poor farming practices, leading to the loss of fertile topsoil."
+      }
+    ]
   }
 ];
 
