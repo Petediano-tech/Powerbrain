@@ -37,6 +37,15 @@ export default function QuizPage() {
   const { toast } = useToast();
   const { user } = useUser();
 
+  const score = useMemo(() => {
+    if (!questions) return 0;
+    return questions.reduce((correctAnswers, question, index) => {
+      return selectedAnswers[index] === question.answer ? correctAnswers + 1 : correctAnswers;
+    }, 0);
+  }, [questions, selectedAnswers]);
+
+  const scorePercentage = useMemo(() => (questions.length > 0 ? (score / questions.length) * 100 : 0), [score, questions.length]);
+
   useEffect(() => {
     const foundQuiz = quizzesData.find(q => q.id === quizId);
     if (foundQuiz) {
@@ -158,15 +167,6 @@ export default function QuizPage() {
   const handleCheckAnswer = () => {
     setIsChecking(true);
   };
-  
-  const score = useMemo(() => {
-    if (!questions) return 0;
-    return questions.reduce((correctAnswers, question, index) => {
-      return selectedAnswers[index] === question.answer ? correctAnswers + 1 : correctAnswers;
-    }, 0);
-  }, [questions, selectedAnswers]);
-
-  const scorePercentage = useMemo(() => (score / questions.length) * 100, [score, questions.length]);
 
   if (showResults) {
     return (
