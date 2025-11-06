@@ -2,14 +2,13 @@
 'use client';
 
 import { useState, useMemo } from 'react';
-import { useUser, useFirestore, useCollection, useMemoFirebase } from '@/firebase';
-import { collection, query } from 'firebase/firestore';
+import { useUser, useFirestore } from '@/firebase';
 import { subjectsData } from '@/lib/subjects-data';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { cn } from '@/lib/utils';
 import { ChatRoom } from '@/components/chat-room';
-import { MessageCircle, Book } from 'lucide-react';
+import { MessageCircle, Book, Sigma, Dna, FlaskConical, Globe, Leaf, Landmark, Laptop, HeartHandshake, Users } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 
 type ChatGroup = {
@@ -21,29 +20,27 @@ type ChatGroup = {
 const subjectIcons: { [key: string]: React.ElementType } = {
   English: Book,
   Chichewa: Book,
-  Mathematics: Book,
-  Biology: Book,
-  Chemistry: Book,
-  Physics: Book,
-  Geography: Book,
-  Agriculture: Book,
-  History: Book,
-  "Computer Studies": Book,
-  "Life Skills": Book,
-  "Social Studies": Book,
+  Mathematics: Sigma,
+  Biology: Dna,
+  Chemistry: FlaskConical,
+  Physics: Sigma,
+  Geography: Globe,
+  Agriculture: Leaf,
+  History: Landmark,
+  "Computer Studies": Laptop,
+  "Life Skills": HeartHandshake,
+  "Social Studies": Users,
 };
 
 
 export default function ChatPage() {
     const firestore = useFirestore();
-    const chatGroupsQuery = useMemoFirebase(() => query(collection(firestore, 'chatGroups')), [firestore]);
-    const { data: chatGroups, isLoading } = useCollection<ChatGroup>(chatGroupsQuery);
+    const isLoading = false; // No longer loading from Firestore
     
-    // For now, let's fall back to subjectsData if chatGroups isn't populated in Firestore
+    // Fallback to subjectsData as the primary source for chat groups
     const availableGroups = useMemo(() => {
-        if (chatGroups && chatGroups.length > 0) return chatGroups;
-        return subjectsData.map(s => ({...s, description: `Discuss ${s.name}`}));
-    }, [chatGroups]);
+        return subjectsData.map(s => ({ id: s.id, name: s.name, description: `Discuss ${s.name}` }));
+    }, []);
 
     const [selectedGroup, setSelectedGroup] = useState<ChatGroup | null>(null);
 
