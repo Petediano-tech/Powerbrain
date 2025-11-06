@@ -10,7 +10,7 @@
 
 import { ai } from '@/ai';
 import { getFirestore } from 'firebase-admin/firestore';
-import { z } from 'genkit/zod';
+import { z } from 'zod';
 
 const FetchMessagesInputSchema = z.object({
   groupId: z.string().describe('The ID of the chat group to fetch messages for.'),
