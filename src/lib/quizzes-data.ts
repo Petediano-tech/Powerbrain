@@ -28,60 +28,70 @@ export const quizzesToSeed: Quiz[] = [
     timeLimit: 10,
     questions: [
       {
+        id: "q1",
         question: "The book is ___ the table.",
         options: ["on", "at", "in", "with"],
         answer: "on",
         explanation: "'On' is used to indicate that something is physically in contact with and supported by a surface."
       },
       {
+        id: "q2",
         question: "I will meet you ___ the bus stop.",
         options: ["on", "in", "at", "by"],
         answer: "at",
         explanation: "'At' is used to specify a particular point or location."
       },
       {
+        id: "q3",
         question: "She was born ___ April.",
         options: ["at", "on", "in", "from"],
         answer: "in",
         explanation: "'In' is used for months, years, and seasons (e.g., in April, in 1990, in summer)."
       },
       {
+        id: "q4",
         question: "The cat is hiding ___ the bed.",
         options: ["on", "under", "over", "through"],
         answer: "under",
         explanation: "'Under' means to be at a lower level than something else, often covered by it."
       },
       {
+        id: "q5",
         question: "He walked ___ the bridge.",
         options: ["under", "across", "through", "in"],
         answer: "across",
         explanation: "'Across' is used to indicate movement from one side of something to the other."
       },
       {
+        id: "q6",
         question: "The meeting is scheduled ___ 3 PM.",
         options: ["in", "on", "at", "for"],
         answer: "at",
         explanation: "'At' is used to specify a precise time."
       },
       {
+        id: "q7",
         question: "We live ___ Malawi.",
         options: ["at", "on", "in", "from"],
         answer: "in",
         explanation: "'In' is used for countries, cities, and other large areas."
       },
       {
+        id: "q8",
         question: "Please put the milk ___ the fridge.",
         options: ["on", "at", "in", "into"],
         answer: "in",
         explanation: "'In' is used to show something is located inside of an enclosed space. 'Into' would also be acceptable but implies motion."
       },
       {
+        id: "q9",
         question: "My birthday is ___ the 25th of December.",
         options: ["at", "on", "in", "by"],
         answer: "on",
         explanation: "'On' is used for specific dates and days of the week (e.g., on Monday, on Christmas Day)."
       },
       {
+        id: "q10",
         question: "I received a letter ___ my friend.",
         options: ["by", "with", "from", "of"],
         answer: "from",
