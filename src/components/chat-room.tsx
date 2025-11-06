@@ -6,13 +6,14 @@ import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/componen
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { useUser, useFirestore, useCollection, useMemoFirebase, useDoc } from '@/firebase';
+import { useUser, useFirestore, useMemoFirebase, useDoc } from '@/firebase';
 import { collection, addDoc, serverTimestamp, query, orderBy, doc } from 'firebase/firestore';
 import { Send, MessageCircle } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useUserStore } from '@/hooks/use-user-store';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
+import { fetchMessages } from '@/ai/flows/fetch-messages-flow';
 
 interface ChatRoomProps {
     groupId: string;
@@ -35,12 +36,38 @@ export function ChatRoom({ groupId, groupName }: ChatRoomProps) {
     const [isSending, setIsSending] = useState(false);
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
-    const messagesQuery = useMemoFirebase(
-        () => query(collection(firestore, 'chatGroups', groupId, 'messages'), orderBy('timestamp', 'asc')),
-        [firestore, groupId]
-    );
+    const [messages, setMessages] = useState<ChatMessage[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
 
-    const { data: messages, isLoading } = useCollection<ChatMessage>(messagesQuery);
+    useEffect(() => {
+        const loadMessages = async () => {
+            setIsLoading(true);
+            setError(null);
+            try {
+                const fetchedMessages = await fetchMessages({ groupId });
+                // Firestore timestamps will be strings, so we need to convert them back to Date objects
+                const formattedMessages = fetchedMessages.map(msg => ({
+                    ...msg,
+                    timestamp: msg.timestamp ? new Date(msg.timestamp) : new Date()
+                }));
+                setMessages(formattedMessages as ChatMessage[]);
+            } catch (e) {
+                console.error("Failed to fetch messages:", e);
+                setError("Could not load messages.");
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        if (groupId) {
+            loadMessages();
+            // Set up an interval to poll for new messages
+            const intervalId = setInterval(loadMessages, 5000); // Poll every 5 seconds
+            return () => clearInterval(intervalId);
+        }
+
+    }, [groupId]);
     
     const { profileId } = useUserStore();
     const userProfileRef = useMemoFirebase(() => profileId ? doc(firestore, 'userProfiles', profileId) : null, [firestore, profileId]);
@@ -78,17 +105,32 @@ export function ChatRoom({ groupId, groupName }: ChatRoomProps) {
         if (!newMessage.trim() || !user || isSending) return;
 
         setIsSending(true);
+        const tempId = `temp_${Date.now()}`;
+        const optimisticMessage: ChatMessage = {
+            id: tempId,
+            text: newMessage,
+            senderId: user.uid,
+            senderName: displayName,
+            senderAvatarUrl: userAvatarUrl || undefined,
+            timestamp: new Date(),
+        };
+
+        setMessages(prev => [...prev, optimisticMessage]);
+        setNewMessage('');
+
         try {
             await addDoc(collection(firestore, 'chatGroups', groupId, 'messages'), {
-                text: newMessage,
+                text: optimisticMessage.text,
                 senderId: user.uid,
                 senderName: displayName,
                 senderAvatarUrl: userAvatarUrl || null,
                 timestamp: serverTimestamp(),
             });
-            setNewMessage('');
+            // Optionally, you can refetch messages here to get the real message from the DB
         } catch (error) {
             console.error('Error sending message:', error);
+            // Revert optimistic update
+            setMessages(prev => prev.filter(msg => msg.id !== tempId));
         } finally {
             setIsSending(false);
         }
@@ -117,6 +159,8 @@ export function ChatRoom({ groupId, groupName }: ChatRoomProps) {
                            </div>
                         ))}
                     </div>
+                ) : error ? (
+                    <div className="text-center p-4 text-destructive">{error}</div>
                 ) : messages && messages.length > 0 ? (
                     messages.map((msg) => (
                         <div key={msg.id} className={`flex items-start gap-3 ${msg.senderId === user?.uid ? 'justify-end' : ''}`}>
@@ -129,7 +173,7 @@ export function ChatRoom({ groupId, groupName }: ChatRoomProps) {
                             <div className={`max-w-xs md:max-w-md ${msg.senderId === user?.uid ? 'text-right items-end' : 'text-left items-start'} flex flex-col`}>
                                 <div className="text-xs text-muted-foreground mb-1">
                                     {msg.senderName}
-                                    <span className="ml-2">{msg.timestamp ? formatDistanceToNow(msg.timestamp.toDate(), { addSuffix: true }) : 'sending...'}</span>
+                                    <span className="ml-2">{msg.timestamp ? formatDistanceToNow(new Date(msg.timestamp), { addSuffix: true }) : 'sending...'}</span>
                                 </div>
                                 <div className={`p-3 rounded-2xl ${msg.senderId === user?.uid ? 'bg-primary text-primary-foreground rounded-br-none' : 'bg-muted rounded-bl-none'}`}>
                                     <p>{msg.text}</p>
