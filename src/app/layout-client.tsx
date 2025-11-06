@@ -1,6 +1,7 @@
+
 'use client';
 import { usePathname } from "next/navigation";
-import { AppShell } from "@/components/app-shell";
+import { AppShell } from "@/app/app-shell";
 import { AppSidebar } from "@/components/app-sidebar";
 import { PomodoroTimer } from "@/components/pomodoro-timer";
 import { useSettingsStore } from "@/hooks/use-settings-store";
@@ -14,19 +15,25 @@ export default function RootLayoutClient({ children }: { children: React.ReactNo
         document.documentElement.style.fontSize = `${fontSize}px`;
     }, [fontSize]);
 
-    const noSidebarRoutes = ['/welcome', '/auth', '/notes/view'];
+    const noShellRoutes = ['/welcome', '/auth'];
+    const noHeaderRoutes = ['/notes/view'];
     const showTimerRoutes = ['/home', '/dashboard', '/subjects', '/tutor', '/repository'];
+    
+    const showShell = !noShellRoutes.some(route => pathname === route);
 
-    const renderShell = !noSidebarRoutes.includes(pathname) && !pathname.startsWith('/notes/view');
-
-    if (!renderShell) {
+    if (!showShell) {
         return <main>{children}</main>;
+    }
+    
+    // For routes that need a full-screen view without the main app shell (like PDF viewer)
+    if (noHeaderRoutes.some(route => pathname.startsWith(route))) {
+        return <main className="min-w-0 flex-1">{children}</main>;
     }
     
     return (
         <div className="flex min-h-screen w-full">
             <AppSidebar />
-            <AppShell>
+            <AppShell pathname={pathname}>
                 {children}
             </AppShell>
             {showTimerRoutes.includes(pathname) && <PomodoroTimer />}

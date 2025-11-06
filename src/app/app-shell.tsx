@@ -1,9 +1,9 @@
+
 'use client';
 
-import { usePathname } from "next/navigation";
 import { capitalize } from "@/lib/utils";
-import { SidebarTrigger } from "./ui/sidebar";
-import { Button } from "./ui/button";
+import { SidebarTrigger } from "@/components/ui/sidebar";
+import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { Settings, ArrowLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -17,6 +17,8 @@ const pageTitles: { [key: string]: string } = {
     '/repository': 'Resources',
     '/dashboard': 'Dashboard',
     '/teacher': "Teacher's Corner",
+    '/teacher/quiz-generator': 'Quiz Generator',
+    '/teacher/classes': 'My Classes',
     '/profile': 'Profile',
     '/settings': 'Settings',
     '/settings/about': 'About & Legal',
@@ -36,26 +38,21 @@ function getPageTitle(pathname: string) {
     }
     if (pathname.startsWith('/subjects/')) return 'Subjects';
     if (pathname.startsWith('/quizzes/')) return 'Quizzes';
+    if (pathname.startsWith('/teacher/classes/')) return 'Class Details';
     
     return null;
 }
 
-export function AppShell({ children }: { children: React.ReactNode }) {
-    const pathname = usePathname();
+export function AppShell({ children, pathname }: { children: React.ReactNode, pathname: string }) {
     const router = useRouter();
     const pageTitle = getPageTitle(pathname);
 
-    const noHeaderRoutes = ['/notes/view'];
-
-    if (noHeaderRoutes.includes(pathname) || pathname.startsWith('/notes/view')) {
-         return <main className="min-w-0 flex-1">{children}</main>;
-    }
-
     const showBackArrow = pathname.startsWith('/settings/') || 
-                          ['/about', '/terms', '/privacy', '/contact', '/developers', '/profile'].includes(pathname);
+                          pathname.startsWith('/teacher/classes/') ||
+                          ['/about', '/terms', '/privacy', '/contact', '/developers', '/teacher/quiz-generator', '/profile'].includes(pathname);
 
     return (
-        <div className="flex flex-col min-h-screen w-full">
+        <div className="flex flex-col flex-1 min-w-0">
             <header className="sticky top-0 z-10 flex h-16 shrink-0 items-center justify-between border-b bg-background/80 backdrop-blur-sm px-4">
                 <div className="flex items-center gap-2">
                     {showBackArrow ? (
