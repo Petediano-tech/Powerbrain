@@ -64,7 +64,7 @@ export function AppSidebar() {
                     <Link href={item.href} className="w-full" onClick={() => setOpenMobile(false)}>
                         <SidebarMenuButton isActive={isActive}>
                             <item.icon />
-                            {item.label}
+                            <span>{item.label}</span>
                             {item.isPremium && <Badge variant="secondary" className="ml-auto bg-yellow-400/20 text-yellow-500 border-none">VIP</Badge>}
                         </SidebarMenuButton>
                     </Link>

@@ -1,30 +1,17 @@
-
 'use client';
 import { useUser, useDoc, useMemoFirebase } from '@/firebase';
 import { useRouter } from 'next/navigation';
 import { useEffect, useMemo } from 'react';
 import { doc, getFirestore } from 'firebase/firestore';
 import { useUserStore } from '@/hooks/use-user-store';
-import { AppShell } from '@/components/app-shell';
 import TeacherPage from '../teacher/page';
-import { Skeleton } from '@/components/ui/skeleton';
+import { LoadingSpinner } from '@/components/loading-spinner';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Search, BarChart2, GraduationCap, FolderKanban, PencilRuler, Layers, FilePenLine, BookCopy, ArrowRight } from 'lucide-react';
-import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
-import { Progress } from '@/components/ui/progress';
 import Link from 'next/link';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
-import { LoadingSpinner } from '@/components/loading-spinner';
-
-const navGridItems = [
-    { href: '/dashboard', label: 'Dashboard', icon: BarChart2, description: 'View your progress' },
-    { href: '/subjects', label: 'Modules', icon: GraduationCap, description: 'Access courses' },
-    { href: '/repository', label: 'Resources', icon: FolderKanban, description: 'Find notes & videos' },
-    { href: '/quizzes', label: 'Quizzes', icon: PencilRuler, description: 'Assess knowledge' },
-    { href: '/flashcards', label: 'Flashcards', icon: Layers, description: 'Create & study cards' },
-    { href: '/notes', label: 'My Notes', icon: FilePenLine, description: 'Personal notepad' },
-];
+import { ArrowRight } from 'lucide-react';
+import { DashboardNotes } from '@/components/dashboard-notes';
 
 
 export default function HomePage() {
@@ -129,22 +116,7 @@ export default function HomePage() {
                 </Card>
             </Link>
             
-
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 gap-4">
-                {navGridItems.map((item) => (
-                    <Link key={item.label} href={item.href} passHref>
-                        <Card className="hover:bg-muted transition-colors h-full">
-                            <CardContent className="pt-6 flex flex-col items-center text-center gap-2">
-                                <div className="p-3 bg-primary/10 rounded-full text-primary">
-                                    <item.icon className="h-6 w-6" />
-                                </div>
-                                <h3 className="font-bold">{item.label}</h3>
-                                <p className="text-xs text-muted-foreground">{item.description}</p>
-                            </CardContent>
-                        </Card>
-                    </Link>
-                ))}
-            </div>
+            <DashboardNotes />
         </div>
     );
 }
