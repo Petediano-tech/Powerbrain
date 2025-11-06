@@ -48,15 +48,16 @@ service cloud.firestore {
 
     // Community Chat Rules
     match /chatGroups/{groupId} {
-      allow get: if isSignedIn(); // Allows reading a single group doc
+      // Allow any signed-in user to get a list of chat rooms or a single chat room document.
+      allow list, get: if isSignedIn();
       allow write: if false; // Prevent clients from creating/updating/deleting groups
 
-      // This rule allows users to query (list) the messages collection.
+      // Rule for the 'messages' subcollection itself
       match /messages {
-        allow list: if isSignedIn();
+        allow list: if isSignedIn(); // Allows querying the messages collection
       }
-
-      // This rule applies to individual message documents.
+      
+      // Rule for individual message documents
       match /messages/{messageId} {
         allow get: if isSignedIn();
         allow create: if isSignedIn() && request.resource.data.senderId == request.auth.uid;
