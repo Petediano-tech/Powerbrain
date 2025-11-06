@@ -1,4 +1,3 @@
-
 'use client';
 
 import { usePathname } from "next/navigation";
@@ -14,7 +13,6 @@ const pageTitles: { [key: string]: string } = {
     '/subjects': 'Subjects',
     '/flashcards': 'Flashcards',
     '/notes': 'My Notes',
-    '/chat': 'Community Chat',
     '/quizzes': 'Quizzes',
     '/repository': 'Resources',
     '/dashboard': 'Dashboard',

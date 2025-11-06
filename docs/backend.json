@@ -59,28 +59,6 @@
       },
       "required": ["id", "name", "subject", "teacherId", "joinCode", "createdAt"]
     },
-    "ChatGroup": {
-        "title": "ChatGroup", "type": "object", "description": "Represents a public chat room for a subject.",
-        "properties": {
-            "id": { "type": "string" },
-            "name": { "type": "string" },
-            "description": { "type": "string" },
-            "subjectId": { "type": "string" }
-        },
-        "required": ["id", "name"]
-    },
-    "ChatMessage": {
-        "title": "ChatMessage", "type": "object", "description": "Represents a single message in a chat group.",
-        "properties": {
-            "id": { "type": "string" },
-            "text": { "type": "string" },
-            "senderId": { "type": "string" },
-            "senderName": { "type": "string" },
-            "senderAvatarUrl": { "type": "string", "format": "uri" },
-            "timestamp": { "type": "string", "format": "date-time" }
-        },
-        "required": ["id", "text", "senderId", "senderName", "timestamp"]
-    },
     "Note": {
       "title": "Note", "type": "object", "description": "Represents a single note or document as text content.",
       "properties": {
@@ -194,14 +172,6 @@
     "classes/{classId}": {
       "schema": { "$ref": "#/entities/Class" },
       "description": "Stores information about teacher-created classes."
-    },
-    "chatGroups/{groupId}": {
-        "schema": { "$ref": "#/entities/ChatGroup"},
-        "description": "Stores information about public chat groups."
-    },
-    "chatGroups/{groupId}/messages/{messageId}": {
-        "schema": { "$ref": "#/entities/ChatMessage" },
-        "description": "Stores messages for a specific chat group."
     },
     "notes/{noteId}": {
       "schema": { "$ref": "#/entities/Note" },

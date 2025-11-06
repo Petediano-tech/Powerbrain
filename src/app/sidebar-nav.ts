@@ -1,4 +1,3 @@
-
 'use client';
 import {
   Home,
@@ -18,5 +17,4 @@ export const navItems = [
   { href: '/subjects', label: 'Subjects', icon: BookCopy },
   { href: '/flashcards', label: 'Flashcards', icon: Layers },
   { href: '/notes', label: 'My Notes', icon: FilePenLine },
-  { href: '/chat', label: 'Community', icon: MessageCircle },
 ];
