@@ -4,13 +4,13 @@ import { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Input } from "@/components/ui/input';
+import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 import { subjectsData } from '@/lib/subjects-data';
-import { quizzesData, Question } from '@/lib/quizzes-data';
+import { quizzesToSeed, Question } from '@/lib/quizzes-data';
 import { useToast } from '@/hooks/use-toast';
 import { FileQuestion, CheckCircle, RefreshCw, Save } from 'lucide-react';
 
@@ -43,7 +43,7 @@ export default function QuizGeneratorPage() {
     setGeneratedQuestions([]);
     
     // Filter questions from the mock data based on form values
-    const availableQuestions = quizzesData
+    const availableQuestions = quizzesToSeed
         .filter(quiz => quiz.subject === values.subject && quiz.difficulty === values.difficulty)
         .flatMap(quiz => quiz.questions);
     
@@ -82,7 +82,7 @@ export default function QuizGeneratorPage() {
         <Card>
           <CardHeader>
             <CardTitle>Quiz Creator</CardTitle>
-            <CardDescription>Generate a custom quiz based on your selections.</CardDescription>
+            <CardDescription>Build a quiz from the existing question bank.</CardDescription>
           </CardHeader>
           <CardContent>
             <Form {...form}>
@@ -180,7 +180,7 @@ export default function QuizGeneratorPage() {
             ) : (
               <div className="space-y-6">
                 {generatedQuestions.map((q, index) => (
-                  <div key={q.id} className="p-4 border rounded-lg bg-muted/50">
+                  <div key={q.id || index} className="p-4 border rounded-lg bg-muted/50">
                     <p className="font-semibold mb-2">{index + 1}. {q.question}</p>
                     <ul className="space-y-1 text-sm text-muted-foreground list-disc list-inside">
                       {q.options.map(opt => (

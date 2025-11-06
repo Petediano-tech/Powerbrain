@@ -21,10 +21,10 @@ const studentFeatures = [
 ];
 
 const teacherFeatures = [
-    "AI Assignment & Quiz Generator",
-    "Advanced Student Analytics Dashboard",
-    "AI-Assisted Grading for Essays",
+    "Create Custom Quizzes & Assignments",
+    "Student Performance Analytics",
     "Create & Manage Unlimited Classes",
+    "Direct Communication Tools with Students",
     "Priority Support",
 ];
 

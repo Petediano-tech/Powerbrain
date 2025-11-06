@@ -1,3 +1,4 @@
+
 'use client';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -13,7 +14,7 @@ import { Bar, BarChart as RechartsBarChart, ResponsiveContainer, XAxis, YAxis } 
 const quickActions = [
     { name: "Resource Library", icon: <BookCopy />, href: "/repository" },
     { name: "Quiz Creator", icon: <PencilRuler />, href: "/teacher/quiz-generator" },
-    { name: "Student Analytics", icon: <BarChart />, href: "/teacher/analytics" },
+    { name: "Analytics", icon: <BarChart />, href: "/teacher/analytics" },
     { name: "My Classes", icon: <Users />, href: "/teacher/classes" },
 ]
 
