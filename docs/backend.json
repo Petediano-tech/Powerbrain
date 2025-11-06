@@ -28,7 +28,7 @@
         "dateOfBirth": { "type": "string", "description": "Date of birth of the user.", "format": "date-time" },
         "profilePicture": { "type": "string", "description": "URL of the user's profile picture.", "format": "uri" },
         "gradeLevel": { "type": "string", "description": "Grade level of the user (e.g., Form 1, Std 8)." },
-        "schoolId": { "type": "string", "description": "Reference to School. (Relationship: UserProfile 1:N School)" },
+        "school": { "type": "string", "description": "The name of the user's school." },
         "studyStreaks": { "type": "number", "description": "Number of consecutive days the user has studied." },
         "totalTimeStudied": { "type": "number", "description": "Total time in minutes the user has studied." },
         "quizzesCompleted": { "type": "number", "description": "Total number of quizzes the user has completed." },
@@ -38,9 +38,48 @@
         "subscriptionTier": { "type": "string", "enum": ["free", "vip1", "vip2", "vip3", "vip4", "power"], "description": "The user's current subscription tier." },
         "dailyChatCount": { "type": "number", "description": "Number of AI tutor questions asked today." },
         "lastChatDate": { "type": "string", "format": "date", "description": "The date of the last chat interaction, in YYYY-MM-DD format." },
-        "role": { "type": "string", "enum": ["student", "teacher"], "description": "The role of the user within the application." }
+        "role": { "type": "string", "enum": ["student", "teacher"], "description": "The role of the user within the application." },
+        "phoneNumber": { "type": "string", "description": "User's phone number." },
+        "location": { "type": "string", "description": "User's city and country." },
+        "subjectsOfInterest": { "type": "array", "items": { "type": "string" }, "description": "List of subjects the user is interested in." },
+        "classIds": { "type": "array", "items": { "type": "string" }, "description": "List of class IDs the student is enrolled in."}
       },
       "required": ["id", "firstName", "lastName", "gradeLevel", "role"]
+    },
+    "Class": {
+      "title": "Class", "type": "object", "description": "Represents a virtual class created by a teacher.",
+      "properties": {
+        "id": { "type": "string", "description": "Unique identifier for the class." },
+        "name": { "type": "string", "description": "Name of the class (e.g., 'Form 4 Biology')." },
+        "subject": { "type": "string", "description": "The primary subject of the class." },
+        "teacherId": { "type": "string", "description": "The profile ID of the teacher who owns the class." },
+        "joinCode": { "type": "string", "description": "A short, unique code for students to join the class." },
+        "studentIds": { "type": "array", "items": { "type": "string" }, "description": "A list of profile IDs of students enrolled in the class." },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "name", "subject", "teacherId", "joinCode", "createdAt"]
+    },
+    "ChatGroup": {
+        "title": "ChatGroup", "type": "object", "description": "Represents a public chat room for a subject.",
+        "properties": {
+            "id": { "type": "string" },
+            "name": { "type": "string" },
+            "description": { "type": "string" },
+            "subjectId": { "type": "string" }
+        },
+        "required": ["id", "name"]
+    },
+    "ChatMessage": {
+        "title": "ChatMessage", "type": "object", "description": "Represents a single message in a chat group.",
+        "properties": {
+            "id": { "type": "string" },
+            "text": { "type": "string" },
+            "senderId": { "type": "string" },
+            "senderName": { "type": "string" },
+            "senderAvatarUrl": { "type": "string", "format": "uri" },
+            "timestamp": { "type": "string", "format": "date-time" }
+        },
+        "required": ["id", "text", "senderId", "senderName", "timestamp"]
     },
     "Note": {
       "title": "Note", "type": "object", "description": "Represents a single note or document as text content.",
@@ -54,6 +93,38 @@
         "createdAt": { "type": "string", "format": "date-time", "description": "Timestamp when the note was created." }
       },
       "required": ["title", "subject", "author", "content", "createdAt"]
+    },
+    "UserNote": {
+      "title": "UserNote", "type": "object", "description": "Represents a personal note created by a user.",
+      "properties": {
+        "id": { "type": "string", "description": "Unique identifier for the note." },
+        "title": { "type": "string", "description": "Title of the note." },
+        "content": { "type": "string", "description": "The content of the note in markdown or plain text." },
+        "subject": { "type": "string", "description": "Optional subject tag for the note." },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Timestamp when the note was created." },
+        "updatedAt": { "type": "string", "format": "date-time", "description": "Timestamp when the note was last updated." }
+      },
+      "required": ["id", "title", "content", "createdAt", "updatedAt"]
+    },
+    "FlashcardSet": {
+      "title": "FlashcardSet", "type": "object", "description": "Represents a collection of flashcards created by a user.",
+      "properties": {
+        "id": { "type": "string", "description": "Unique identifier for the flashcard set." },
+        "title": { "type": "string", "description": "Title of the flashcard set." },
+        "description": { "type": "string", "description": "A brief description of the set." },
+        "subject": { "type": "string", "description": "The subject the flashcards are for." },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "title", "subject", "createdAt"]
+    },
+    "Flashcard": {
+      "title": "Flashcard", "type": "object", "description": "Represents a single flashcard within a set.",
+      "properties": {
+        "id": { "type": "string" },
+        "question": { "type": "string", "description": "The front side of the card (question/term)." },
+        "answer": { "type": "string", "description": "The back side of the card (answer/definition)." }
+      },
+      "required": ["id", "question", "answer"]
     },
     "Subject": {
       "title": "Subject", "type": "object", "description": "Represents a single educational subject.",
@@ -107,6 +178,30 @@
     "userProfiles/{profileId}": {
       "schema": { "$ref": "#/entities/UserProfile" },
       "description": "Stores user profile details."
+    },
+     "userProfiles/{profileId}/notes/{noteId}": {
+      "schema": { "$ref": "#/entities/UserNote" },
+      "description": "Stores personal notes for a specific user."
+    },
+    "userProfiles/{profileId}/flashcardSets/{setId}": {
+      "schema": { "$ref": "#/entities/FlashcardSet" },
+      "description": "Stores flashcard sets created by a user."
+    },
+    "userProfiles/{profileId}/flashcardSets/{setId}/flashcards/{cardId}": {
+      "schema": { "$ref": "#/entities/Flashcard" },
+      "description": "Stores individual flashcards within a set."
+    },
+    "classes/{classId}": {
+      "schema": { "$ref": "#/entities/Class" },
+      "description": "Stores information about teacher-created classes."
+    },
+    "chatGroups/{groupId}": {
+        "schema": { "$ref": "#/entities/ChatGroup"},
+        "description": "Stores information about public chat groups."
+    },
+    "chatGroups/{groupId}/messages/{messageId}": {
+        "schema": { "$ref": "#/entities/ChatMessage" },
+        "description": "Stores messages for a specific chat group."
     },
     "notes/{noteId}": {
       "schema": { "$ref": "#/entities/Note" },
